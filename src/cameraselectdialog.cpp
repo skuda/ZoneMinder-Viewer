@@ -24,6 +24,7 @@
 #include <QDialogButtonBox>
 #include <QPushButton>
 #include <QMessageBox>
+#include <QFrame>
 
 CameraSelectDialog::CameraSelectDialog( QWidget * parent )
 :QDialog ( parent )
@@ -35,7 +36,7 @@ CameraSelectDialog::CameraSelectDialog( QWidget * parent )
 void CameraSelectDialog::init(){
     setWindowTitle ("Seleccionar camaras");
 }
-#include <QFrame>
+
 void CameraSelectDialog::setNames (  const QStringList &names ){
         QVBoxLayout *l = new QVBoxLayout( this );
         for ( int i = 0 ; i < names.size() ; i++ ){
