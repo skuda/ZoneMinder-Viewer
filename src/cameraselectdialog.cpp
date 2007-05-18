@@ -39,7 +39,9 @@ void CameraSelectDialog::init(){
 void CameraSelectDialog::setNames (  const QStringList &names ){
         QVBoxLayout *l = new QVBoxLayout( this );
         for ( int i = 0 ; i < names.size() ; i++ ){
-                 m_checkBoxes.insert(i,new QCheckBox(names.at(i),this ));
+		 QCheckBox * insertCheckBox = new QCheckBox(names.at(i),this );
+		 insertCheckBox->setChecked( true );
+                 m_checkBoxes.insert(i,insertCheckBox );
                  l->addWidget( m_checkBoxes.at(i));
                 }
 
