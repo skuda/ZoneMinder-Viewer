@@ -1,6 +1,6 @@
 /***************************************************************************
  *   Copyright (C) 2007 by Leandro Emanuel López                           *
- *   lopezlean@gmail.com  				                   *
+ *   lopezlean@gmail.com                         *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -25,10 +25,15 @@
 /**
     default translation function
 */
-#define _(str) QObject::trUtf8( str)
-#define __(str,comment) QObject::trUtf8( str,comment)
-#define ZMVIEWER_VERSION 0.1
+#ifdef Q_WS_X11
+ #define _(str) QObject::trUtf8( str)
+ #define __(str,comment) QObject::trUtf8( str,comment)
+#else
+ #define _(str) QObject::tr( str)
+ #define __(str,comment) QObject::tr( str,comment)
+#endif
 
+#define ZMVIEWER_VERSION 0.1
 static char * ApplicationName = "ZoneMinder Viewer";
 static char * ApplicationShortName ="ZMViewer";
 
