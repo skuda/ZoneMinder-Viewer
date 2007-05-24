@@ -152,9 +152,18 @@
       <autoinstall>false</autoinstall>
       <autokdesu>false</autokdesu>
       <envvars/>
+      <runarguments>
+        <zmviewer></zmviewer>
+      </runarguments>
+      <cwd>
+        <zmviewer>/home/leo/development/zmviewer/trunk/zmviewer</zmviewer>
+      </cwd>
+      <debugarguments>
+        <zmviewer></zmviewer>
+      </debugarguments>
     </run>
     <general>
-      <activedir>src</activedir>
+      <activedir>src/shell</activedir>
     </general>
     <make>
       <abortonerror>true</abortonerror>
