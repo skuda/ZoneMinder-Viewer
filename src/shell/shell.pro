@@ -1,10 +1,10 @@
 CONFIG += warn_on \
 	  thread \
-          qt
+          qt \
+	  debug
 TARGET = zmviewer
 
 SOURCES += main.cpp \
-stream.cpp \
 mainwindow.cpp \
 cameraadddialog.cpp \
 fullscreencamera.cpp \
@@ -13,8 +13,7 @@ cameraselectdialog.cpp \
 camerawidgettoolbar.cpp \
 camerawidget.cpp \
 about.cpp
-HEADERS += stream.h \
-mainwindow.h \
+HEADERS += mainwindow.h \
 cameraadddialog.h \
 fullscreencamera.h \
 multicameraview.h \
@@ -29,4 +28,12 @@ RESOURCES += resources.qrc
 
 FORMS += ui/cameraadddialog.ui
 TEMPLATE = app
+
+INCLUDEPATH += ../core
+
+INSTALLS += target
+
+LIBS += -L../core \
+-lzmviewercore
+TARGETDEPS += ../core/libzmviewercore.so
 

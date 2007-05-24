@@ -2,5 +2,5 @@ TEMPLATE = subdirs
 
 CONFIG += warn_on
 
-SUBDIRS += shell
-
+SUBDIRS += core \
+	   shell
