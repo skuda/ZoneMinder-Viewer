@@ -1,5 +1,8 @@
 <RCC>
     <qresource prefix="/icons" >
+        <file alias="Icon">img/icon.png</file>
+        <file alias="MdiIcon">img/mdiicon.png</file>
+        <file alias="Quit">img/application-exit.png</file>
         <file alias="AddCameraIcon">img/cameradd.png</file>
         <file alias="Start">img/start.png</file>
         <file alias="Stop">img/stop.png</file>

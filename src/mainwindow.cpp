@@ -25,7 +25,7 @@
 #include "cameraadddialog.h"
 #include "multicameraview.h"
 #include "cameraselectdialog.h"
-//#include "fullscreencamera.h"
+#include "config.h"
 
 #include <QMenuBar>
 #include <QSettings>
@@ -53,7 +53,8 @@ MainWindow::MainWindow(QWidget * parent, Qt::WindowFlags flags)
 }
 
 void MainWindow::init(){
-      setWindowTitle("ZoneMinder Viewer");
+      qApp->setWindowIcon ( QIcon (":/icons/Icon"));
+      setWindowTitle( About::applicationName() );
       m_settings = new QSettings ( this );
       m_cameraToggleAction = new QList < QAction *>;
       m_cameraRemoveAction = new QList < QAction *>;
@@ -64,40 +65,40 @@ void MainWindow::init(){
 }
 
 void MainWindow::initActions(){
-    m_newCameraAction = new QAction (QIcon(":/icons/AddCameraIcon"),"&Agregar" , this );
+    m_newCameraAction = new QAction (QIcon(":/icons/AddCameraIcon"),_("&Add") , this );
     connect (m_newCameraAction , SIGNAL( triggered() ), this , SLOT (cameraAddSlot()) ); 
-    m_closeFullScreenAction = new QAction(QIcon(":/icons/Restore"),"&Cerrar pantalla completa" , this );
+    m_closeFullScreenAction = new QAction(QIcon(":/icons/Restore"),_("&Close FullScreen View") , this );
     connect (m_closeFullScreenAction , SIGNAL( triggered() ), this , SLOT (showNormal()) );
-    m_fullScreenAction = new QAction( QIcon(":icons/FullScreen"),"&Pantalla completa" , this);
+    m_fullScreenAction = new QAction( QIcon(":icons/FullScreen"),_("&FullScreen"), this);
     connect (m_fullScreenAction, SIGNAL(triggered()), this , SLOT (fullScreen()));
-    m_quitAction = new QAction (QIcon(":/icons/Quit"),"&Salir" , this );
+    m_quitAction = new QAction (QIcon(":/icons/Quit"),_("&Quit") , this );
     connect (m_quitAction, SIGNAL(triggered()), this , SLOT (close()));
-    m_cascadeAction = new QAction ("&Cascada" , this );
+    m_cascadeAction = new QAction (_("&Cascade") , this );
     connect ( m_cascadeAction , SIGNAL(triggered()) , m_centralWidget , SLOT (cascade()) );
-    m_tileAction = new QAction ("&Mosaico" , this );
+    m_tileAction = new QAction (_("&Tile") , this );
     connect ( m_tileAction , SIGNAL(triggered()) , m_centralWidget , SLOT (tile()) );
-    m_arrangeIconsAction = new QAction ("&Arreglar iconos",this);
+    m_arrangeIconsAction = new QAction (_("&Arrange Icons"),this);
     connect ( m_arrangeIconsAction , SIGNAL(triggered()) , m_centralWidget , SLOT (arrangeIcons()) );
 
-    closeAction = new QAction(tr("&Cerrar"), this);
-    closeAction->setShortcut(tr("Ctrl+F4"));
-    closeAction->setStatusTip(tr("Cerrar la ventana activa"));
+    closeAction = new QAction(_("&Close"), this);
+    closeAction->setShortcut(_("Ctrl+F4"));
+    closeAction->setStatusTip(_("Close active window"));
     connect(closeAction, SIGNAL(triggered()), m_centralWidget, SLOT(closeActiveWindow()));
 
-    closeAllAction = new QAction(tr("Cerrar &todas"), this);
-    closeAllAction->setStatusTip(tr("Cerrar todas las ventanas"));
+    closeAllAction = new QAction(_("Close &All"), this);
+    closeAllAction->setStatusTip(_("Close All &Windows"));
     connect(closeAllAction, SIGNAL(triggered()),m_centralWidget, SLOT(closeAllWindows() ) );
 }
 
 void MainWindow::initMenuBar(){
-    QMenu * camMenu = menuBar()->addMenu("Camara");
+    QMenu * camMenu = menuBar()->addMenu(_("Video Camera"));
     camMenu->addAction ( m_newCameraAction );
-    m_camRemoveMenu = camMenu->addMenu("Borrar");
+    m_camRemoveMenu = camMenu->addMenu(_("Delete"));
     camMenu->addSeparator();
     camMenu->addAction ( m_quitAction );
-    QMenu * m_viewMenu = menuBar()->addMenu("Ver");
-    m_cameraMenu = m_viewMenu->addMenu("&Camaras");
-    QAction * t = m_viewMenu->addAction("V&ista personalizada...");
+    QMenu * m_viewMenu = menuBar()->addMenu(_("View"));
+    m_cameraMenu = m_viewMenu->addMenu(_("&Cameras"));
+    QAction * t = m_viewMenu->addAction(_("Customized View..."));
     connect ( t, SIGNAL(triggered()), this , SLOT( selectedCamerasSlot () ) );
     for (int i = 0 ; i < m_cameraToggleAction->count() ; i++ ){
         m_cameraMenu->addAction( m_cameraToggleAction->at( i ) );
@@ -108,16 +109,16 @@ void MainWindow::initMenuBar(){
     m_viewMenu->addSeparator();
     m_viewMenu->addAction( m_fullScreenAction );
     m_viewMenu->addAction( m_closeFullScreenAction );
-    QMenu * m_windowMenu = menuBar()->addMenu("&Ventana");
+    QMenu * m_windowMenu = menuBar()->addMenu(_("&Window"));
     m_windowMenu->addAction ( closeAction );
     m_windowMenu->addAction ( closeAllAction );
     m_windowMenu->addSeparator();
     m_windowMenu->addAction ( m_cascadeAction );
     m_windowMenu->addAction ( m_tileAction );
     m_windowMenu->addAction ( m_arrangeIconsAction );
-    QMenu * m_helpMenu = menuBar()->addMenu("&Ayuda");
-    connect (m_helpMenu->addAction("Acerca de..."), SIGNAL ( triggered ()), this, SLOT(about()));
-    connect (m_helpMenu->addAction("Acerca de Qt..."), SIGNAL ( triggered ()), qApp, SLOT(aboutQt()));
+    QMenu * m_helpMenu = menuBar()->addMenu(_("&Help"));
+    connect (m_helpMenu->addAction(_("About...")), SIGNAL ( triggered ()), this, SLOT(aboutDialog()));
+    connect (m_helpMenu->addAction(_("About Qt...")), SIGNAL ( triggered ()), qApp, SLOT(aboutQt()));
     
 }
 
@@ -190,7 +191,7 @@ void MainWindow::saveSettings(){
     QList<CameraWidget *> allCameras = m_centralWidget->findChildren<CameraWidget *>();
     for ( int i = 0 ; i < allCameras.size() ; i++ ){
         allnames << allCameras.at( i )->windowTitle();
-        qWarning ("Saving %s...",qPrintable(allCameras.at( i )->windowTitle()));
+        qDebug ("Saving %s...",qPrintable(allCameras.at( i )->windowTitle()));
         CameraWidget * current_camera = /*(CameraWidget *)*/ allCameras.at( i );
         m_settings->beginGroup( allCameras.at( i )->windowTitle() );
         m_settings->setValue("host", current_camera->stream()->host() );
@@ -249,11 +250,11 @@ void MainWindow::addCamera( const QString & name , const QString &host , int por
 void MainWindow::cameraAddSlot(){
     CameraAddDialog dlg(this);
     dlg.completeDefaults();
-    dlg.setWindowTitle("Agregar camara");
+    dlg.setWindowTitle(_("Add Video Camera"));
     int r = dlg.exec();
     if ( r == QDialog::Accepted ){
             if (cameraListContainsName(dlg.m_name->text())){
-                QMessageBox::critical(this, "Agregar camara", "El nombre ya existe.\n Por favor elija otro");
+                QMessageBox::critical(this, _("Add Video Camera"), _("Name is already in use.\n Please select other"));
             }
             else addCamera( dlg.m_name->text() , dlg.m_host->text() , dlg.m_port->text().toInt() , dlg.m_monitor->text().toInt() , dlg.m_zms->text() );
     }
@@ -264,7 +265,7 @@ void MainWindow::fullScreen(){
 }
 
 void MainWindow::removeCamera( CameraWidget * w){
-    /** TODO: buscar una forma mejor*/
+    /** TODO: */
     //    m_centralWidget->removeSubWindow( w );
 
     w->stopCamera();
@@ -324,9 +325,9 @@ void MainWindow::setCentralWidgetCamera ( QWidget * w ){
     layout->addWidget ( w );
 }
 
-void MainWindow::about(){
-    About about( this );
-    about.exec();
+void MainWindow::aboutDialog(){
+    About about;
+    about.showAboutDialog();
 }
 
 MainWindow::~MainWindow()

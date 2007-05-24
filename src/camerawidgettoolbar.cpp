@@ -18,8 +18,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 #include "camerawidgettoolbar.h"
-
 #include "camerawidget.h"
+#include "config.h"
 
 #include <QToolButton>
 #include <QHBoxLayout>
@@ -42,31 +42,31 @@ void CameraWidgetToolBar::init()
     m_startButton->setIcon ( QIcon ( ":/icons/Start" ) );
 
     m_buttonsLayout->addWidget ( m_startButton );
-    m_startButton->setToolTip ( "Reproducir camara" );
+    m_startButton->setToolTip ( _("Play Video Camera") );
     m_stopButton = new QToolButton ( this );
     m_stopButton->setIcon ( QIcon ( ":/icons/Stop" ) );
-    m_stopButton->setToolTip ( "Parar camara" );
+    m_stopButton->setToolTip ( _("Stop Video Camera") );
 
     m_buttonsLayout->addWidget ( m_stopButton );
     m_pauseButton = new QToolButton ( this );
     m_pauseButton->setIcon ( QIcon ( ":/icons/Pause" ) );
-    m_pauseButton->setToolTip ( "Pausar camara" );
+    m_pauseButton->setToolTip ( _("Pause Video Camera") );
 
     m_buttonsLayout->addWidget ( m_pauseButton );
     m_fullScreenButton = new QToolButton ( this );
     m_fullScreenButton->setIcon ( QIcon ( ":/icons/FullScreen" ) );
-    m_fullScreenButton->setToolTip ( "Mostrar camara en pantalla completa" );
+    m_fullScreenButton->setToolTip ( _("FullScreen Mode" ) );
 
     m_buttonsLayout->addWidget ( m_fullScreenButton );
     m_removeButton = new QToolButton ( this );
     m_removeButton->setIcon ( QIcon ( ":/icons/Remove" ) );
-    m_removeButton->setToolTip ( "Borrar Camara" );
+    m_removeButton->setToolTip ( _("Delete Video Camera") );
     m_buttonsLayout->addWidget ( m_removeButton );
 
 
     m_configButton = new QToolButton ( this );
     m_configButton->setIcon ( QIcon ( ":/icons/Setup" ) );
-    m_configButton->setToolTip ( "Configurar camara" );
+    m_configButton->setToolTip ( _("Setup Video Camera") );
     m_buttonsLayout->addWidget ( m_configButton );
 
     QSpacerItem * spacerItem = new QSpacerItem ( 40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );

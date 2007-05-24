@@ -22,10 +22,10 @@ multicameraview.h \
 cameraselectdialog.h \
 camerawidgettoolbar.h \
 camerawidget.h \
-about.h
+about.h \
+config.h
 QT += core \
 network
 RESOURCES += resources.qrc
 
-FORMS += ui/cameraadddialog.ui \
-ui/aboutdialog.ui
+FORMS += ui/cameraadddialog.ui

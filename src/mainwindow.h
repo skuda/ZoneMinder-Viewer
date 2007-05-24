@@ -48,7 +48,7 @@ public Q_SLOTS:
     void fullScreen();
     void removeCamera( CameraWidget *);
     void selectedCamerasSlot ();
-    void about();
+    void aboutDialog();
 protected:
     bool event ( QEvent * event );
 

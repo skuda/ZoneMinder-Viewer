@@ -18,6 +18,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 #include "camerawidget.h"
+#include "config.h"
 
 #include <QLabel>
 #include <QVBoxLayout>
@@ -48,6 +49,7 @@ CameraWidget::CameraWidget( const CameraWidget & other ){
 }
 
 void CameraWidget::init(){
+    setWindowIcon ( QIcon (":/icons/MdiIcon"));
     setSizePolicy(QSizePolicy::Minimum , QSizePolicy::Minimum);
     m_stream = new Stream( this );
     //m_toolbar = new CameraToolBar( m_container );
@@ -65,7 +67,7 @@ void CameraWidget::init(){
     m_layout = new QVBoxLayout ( this );
     m_layout->setMargin(0);
 
-    m_camView->setText ("<b>Sin señal</b>");
+    m_camView->setText (_("<b>No signal</b>"));
 
     m_spacerV = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
 
@@ -101,7 +103,7 @@ void CameraWidget::pauseCamera( ){
 void CameraWidget::stopCamera(){
     m_stream->stop();
     disconnect ( m_stream , SIGNAL ( frameReady ( QPixmap *) ) , this , SLOT (setPixmap (QPixmap *)));
-    m_camView->setText("<b>Camara detenida</b>");
+    m_camView->setText(_("<b>Stopped Video Camera</b>"));
 }
 void CameraWidget::restartCamera(){
     stopCamera();
@@ -124,7 +126,7 @@ void CameraWidget::setPixmap ( QPixmap * p){
 
 void CameraWidget::configCamera(){
     CameraAddDialog d( this );
-    d.setWindowTitle("Configurar camara");
+    d.setWindowTitle("Configure Video Camera");
     d.setValues( windowTitle(), stream()->host() , QString::number(stream()->port() ) , QString::number(stream()->monitor()), stream()->zmStreamServer() );
     if ( d.exec() == QDialog::Accepted ){
             setWindowTitle(d.m_name->text());
@@ -144,12 +146,12 @@ void CameraWidget::fullScreen(){
 
 }
 void CameraWidget::remove(){
-    int ret = QMessageBox::warning(this, tr("ZoneMinder Viewer"),
-                   tr("Realmente desea borrar la camara?"),
+    int ret = QMessageBox::warning(this, _("ZoneMinder Viewer"),
+                   _("Really you want to delete Video Camera?"),
                    QMessageBox::Ok | QMessageBox::Cancel );
     if (ret ==QMessageBox::Ok){
         stopCamera();
-        m_camView->setText("<b>La señal removeMe debe de ser atrapada\n para destruir este objecto.</b>");
+        m_camView->setText("<b>Signal removeMe was not connected. Please fix this</b>");
         emit( removeMe ( this ) );
     }
 }

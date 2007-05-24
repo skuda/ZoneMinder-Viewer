@@ -17,27 +17,19 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef ABOUT_H
-#define ABOUT_H
 
-class QDialog;
-class QString;
-class QWidget;
+#ifndef CONFIG_H
+#define CONFIG_H
 
-class About
-{
-public:
-    About( );
-    ~About();
-    static QString applicationName();
-    static QString versionString();
 
-    void showAboutDialog ();
-private:
-    QString aboutText();
-    QString authorsText();
-    QDialog * m_dialog;
+/**
+    default translation function
+*/
+#define _(str) QObject::trUtf8( str)
+#define __(str,comment) QObject::trUtf8( str,comment)
+#define ZMVIEWER_VERSION 0.1
 
-};
+static char * ApplicationName = "ZoneMinder Viewer";
+static char * ApplicationShortName ="ZMViewer";
 
 #endif
