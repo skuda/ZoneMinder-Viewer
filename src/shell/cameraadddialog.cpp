@@ -45,3 +45,4 @@ CameraAddDialog::~CameraAddDialog()
 }
 
 
+#include "cameraadddialog.moc"

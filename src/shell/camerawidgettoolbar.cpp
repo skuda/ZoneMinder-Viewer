@@ -95,3 +95,4 @@ CameraWidgetToolBar::~CameraWidgetToolBar()
 {}
 
 
+#include "camerawidgettoolbar.moc"

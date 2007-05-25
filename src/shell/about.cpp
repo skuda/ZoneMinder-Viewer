@@ -108,3 +108,4 @@ About::~About()
 }
 
 
+#include "about.moc"

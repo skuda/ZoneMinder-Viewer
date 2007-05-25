@@ -204,3 +204,4 @@ Stream::~Stream()
 
 
 
+#include "stream.moc"

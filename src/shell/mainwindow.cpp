@@ -339,3 +339,4 @@ MainWindow::~MainWindow()
 }
 
 
+#include "mainwindow.moc"

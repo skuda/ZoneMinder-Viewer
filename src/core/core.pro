@@ -6,10 +6,12 @@ qt \
 warn_on
 TARGET = zmviewercore
 
-SOURCES += stream.cpp
-
-HEADERS += stream.h
-
+SOURCES += stream.cpp \
+monitors.cpp \
+database.cpp
+HEADERS += stream.h \
+monitors.h \
+database.h
 QT += network
 
 INSTALLS += target

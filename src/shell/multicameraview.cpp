@@ -164,3 +164,4 @@ MultiCameraView::~MultiCameraView()
 {
 //delete m_cameras;
 }
+#include "multicameraview.moc"

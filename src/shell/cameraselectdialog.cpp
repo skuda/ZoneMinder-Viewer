@@ -91,3 +91,4 @@ CameraSelectDialog::~CameraSelectDialog()
 }
 
 
+#include "cameraselectdialog.moc"
