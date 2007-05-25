@@ -1,0 +1,10 @@
+REQUIREMENTS: 
+ * Qt 4.2.3 (http://trolltech.com/developer/downloads/qt/index) 
+ * CMake (http://cmake.org)
+
+BUILD:
+Run: 
+cd zmviewer
+mkdir build && cd build
+cmake ..
+make
