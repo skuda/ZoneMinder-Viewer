@@ -27,6 +27,9 @@
 #include "cameraselectdialog.h"
 #include "config.h"
 
+//core
+#include "databasesession.h"
+
 #include <QMenuBar>
 #include <QSettings>
 #include <QEvent>
@@ -65,6 +68,9 @@ void MainWindow::init(){
 }
 
 void MainWindow::initActions(){
+    m_sessionNew = new QAction ( _("&New Session...") , this );
+    connect (m_sessionNew , SIGNAL( triggered() ), this , SLOT (newSession()) ); 
+
     m_newCameraAction = new QAction (QIcon(":/icons/AddCameraIcon"),_("&Add") , this );
     connect (m_newCameraAction , SIGNAL( triggered() ), this , SLOT (cameraAddSlot()) ); 
     m_closeFullScreenAction = new QAction(QIcon(":/icons/Restore"),_("&Close FullScreen View") , this );
@@ -91,6 +97,9 @@ void MainWindow::initActions(){
 }
 
 void MainWindow::initMenuBar(){
+    QMenu * sessionMenu = menuBar()->addMenu(_("Session"));
+    sessionMenu->addAction( m_sessionNew );
+
     QMenu * camMenu = menuBar()->addMenu(_("Video Camera"));
     camMenu->addAction ( m_newCameraAction );
     m_camRemoveMenu = camMenu->addMenu(_("Delete"));
@@ -323,6 +332,11 @@ void MainWindow::setCentralWidgetCamera ( QWidget * w ){
     //TODO:
     QVBoxLayout * layout = new QVBoxLayout ( centralWidget() );
     layout->addWidget ( w );
+}
+
+void MainWindow::newSession(){
+    DatabaseSession s;
+    s.exec();
 }
 
 void MainWindow::aboutDialog(){

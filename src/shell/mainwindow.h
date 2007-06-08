@@ -49,6 +49,7 @@ public Q_SLOTS:
     void removeCamera( CameraWidget *);
     void selectedCamerasSlot ();
     void aboutDialog();
+    void newSession();
 protected:
     bool event ( QEvent * event );
 
@@ -72,6 +73,8 @@ private:
     QAction * m_quitAction;
     QAction * m_fullScreenAction;
     QAction * m_closeFullScreenAction;
+    
+    QAction * m_sessionNew;
     
     //MDI Actions
     QAction *closeAction;
