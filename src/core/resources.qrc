@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/images" >
+        <file alias="Connect">img/connect.png</file>
+    </qresource>
+</RCC>
