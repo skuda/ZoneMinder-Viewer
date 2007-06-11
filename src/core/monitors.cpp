@@ -18,22 +18,38 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 #include "monitors.h"
+#include "connectionmanager.h"
+
+#include<QSqlQuery>
+#include<QStringList>
+#include<QVariant>
 
 
 
 Monitors::Monitors(QObject * parent )
 :QObject( parent )
 {
+    init();
 }
 
 
 void Monitors::init(){
-    m_database = new QSqlDatabase;
+    foreach (QString  connection , ConnectionManager::connectionNames() ){
+        QSqlDatabase db = QSqlDatabase::database( connection ) ;
+        QSqlQuery query = db.exec("SELECT * from Monitors where 1");
+        while (query.next()) {
+            qWarning ("%s contains %s", qPrintable(connection), qPrintable(query.value(0).toString()) );
+        }
+    }
+
+}
+
+int Monitors::count(){
+    return 0;
 }
 
 Monitors::~Monitors()
 {
-    delete m_database;
 }
 
 

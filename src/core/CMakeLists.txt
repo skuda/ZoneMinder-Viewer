@@ -6,6 +6,7 @@ set ( core_SRCS
       connectionmanager.cpp
       fullscreencamera.cpp
       databasesession.cpp
+      monitors.cpp
     )
 
 set ( core_UIS

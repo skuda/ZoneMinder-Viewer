@@ -176,13 +176,14 @@ void DatabaseSession::init(){
     m_portLE->setText("3306");
     m_databaseNameLE->setText("zm");
 }
-
+#include "monitors.h"
 void DatabaseSession::tryConnect(){
     ConnectionManager c;
     bool  b = c.addConnection( m_driversCB->currentText() , m_hostLE->text() , m_databaseNameLE->text(), m_userNameLE->text() , m_passwordLE->text(), m_portLE->text().toInt() );
     if (!b)
         QMessageBox::critical( this , tr("Error"), tr("Database connection error: %1").arg( ConnectionManager::lastErrorString() ) );
     else done(QDialog::Accepted);
+    Monitors m(this);
 }
 
 DatabaseSession::~DatabaseSession()

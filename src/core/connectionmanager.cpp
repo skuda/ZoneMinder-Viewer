@@ -23,6 +23,8 @@
 #include <QSqlDatabase>
 #include <QSqlError>
 #include <QStringList>
+#include <QString>
+#include <QObject>
 
 
 static QSqlError lastError;
@@ -33,7 +35,13 @@ ConnectionManager::ConnectionManager()
 
 bool ConnectionManager::addConnection ( const QString &d , const QString & h, const QString & dn , const QString & u,const QString & p , int port )
 {
-     QSqlDatabase db = QSqlDatabase::addDatabase( d );
+    QString cn = d+h+dn+u+QString::number(port);
+    if ( QSqlDatabase::contains( cn ) )
+            {
+                lastError.setDatabaseText(QObject::tr("Connection to <b>%1</b> already exist at host %2").arg(dn).arg(h));
+                return false;
+            }
+     QSqlDatabase db = QSqlDatabase::addDatabase( d , cn );
      db.setHostName( h );
      db.setDatabaseName( dn );
      db.setUserName( u );
@@ -42,7 +50,9 @@ bool ConnectionManager::addConnection ( const QString &d , const QString & h, co
         db.setPort( port );
      bool b = db.open();
      if ( ! b ) lastError = db.lastError();
-     else lastError = QSqlError();
+     else {
+        lastError = QSqlError();
+        }
      return b;
 }
 

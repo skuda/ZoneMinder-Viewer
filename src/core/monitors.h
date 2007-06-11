@@ -28,13 +28,11 @@
 class Monitors: public QObject{
 public:
     Monitors( QObject * parent = 0 );
-
+    int count();
     ~Monitors();
 
 private:
     void init();
-    QSqlDatabase * m_database;
-
 };
 
 #endif
