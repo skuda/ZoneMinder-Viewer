@@ -2,4 +2,12 @@
     <qresource prefix="/images" >
         <file alias="Connect">img/connect.png</file>
     </qresource>
+    <qresource prefix="/icons" >
+        <file alias="Remove">img/remove.png</file>
+        <file alias="Start">img/start.png</file>
+        <file alias="Stop">img/stop.png</file>
+        <file alias="Pause">img/pause.png</file>
+        <file alias="Setup">img/setup.png</file>
+        <file alias="FullScreen">img/view-fullscreen.png</file>
+    </qresource>
 </RCC>

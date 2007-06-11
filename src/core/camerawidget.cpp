@@ -44,6 +44,7 @@ CameraWidget::CameraWidget(QWidget *parent)
 }
 
 CameraWidget::CameraWidget( const CameraWidget & other ){
+    this->m_toolbar = other.m_toolbar;
     this->m_stream = other.m_stream;
     this->m_autoAdjustImage = other.m_autoAdjustImage;
 }
