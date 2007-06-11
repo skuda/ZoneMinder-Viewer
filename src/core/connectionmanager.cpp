@@ -31,13 +31,15 @@ ConnectionManager::ConnectionManager()
 {}
 
 
-bool ConnectionManager::addConnection ( const QString &d , const QString & h, const QString & dn , const QString & u,const QString & p )
+bool ConnectionManager::addConnection ( const QString &d , const QString & h, const QString & dn , const QString & u,const QString & p , int port )
 {
      QSqlDatabase db = QSqlDatabase::addDatabase( d );
      db.setHostName( h );
      db.setDatabaseName( dn );
      db.setUserName( u );
      db.setPassword( p );
+     if  ( port != 0)
+        db.setPort( port );
      bool b = db.open();
      if ( ! b ) lastError = db.lastError();
      else lastError = QSqlError();

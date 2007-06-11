@@ -18,8 +18,10 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 #include "databasesession.h"
+#include "connectionmanager.h"
 
 #include <QComboBox>
+#include <QMessageBox>
 #include <QLineEdit>
 #include <QLabel>
 #include <QPushButton>
@@ -139,7 +141,9 @@ void DatabaseSession::init(){
 
     QHBoxLayout * hboxLayout1 = new QHBoxLayout();
     QDialogButtonBox * buttonBox = new QDialogButtonBox( this );
-    buttonBox->setStandardButtons(QDialogButtonBox::Cancel|QDialogButtonBox::NoButton|QDialogButtonBox::Ok);
+    buttonBox->setStandardButtons(QDialogButtonBox::Cancel|QDialogButtonBox::NoButton);
+    QPushButton * btnOk = buttonBox->addButton( tr ("Ok") , QDialogButtonBox::AcceptRole );
+    connect (btnOk, SIGNAL(clicked()), this , SLOT(tryConnect()));
 
     hboxLayout1->addWidget(buttonBox);
 
@@ -170,8 +174,17 @@ void DatabaseSession::init(){
     m_hostLE->setText( "localhost" );
     m_driversCB->setCurrentIndex( m_driversCB->findText("QMYSQL") );
     m_portLE->setText("3306");
-    m_databaseNameLE->setText("zoneminder");
+    m_databaseNameLE->setText("zm");
 }
+
+void DatabaseSession::tryConnect(){
+    ConnectionManager c;
+    bool  b = c.addConnection( m_driversCB->currentText() , m_hostLE->text() , m_databaseNameLE->text(), m_userNameLE->text() , m_passwordLE->text(), m_portLE->text().toInt() );
+    if (!b)
+        QMessageBox::critical( this , tr("Error"), tr("Database connection error: %1").arg( ConnectionManager::lastErrorString() ) );
+    else done(QDialog::Accepted);
+}
+
 DatabaseSession::~DatabaseSession()
 {
 }

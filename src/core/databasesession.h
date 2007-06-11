@@ -32,7 +32,8 @@ Q_OBJECT
 public:
     DatabaseSession( QWidget * parent = 0 );
     ~DatabaseSession();
-
+public Q_SLOTS:
+    void tryConnect();
 private:
     void init();
 
