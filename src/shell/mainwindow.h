@@ -50,6 +50,7 @@ public Q_SLOTS:
     void selectedCamerasSlot ();
     void aboutDialog();
     void newSession();
+    void sessionList();
 protected:
     bool event ( QEvent * event );
 
@@ -75,6 +76,7 @@ private:
     QAction * m_closeFullScreenAction;
     
     QAction * m_sessionNew;
+    QAction * m_sessionList;
     
     //MDI Actions
     QAction *closeAction;

@@ -29,6 +29,7 @@
 
 //core
 #include "databasesession.h"
+#include "connectionwidget.h"
 
 #include <QMenuBar>
 #include <QSettings>
@@ -71,6 +72,9 @@ void MainWindow::initActions(){
     m_sessionNew = new QAction ( _("&New Session...") , this );
     connect (m_sessionNew , SIGNAL( triggered() ), this , SLOT (newSession()) ); 
 
+    m_sessionList = new QAction ( _("&New List...") , this );
+    connect (m_sessionList , SIGNAL( triggered() ), this , SLOT (sessionList()) ); 
+
     m_newCameraAction = new QAction (QIcon(":/icons/AddCameraIcon"),_("&Add") , this );
     connect (m_newCameraAction , SIGNAL( triggered() ), this , SLOT (cameraAddSlot()) ); 
     m_closeFullScreenAction = new QAction(QIcon(":/icons/Restore"),_("&Close FullScreen View") , this );
@@ -99,6 +103,7 @@ void MainWindow::initActions(){
 void MainWindow::initMenuBar(){
     QMenu * sessionMenu = menuBar()->addMenu(_("Session"));
     sessionMenu->addAction( m_sessionNew );
+    sessionMenu->addAction( m_sessionList );
 
     QMenu * camMenu = menuBar()->addMenu(_("Video Camera"));
     camMenu->addAction ( m_newCameraAction );
@@ -337,6 +342,11 @@ void MainWindow::setCentralWidgetCamera ( QWidget * w ){
 void MainWindow::newSession(){
     DatabaseSession s;
     s.exec();
+}
+
+void MainWindow::sessionList(){
+    ConnectionWidget w;
+    w.exec();
 }
 
 void MainWindow::aboutDialog(){

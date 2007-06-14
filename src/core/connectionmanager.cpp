@@ -35,6 +35,7 @@ ConnectionManager::ConnectionManager()
 
 bool ConnectionManager::addConnection ( const QString &d , const QString & h, const QString & dn , const QString & u,const QString & p , int port )
 {
+    //driver,host,database,user,port
     QString cn = d+h+dn+u+QString::number(port);
     if ( QSqlDatabase::contains( cn ) )
             {
