@@ -36,11 +36,13 @@ class ConnectionManager
         /**
             driver, hostname , database name , user, password, port
         */
-        bool addConnection ( const QString &d , const QString & h, const QString & dn , const QString & u,const QString & p , int port = 0 );
+        static bool addConnection ( const QString &d , const QString & h, const QString & dn , const QString & u,const QString & p , int port = 0 );
         bool constains ( const QString & name );
         static QStringList connectionNames();
 
         static QString lastErrorString();
+    private:
+        static void saveConnection(const QString &d , const QString & h, const QString & dn , const QString & u,const QString & p , int port );
 };
 
 #endif

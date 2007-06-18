@@ -19,10 +19,13 @@
  ***************************************************************************/
 #include "monitors.h"
 #include "connectionmanager.h"
+#include "camerawidget.h"
+#include "stream.h"
 
 #include<QSqlQuery>
 #include<QStringList>
 #include<QVariant>
+#include<QSqlRecord>
 
 
 
@@ -36,20 +39,38 @@ Monitors::Monitors(QObject * parent )
 void Monitors::init(){
     foreach (QString  connection , ConnectionManager::connectionNames() ){
         QSqlDatabase db = QSqlDatabase::database( connection ) ;
-        QSqlQuery query = db.exec("SELECT * from Monitors where 1");
+        QSqlQuery query = db.exec("SELECT Value from Config where Name='ZM_PATH_ZMS'");
+        query.next();
+        QString zms = query.value(0).toString();
+        query.clear();
+        query = db.exec("SELECT * from Monitors where 1");
         while (query.next()) {
-            qWarning ("%s contains %s", qPrintable(connection), qPrintable(query.value(0).toString()) );
+            CameraWidget * camera = new CameraWidget ( );
+            camera->setWindowTitle( query.value(query.record().indexOf("Name")).toString() );
+            camera->stream()->setHost( db.hostName() ,query.value(query.record().indexOf("Port")).toInt() );
+            camera->stream()->setMonitor( query.value(query.record().indexOf("Id")).toUInt() );
+            camera->stream()->setZMStreamServer( zms );
+            m_cameras.append( camera );
+            camera->setAutoAdjustImage ( true );
+            camera->startCamera();
         }
     }
 
 }
 
 int Monitors::count(){
-    return 0;
+    return m_cameras.count();
+}
+
+void Monitors::updateMonitors(){
+    m_cameras.clear();
+    init();
 }
 
 Monitors::~Monitors()
 {
 }
+
+#include "monitors.moc"
 
 

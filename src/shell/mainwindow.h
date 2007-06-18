@@ -36,6 +36,7 @@ class QMenu;
 #else
     #error "Qt Version to old"
 #endif
+class Monitors;
 
 class MainWindow: public QMainWindow{
 Q_OBJECT
@@ -56,6 +57,7 @@ protected:
 
 private Q_SLOTS:
     void setCentralWidgetCamera ( QWidget * w );
+    void update ( );
 
 private:
     void init();
@@ -95,6 +97,7 @@ private:
     int m_cameras;
 
     MDICLASS  *m_centralWidget;
+    Monitors * m_monitors;
     
 };
 

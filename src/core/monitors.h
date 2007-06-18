@@ -25,14 +25,22 @@
 /**
 	@author Leandro Emanuel López <lopezlean@gmail.com>
 */
+
+class CameraWidget;
+
 class Monitors: public QObject{
+Q_OBJECT
 public:
     Monitors( QObject * parent = 0 );
     int count();
     ~Monitors();
+    QList<CameraWidget *> cameras(){ return m_cameras;}
+public Q_SLOTS:
+    void updateMonitors();
 
 private:
     void init();
+    QList<CameraWidget *> m_cameras;
 };
 
 #endif

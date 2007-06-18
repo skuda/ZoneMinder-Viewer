@@ -40,7 +40,8 @@ CameraWidget::CameraWidget(QWidget *parent)
  : QScrollArea( parent),m_autoAdjustImage( false ),m_toggleViewAction(0)
 {
     init();
-    connect ( this , SIGNAL ( removeMe(CameraWidget *)), parent , SLOT    (removeCamera(CameraWidget *)));
+    if (parent)
+        connect ( this , SIGNAL ( removeMe(CameraWidget *)), parent , SLOT    (removeCamera(CameraWidget *)));
 }
 
 CameraWidget::CameraWidget( const CameraWidget & other ){

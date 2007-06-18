@@ -33,7 +33,9 @@ public:
     ConnectionWidget( QWidget * parent = 0  );
     ~ConnectionWidget();
 public Q_SLOTS:
-    void removeConnectionCheck( int row , int column );
+    void removeConnection( );
+signals:
+    void needUpdate();
 
 
 private:

@@ -34,6 +34,8 @@ public:
     ~DatabaseSession();
 public Q_SLOTS:
     void tryConnect();
+signals:
+    void needUpdate();
 private:
     void init();
 
