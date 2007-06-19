@@ -54,6 +54,7 @@ void Monitors::init(){
             camera->setAutoAdjustImage ( true );
             camera->startCamera();
         }
+        query.clear();
     }
 
 }
