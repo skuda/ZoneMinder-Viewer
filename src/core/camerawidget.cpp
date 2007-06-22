@@ -184,7 +184,7 @@ bool CameraWidget::event ( QEvent * event ){
 
 void CameraWidget::cameraEvents(){
     CameraEvents * e = new CameraEvents ( stream()->monitor() , m_conectionName , this );
-    e->setWindowTitle(_( "Events for Monitor %s").arg( windowTitle() ) );
+    e->setWindowTitle(_( "Events for Monitor %1").arg( windowTitle() ) );
     e->show();
 }
 
