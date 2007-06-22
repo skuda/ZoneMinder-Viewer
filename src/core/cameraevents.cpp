@@ -54,6 +54,7 @@ void CameraEvents::init()
     m_view->setEditTriggers ( QAbstractItemView::NoEditTriggers );
     m_view->setSelectionBehavior ( QAbstractItemView::SelectRows );
     m_view->setAlternatingRowColors ( true );
+    m_view->setSortingEnabled ( true );
     m_view->setModel ( m_model );
     layout->addWidget ( m_view );
 
