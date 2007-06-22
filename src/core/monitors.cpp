@@ -21,6 +21,7 @@
 #include "connectionmanager.h"
 #include "camerawidget.h"
 #include "stream.h"
+#include "config.h"
 
 #include<QSqlQuery>
 #include<QStringList>
@@ -46,7 +47,7 @@ void Monitors::init(){
         query = db.exec("SELECT * from Monitors where 1");
         while (query.next()) {
             CameraWidget * camera = new CameraWidget ( );
-            camera->setWindowTitle( query.value(query.record().indexOf("Name")).toString() );
+            camera->setWindowTitle( query.value(query.record().indexOf("Name")).toString() + _(" at ") + db.hostName() );
             camera->stream()->setHost( db.hostName() ,query.value(query.record().indexOf("Port")).toInt() );
             camera->stream()->setMonitor( query.value(query.record().indexOf("Id")).toUInt() );
             camera->stream()->setZMStreamServer( zms );

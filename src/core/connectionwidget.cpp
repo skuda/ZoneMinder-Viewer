@@ -47,10 +47,10 @@ void ConnectionWidget::init()
     m_table->setSelectionBehavior ( QAbstractItemView::SelectRows );
     QVBoxLayout * v = new QVBoxLayout ( this );
     v->addWidget ( m_table );
-    m_table->setColumnCount ( 5 );
+    m_table->setColumnCount ( 6 );
     QStringList labels;
     int r=0;
-    labels << _ ( "Host" ) << _ ( "Database" ) << _ ( "User" ) << _ ( "Driver" ) << _ ( "Port" ) ;
+    labels << _ ( "Host" ) << _ ( "Database" ) << _ ( "User" ) << _ ( "Driver" ) << _ ( "Port" ) << _ ( "State" );
     m_table->setHorizontalHeaderLabels ( labels );
     foreach ( QString  connection , ConnectionManager::connectionNames() )
     {
@@ -61,11 +61,7 @@ void ConnectionWidget::init()
         m_table->setItem ( r , 2 , new QTableWidgetItem ( db.userName() ) );
         m_table->setItem ( r , 3 , new QTableWidgetItem ( db.driverName() ) );
         m_table->setItem ( r , 4 , new QTableWidgetItem ( QString::number ( db.port() ) ) );
-        /*QTableWidgetItem * ri = new QTableWidgetItem(QIcon(":/icons/Remove") ,"" );
-        m_table->setItem( r , 5 , ri );
-        ri->setTextAlignment(Qt::AlignHCenter);
-        ri->setToolTip(_"Press double click here to remove this connection"));
-        ri->setWhatsThis(_"Press double click here to removethis connection"));*/
+        m_table->setItem ( r , 5 , new QTableWidgetItem ( db.isOpenError() ? _("Failed") : _("Connected") ) ) ;
         r++;
     }
     resize ( 650 , 300 );

@@ -34,7 +34,7 @@ ConnectionManager::ConnectionManager()
 {}
 
 
-bool ConnectionManager::addConnection ( const QString &d , const QString & h, const QString & dn , const QString & u,const QString & p , int port )
+bool ConnectionManager::addConnection ( const QString &d , const QString & h, const QString & dn , const QString & u,const QString & p , int port ,bool removeiferror )
 {
     //driver,host,database,user,port
     QString cn = d+h+dn+u+QString::number ( port );
@@ -55,7 +55,9 @@ bool ConnectionManager::addConnection ( const QString &d , const QString & h, co
     if ( ! b )
     {
         lastError = db.lastError();
-        db.removeDatabase ( cn );
+        db.close();
+        if( removeiferror )
+            db.removeDatabase ( cn );
     }
     else
     {
