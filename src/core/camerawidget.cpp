@@ -19,6 +19,7 @@
  ***************************************************************************/
 #include "camerawidget.h"
 #include "config.h"
+#include "cameraevents.h"
 
 #include <QLabel>
 #include <QVBoxLayout>
@@ -36,9 +37,10 @@
 //
 //TODO:
 
-CameraWidget::CameraWidget(QWidget *parent)
+CameraWidget::CameraWidget( const QString &conectionName, QWidget *parent)
  : QScrollArea( parent),m_autoAdjustImage( false ),m_toggleViewAction(0)
 {
+    m_conectionName = conectionName;
     init();
     if (parent)
         connect ( this , SIGNAL ( removeMe(CameraWidget *)), parent , SLOT    (removeCamera(CameraWidget *)));
@@ -48,6 +50,7 @@ CameraWidget::CameraWidget( const CameraWidget & other ){
     this->m_toolbar = other.m_toolbar;
     this->m_stream = other.m_stream;
     this->m_autoAdjustImage = other.m_autoAdjustImage;
+    this->m_conectionName = other.m_conectionName;
 }
 
 void CameraWidget::init(){
@@ -177,6 +180,12 @@ QAction * CameraWidget::toggleViewAction(){
 bool CameraWidget::event ( QEvent * event ){
     if (m_toggleViewAction ) m_toggleViewAction->setChecked ( this->isVisible());
     return QWidget::event( event );
+}
+
+void CameraWidget::cameraEvents(){
+    CameraEvents * e = new CameraEvents ( stream()->monitor() , m_conectionName , this );
+    e->setWindowTitle(_( "Events for Monitor %s").arg( windowTitle() ) );
+    e->show();
 }
 
 CameraWidget::~CameraWidget()

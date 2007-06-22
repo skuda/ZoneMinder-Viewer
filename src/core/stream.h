@@ -30,7 +30,7 @@ class Stream: public QObject{
 Q_OBJECT
 public:
     enum StreamMode{ JPEG, VIDEO/** TODO: VIDEO */ };
-    
+    enum StreamType{ Monitor, Event };
     Stream( QObject * parent = 0 );
     ~Stream();
     
@@ -51,6 +51,8 @@ public Q_SLOTS:
     void setHost( const QString & host , quint16 port = 80 );
     void setMode ( const StreamMode &mode );
     void setMonitor ( quint16 monitor );
+    void setStreamType ( const StreamType & t );
+    void setEvent ( quint16 event );
     void setBitRate ( quint16 bitrate );
     void setScale ( quint16 scale );
     void setZMStreamServer ( const QString &zms = "/cgi-bin/nph-zms" );

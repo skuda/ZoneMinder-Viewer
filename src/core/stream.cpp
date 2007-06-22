@@ -36,6 +36,7 @@ class Stream::Private
             host = "localhost";
             port = 80;
             monitor = 1;
+            type = Monitor;
             scale = 100;
             bitrate = 2;
             zms ="/cgi-bin/nph-zms";
@@ -49,9 +50,11 @@ class Stream::Private
         QString host;
         quint16 port;
         quint16 monitor;
+        quint16 event;
         quint16 scale;
         quint16 bitrate;
         QString zms;
+        StreamType type;
         QPixmap * current_frame;
 };
 
@@ -71,7 +74,7 @@ void Stream::setMode ( const StreamMode &mode )
 {
     if ( mode != JPEG )
     {
-        qDebug ( "Stream:setMode(): Soporte para video no implementado." );
+        qDebug ( "Stream:setMode(): Not implemented yet!" );
         d->mode = "Invalid";
     }
     d->mode = "jpeg";
@@ -80,6 +83,10 @@ void Stream::setMode ( const StreamMode &mode )
 void Stream::setMonitor ( quint16 monitor )
 {
     d->monitor = monitor;
+}
+
+void Stream::setStreamType ( const StreamType & t ){
+    d->type = t;
 }
 void Stream::setScale ( quint16 scale )
 {
@@ -96,6 +103,9 @@ void Stream::setZMStreamServer ( const QString &zms )
     d->zms = zms;
 }
 
+void Stream::setEvent ( quint16 event ){
+    d->event = event;
+}
 
 void Stream::read ( const QHttpResponseHeader &header )
 {
@@ -149,7 +159,11 @@ bool Stream::image ( QByteArray* array )
 
 void Stream::start()
 {
-    QString connection = QString ( "%1?mode=%2&monitor=%3&scale=%4&bitrate=%5" ).arg ( d->zms ).arg ( d->mode ).arg ( d->monitor ).arg ( d->scale ).arg ( d->bitrate );
+    QString connection;
+    if (d->type == Monitor )
+        connection = QString ( "%1?mode=%2&monitor=%3&scale=%4&bitrate=%5" ).arg ( d->zms ).arg ( d->mode ).arg ( d->monitor ).arg ( d->scale ).arg ( d->bitrate );
+    else if ( d->type == Event )
+            connection = QString ( "%1?mode=%2&frame=1&event=%3&scale=%4&bitrate=%5" ).arg ( d->zms ).arg ( d->mode ).arg ( d->event ).arg ( d->scale ).arg ( d->bitrate);
     qDebug ( qPrintable ( connection ) );
     d->http->get ( connection );
     connect ( d->http, SIGNAL ( readyRead ( const QHttpResponseHeader& ) ), this, SLOT ( read ( const QHttpResponseHeader & ) ) );

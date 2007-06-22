@@ -8,6 +8,7 @@ set ( core_SRCS
       databasesession.cpp
       monitors.cpp
       connectionwidget.cpp
+      cameraevents.cpp
     )
 
 set ( core_UIS

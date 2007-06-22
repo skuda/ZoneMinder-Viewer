@@ -210,7 +210,10 @@ bool MainWindow::event ( QEvent * ev )
 
 void MainWindow::addCamera ( const QString & name , const QString &host , int port , int monitor , const QString &zms )
 {
-    CameraWidget * camera = new CameraWidget ( this );
+    /**
+        TODO: make this with database!
+    */
+    CameraWidget * camera = new CameraWidget ( NULL, this );
     camera->setWindowTitle ( name );
     camera->stream()->setHost ( host , port );
     camera->stream()->setMonitor ( monitor );

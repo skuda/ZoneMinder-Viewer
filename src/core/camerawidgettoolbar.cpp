@@ -63,6 +63,10 @@ void CameraWidgetToolBar::init()
     m_removeButton->setToolTip ( _("Delete Video Camera") );
     m_buttonsLayout->addWidget ( m_removeButton );
 
+    m_eventButton = new QToolButton ( this );
+    m_eventButton->setIcon ( QIcon ( ":/icons/Events" ) );
+    m_eventButton->setToolTip ( _("Event List") );
+    m_buttonsLayout->addWidget ( m_eventButton );
 
     m_configButton = new QToolButton ( this );
     m_configButton->setIcon ( QIcon ( ":/icons/Setup" ) );
@@ -81,6 +85,7 @@ void CameraWidgetToolBar::autoConnectWith ( CameraWidget * camera )
     connect ( m_pauseButton , SIGNAL ( clicked() ) , camera , SLOT ( pauseCamera() ) );
     connect ( m_fullScreenButton , SIGNAL ( clicked() ) , camera , SLOT ( fullScreen() ) );
     connect ( m_removeButton , SIGNAL ( clicked() ) , camera , SLOT ( remove() ) );
+    connect ( m_eventButton , SIGNAL ( clicked() ) , camera , SLOT ( cameraEvents() ) );
     connect ( m_configButton , SIGNAL ( clicked() ) , camera , SLOT ( configCamera() ) );
 }
 

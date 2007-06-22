@@ -46,7 +46,7 @@ void Monitors::init(){
         query.clear();
         query = db.exec("SELECT * from Monitors where 1");
         while (query.next()) {
-            CameraWidget * camera = new CameraWidget ( );
+            CameraWidget * camera = new CameraWidget (  connection );
             camera->setWindowTitle( query.value(query.record().indexOf("Name")).toString() + _(" at ") + db.hostName() );
             camera->stream()->setHost( db.hostName() ,query.value(query.record().indexOf("Port")).toInt() );
             camera->stream()->setMonitor( query.value(query.record().indexOf("Id")).toUInt() );

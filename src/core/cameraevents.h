@@ -17,36 +17,30 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef CAMERAWIDGETTOOLBAR_H
-#define CAMERAWIDGETTOOLBAR_H
-
-#include <QWidget>
+#ifndef CAMERAEVENTS_H
+#define CAMERAEVENTS_H
 
 /**
-	@author Leandro Emanuel López <lopezlean@gmail.com>
-        ToolBar de las camaras
+	@author Leandro Emanuel Lopez <lopezlean@gmail.com>
 */
+#include <QDialog>
+class QModelIndex;
+class QSqlTableModel;
+class QTableView;
 
-class QToolButton;
-class CameraWidget;
-
-class CameraWidgetToolBar : public QWidget
-{
+class CameraEvents: public QDialog{
+Q_OBJECT
 public:
-    CameraWidgetToolBar( QWidget * parent = 0 );
-    void autoConnectWith( CameraWidget * camera );
-    ~CameraWidgetToolBar();
-    void setRemoveActionState( bool state );
-    void setConfigActionState( bool state );
+    CameraEvents( int camId, const QString & connectionName , QWidget * parent = 0 );
+    ~CameraEvents();
+public Q_SLOTS:
+    void showEvent (const QModelIndex & index);
 private:
     void init();
-    QToolButton * m_startButton;
-    QToolButton * m_stopButton;
-    QToolButton * m_pauseButton;
-    QToolButton * m_fullScreenButton;
-    QToolButton * m_configButton;
-    QToolButton * m_eventButton;
-    QToolButton * m_removeButton;
+    int m_cameraId;
+    QString m_connectionName;
+    QSqlTableModel * m_model;
+    QTableView * m_view;
 };
 
 #endif

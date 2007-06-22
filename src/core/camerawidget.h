@@ -35,7 +35,10 @@ class CameraWidget : public QScrollArea
 {
 Q_OBJECT
 public:
-    CameraWidget( QWidget * parent = 0);
+    /**
+        @param conectionName is used to take events from database.
+    */
+    CameraWidget( const QString &conectionName = QString() ,QWidget * parent = 0);
     CameraWidget( const CameraWidget & other );
 
     ~CameraWidget();
@@ -65,6 +68,7 @@ public Q_SLOTS:
     void configCamera();
     void fullScreen();
     void remove();
+    void cameraEvents();
 
 Q_SIGNALS:
     /**
@@ -79,7 +83,6 @@ protected:
     bool event ( QEvent * event );
 private:
     void init();
-
     QLabel * m_camView;
     QSpacerItem * m_spacerV;
     Stream * m_stream;
@@ -88,6 +91,7 @@ private:
     CameraWidgetToolBar * m_toolbar;
     bool m_autoAdjustImage;
     QAction * m_toggleViewAction;
+    QString m_conectionName;
 
 
 
