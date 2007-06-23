@@ -45,6 +45,7 @@ void CameraEvents::init()
     QVBoxLayout * layout = new QVBoxLayout ( this );
     m_camera = new CameraWidget( NULL , this );
     m_FitToWindowCheckBox = new QCheckBox ( _("Fit to Window"), this );
+    m_FitToWindowCheckBox->setChecked( true );
     connect (m_FitToWindowCheckBox , SIGNAL (toggled ( bool ) ) , m_camera , SLOT(setAutoAdjustImage(bool) ) );
 
     m_model = new QSqlTableModel ( this , QSqlDatabase::database ( m_connectionName ) );
