@@ -122,9 +122,25 @@ void CameraWidget::setPixmap ( QPixmap * p){
         qDebug( "CameraWidget::setPixmap: is Null" );
         return;
     }
-    if (!m_autoAdjustImage)
-        m_camView->setPixmap ( p->scaled(m_frame->size() , Qt::KeepAspectRatioByExpanding) );
-    else m_camView->setPixmap ( p->scaled(m_frame->size() ,Qt::KeepAspectRatioByExpanding) );
+    if (m_autoAdjustImage){
+        /**
+            TODO: check if height and width are ok.
+        */
+        QSize s;
+        int w,h = 0;
+        h = size().height();
+        w = size().width();
+        if ( w < h ){
+            s.setHeight ( 10 );
+            s.setWidth ( w  - 10 );
+            }
+        else{
+            s.setHeight ( h - m_toolbar->size().height() - 10 );
+            s.setWidth ( 10 );
+        }
+        m_camView->setPixmap ( p->scaled( s , Qt::KeepAspectRatioByExpanding) );
+    }
+    else m_camView->setPixmap ( *p );
 
 }
 }

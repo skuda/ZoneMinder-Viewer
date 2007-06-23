@@ -20,6 +20,7 @@
 #include "cameraevents.h"
 #include "camerawidget.h"
 #include "stream.h"
+#include "config.h"
 
 
 #include <QSqlDatabase>
@@ -29,6 +30,7 @@
 #include <QString>
 #include <QSqlQuery>
 #include <QSqlRecord>
+#include <QCheckBox>
 
 CameraEvents::CameraEvents ( int camId, const QString & connectionName , QWidget * parent )
         :QDialog ( parent )
@@ -41,6 +43,10 @@ CameraEvents::CameraEvents ( int camId, const QString & connectionName , QWidget
 void CameraEvents::init()
 {
     QVBoxLayout * layout = new QVBoxLayout ( this );
+    m_camera = new CameraWidget( NULL , this );
+    m_FitToWindowCheckBox = new QCheckBox ( _("Fit to Window"), this );
+    connect (m_FitToWindowCheckBox , SIGNAL (toggled ( bool ) ) , m_camera , SLOT(setAutoAdjustImage(bool) ) );
+
     m_model = new QSqlTableModel ( this , QSqlDatabase::database ( m_connectionName ) );
     m_model->setTable ( "Events" );
     m_model->setFilter ( "MonitorId = " + QString::number ( m_cameraId ) );
@@ -56,6 +62,8 @@ void CameraEvents::init()
     m_view->setAlternatingRowColors ( true );
     m_view->setSortingEnabled ( true );
     m_view->setModel ( m_model );
+    layout->addWidget ( m_camera );
+    layout->addWidget ( m_FitToWindowCheckBox );
     layout->addWidget ( m_view );
 
     connect ( m_view , SIGNAL ( doubleClicked ( QModelIndex ) ), this , SLOT ( showEvent ( QModelIndex ) ) );
@@ -63,6 +71,7 @@ void CameraEvents::init()
 
 void CameraEvents::showEvent ( const QModelIndex & index )
 {
+    m_camera->stopCamera();
     int eventId = m_model->data ( m_model->index ( index.row(), 0 ) ).toInt();
     QSqlDatabase db = QSqlDatabase::database ( m_connectionName );
     QSqlQuery query = db.exec ( "SELECT Value from Config where Name='ZM_PATH_ZMS'" );
@@ -72,16 +81,16 @@ void CameraEvents::showEvent ( const QModelIndex & index )
     query = db.exec ( "SELECT * from Monitors where Id = " + m_model->data ( m_model->index ( index.row(), 1 ) ).toString() );
     query.next();
 
-    CameraWidget * camera = new CameraWidget ( );
-    camera->setWindowTitle ( m_model->data ( m_model->index ( index.row(), 2 ) ).toString() );
-    camera->stream()->setHost ( db.hostName() ,query.value ( query.record().indexOf ( "Port" ) ).toInt() );
-    camera->stream()->setStreamType ( Stream::Event );
-    camera->stream()->setEvent ( eventId );
-    camera->stream()->setZMStreamServer ( zms );
-    camera->setAutoAdjustImage ( true );
-    camera->startCamera();
+    //CameraWidget * camera = new CameraWidget ( );
+    m_camera->setWindowTitle ( m_model->data ( m_model->index ( index.row(), 2 ) ).toString() );
+    m_camera->stream()->setHost ( db.hostName() ,query.value ( query.record().indexOf ( "Port" ) ).toInt() );
+    m_camera->stream()->setStreamType ( Stream::Event );
+    m_camera->stream()->setEvent ( eventId );
+    m_camera->stream()->setZMStreamServer ( zms );
+    m_camera->setAutoAdjustImage ( m_FitToWindowCheckBox->isChecked() );
+    m_camera->startCamera();
     query.clear();
-    camera->show();
+    m_camera->show();
 
 
 

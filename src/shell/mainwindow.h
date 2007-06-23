@@ -89,6 +89,8 @@ private:
     QAction * m_nextWindowAction;
     QAction * m_previusWindowAction;
 
+    QAction * m_updateAllMonitorsActions;
+
     QMenu * m_cameraMenu;
     QMenu * m_camRemoveMenu;
 

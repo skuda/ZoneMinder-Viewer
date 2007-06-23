@@ -102,6 +102,10 @@ void MainWindow::initActions()
     closeAllAction = new QAction ( _ ( "Close &All" ), this );
     closeAllAction->setStatusTip ( _ ( "Close All &Windows" ) );
     connect ( closeAllAction, SIGNAL ( triggered() ),m_centralWidget, SLOT ( closeAllWindows() ) );
+
+    m_updateAllMonitorsActions = new QAction ( _ ( "Update All Monitors" ), this );
+    m_updateAllMonitorsActions->setStatusTip ( _ ( "Update all session's monitors" ) );
+    connect ( m_updateAllMonitorsActions, SIGNAL ( triggered() ),this, SLOT ( update() ) );
 }
 
 void MainWindow::initMenuBar()
@@ -109,14 +113,16 @@ void MainWindow::initMenuBar()
     QMenu * sessionMenu = menuBar()->addMenu ( _ ( "Session" ) );
     sessionMenu->addAction ( m_sessionNew );
     sessionMenu->addAction ( m_sessionList );
+    sessionMenu->addSeparator();
+    sessionMenu->addAction ( m_quitAction );
 
-    QMenu * camMenu = menuBar()->addMenu ( _ ( "Video Camera" ) );
+    QMenu * camMenu = menuBar()->addMenu ( _ ( "Monitors" ) );
     camMenu->addAction ( m_newCameraAction );
     m_camRemoveMenu = camMenu->addMenu ( _ ( "Delete" ) );
-    camMenu->addSeparator();
-    camMenu->addAction ( m_quitAction );
+    camMenu->addAction ( m_updateAllMonitorsActions );
+
     QMenu * m_viewMenu = menuBar()->addMenu ( _ ( "View" ) );
-    m_cameraMenu = m_viewMenu->addMenu ( _ ( "&Cameras" ) );
+    m_cameraMenu = m_viewMenu->addMenu ( _ ( "&Monitors" ) );
     QAction * t = m_viewMenu->addAction ( _ ( "Customized View..." ) );
     connect ( t, SIGNAL ( triggered() ), this , SLOT ( selectedCamerasSlot () ) );
     for ( int i = 0 ; i < m_cameraToggleAction->count() ; i++ )
@@ -170,6 +176,7 @@ void MainWindow::initSettings()
     foreach ( cam , m_monitors->cameras() )
     {
         m_centralWidget->addWindow ( cam );
+        m_cameraToggleAction->append ( ((CameraWidget *)cam)->toggleViewAction() );
     }
 }
 

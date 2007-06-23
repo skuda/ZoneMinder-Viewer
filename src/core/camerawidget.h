@@ -47,7 +47,6 @@ public:
     */
     Stream * stream();
     void setStream( Stream * stream);
-    void setAutoAdjustImage ( bool b );
     void setRemoveActionState( bool state );
     void setConfigActionState( bool state );
     /**
@@ -69,6 +68,7 @@ public Q_SLOTS:
     void fullScreen();
     void remove();
     void cameraEvents();
+    void setAutoAdjustImage ( bool b );
 
 Q_SIGNALS:
     /**

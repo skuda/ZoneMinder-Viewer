@@ -27,6 +27,8 @@
 class QModelIndex;
 class QSqlTableModel;
 class QTableView;
+class CameraWidget;
+class QCheckBox;
 
 class CameraEvents: public QDialog{
 Q_OBJECT
@@ -41,6 +43,8 @@ private:
     QString m_connectionName;
     QSqlTableModel * m_model;
     QTableView * m_view;
+    CameraWidget * m_camera;
+    QCheckBox * m_FitToWindowCheckBox;
 };
 
 #endif
