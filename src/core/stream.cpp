@@ -56,6 +56,7 @@ class Stream::Private
         QString zms;
         StreamType type;
         QPixmap * current_frame;
+        QString appendString;
 };
 
 Stream::Stream ( QObject * parent )
@@ -164,6 +165,8 @@ void Stream::start()
         connection = QString ( "%1?mode=%2&monitor=%3&scale=%4&bitrate=%5" ).arg ( d->zms ).arg ( d->mode ).arg ( d->monitor ).arg ( d->scale ).arg ( d->bitrate );
     else if ( d->type == Event )
             connection = QString ( "%1?mode=%2&frame=1&event=%3&scale=%4&bitrate=%5" ).arg ( d->zms ).arg ( d->mode ).arg ( d->event ).arg ( d->scale ).arg ( d->bitrate);
+    if ( !d->appendString.isNull() && d->appendString.size() > 0 )
+            connection.append("&"+d->appendString);
     qDebug ( qPrintable ( connection ) );
     d->http->get ( connection );
     connect ( d->http, SIGNAL ( readyRead ( const QHttpResponseHeader& ) ), this, SLOT ( read ( const QHttpResponseHeader & ) ) );
@@ -210,7 +213,9 @@ QString Stream::zmStreamServer() const
     return d->zms;
 };
 
-
+void Stream::appendZMSString( const QString & s ){
+   d->appendString = s;
+}
 Stream::~Stream()
 {
     delete d;

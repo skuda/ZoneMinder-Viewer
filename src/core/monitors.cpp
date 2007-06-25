@@ -1,6 +1,6 @@
 /***************************************************************************
  *   Copyright (C) 2007 by Leandro Emanuel López                           *
- *   lopezlean@gmail.com  				                   *
+ *   lopezlean@gmail.com                         *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -21,6 +21,8 @@
 #include "connectionmanager.h"
 #include "camerawidget.h"
 #include "stream.h"
+#include "auth.h"
+#include "authdialog.h"
 #include "config.h"
 
 #include<QSqlQuery>
@@ -30,29 +32,48 @@
 
 
 
-Monitors::Monitors(QObject * parent )
-:QObject( parent )
+Monitors::Monitors ( QObject * parent )
+        :QObject ( parent )
 {
     init();
 }
 
 
-void Monitors::init(){
-    foreach (QString  connection , ConnectionManager::connectionNames() ){
-        QSqlDatabase db = QSqlDatabase::database( connection ) ;
-        QSqlQuery query = db.exec("SELECT Value from Config where Name='ZM_PATH_ZMS'");
+void Monitors::init()
+{
+    foreach ( QString  connection , ConnectionManager::connectionNames() )
+    {
+        QSqlDatabase db = QSqlDatabase::database ( connection ) ;
+        QSqlQuery query = db.exec ( "SELECT Value from Config where Name='ZM_PATH_ZMS'" );
         query.next();
-        QString zms = query.value(0).toString();
+        QString zms = query.value ( 0 ).toString();
         query.clear();
-        query = db.exec("SELECT * from Monitors where 1");
-        while (query.next()) {
-            CameraWidget * camera = new CameraWidget (  connection );
-            camera->setWindowTitle( query.value(query.record().indexOf("Name")).toString() + _(" at ") + db.hostName() );
-            camera->stream()->setHost( db.hostName() ,query.value(query.record().indexOf("Port")).toInt() );
-            camera->stream()->setMonitor( query.value(query.record().indexOf("Id")).toUInt() );
-            camera->stream()->setZMStreamServer( zms );
-            m_cameras.append( camera );
+        query = db.exec ( "SELECT * from Monitors where 1" );
+        Auth auth ( connection );
+        bool append = false;
+        if ( auth.isAuthNeeded() )
+        {
+            if ( ! auth.isAuth() )
+            {
+                AuthDialog d ( &auth );
+                int r = d.exec();
+                if ( r == QDialog::Accepted )
+                    append = true;
+            }
+            else append = true;
+        }
+
+        while ( query.next() )
+        {
+            CameraWidget * camera = new CameraWidget ( connection );
+            camera->setWindowTitle ( query.value ( query.record().indexOf ( "Name" ) ).toString() + _ ( " at " ) + db.hostName() );
+            camera->stream()->setHost ( db.hostName() ,query.value ( query.record().indexOf ( "Port" ) ).toInt() );
+            camera->stream()->setMonitor ( query.value ( query.record().indexOf ( "Id" ) ).toUInt() );
+            camera->stream()->setZMStreamServer ( zms );
+            m_cameras.append ( camera );
             camera->setAutoAdjustImage ( true );
+            if ( append )
+                camera->stream()->appendZMSString ( auth.zmsString() );
             camera->startCamera();
         }
         query.clear();
@@ -60,18 +81,20 @@ void Monitors::init(){
 
 }
 
-int Monitors::count(){
+
+int Monitors::count()
+{
     return m_cameras.count();
 }
 
-void Monitors::updateMonitors(){
+void Monitors::updateMonitors()
+{
     m_cameras.clear();
     init();
 }
 
 Monitors::~Monitors()
-{
-}
+{}
 
 #include "monitors.moc"
 

@@ -17,63 +17,30 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef STREAM_H
-#define STREAM_H
+#ifndef AUTHDIALOG_H
+#define AUTHDIALOG_H
 
-#include <QObject>
-class QString;
-class QHttpResponseHeader;
-class QPixmap;
-class QByteArray;
+/**
+	@author Leandro Emanuel Lopez <lopezlean@gmail.com>
+*/
 
-class Stream: public QObject{
+#include <QDialog>
+#include "ui_authdialogwidget.h"
+
+#include "auth.h"
+
+
+class AuthDialog: public QDialog, public Ui::AuthDialogWidget{
 Q_OBJECT
 public:
-    enum StreamMode{ JPEG, VIDEO/** TODO: VIDEO */ };
-    enum StreamType{ Monitor, Event };
-    Stream( QObject * parent = 0 );
-    ~Stream();
-    
-    QString host()const;
-    quint16 port()const;
-    QString mode()const;
-    quint16 monitor()const;
-    quint16 bitrate()const;
-    quint16 scale()const;
-    QString zmStreamServer()const;
+    AuthDialog( Auth * auth ,  QWidget * parent = 0 );
 
-    /** start Stream*/
-    void start();
-    void stop();
-    void restart();
+    ~AuthDialog();
 
-    void appendZMSString( const QString & s );
 public Q_SLOTS:
-    void setHost( const QString & host , quint16 port = 80 );
-    void setMode ( const StreamMode &mode );
-    void setMonitor ( quint16 monitor );
-    void setStreamType ( const StreamType & t );
-    void setEvent ( quint16 event );
-    void setBitRate ( quint16 bitrate );
-    void setScale ( quint16 scale );
-    void setZMStreamServer ( const QString &zms = "/cgi-bin/nph-zms" );
-
-Q_SIGNALS:
-    /**
-        Esta señal es emitida por cada vez que se produce una imagen y
-        debe de ser atrapada por algun objeto externo.
-    */
-    void frameReady ( QPixmap * current_frame );
-private Q_SLOTS:
-    void read (const QHttpResponseHeader &header );
+    void checkAuth();
 private:
-
-    
-    bool image ( QByteArray* array );
-    //private class
-    class Private;
-    Private *d;
-
+    Auth *m_auth;
 };
 
 #endif

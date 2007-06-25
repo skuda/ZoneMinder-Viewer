@@ -9,10 +9,13 @@ set ( core_SRCS
       monitors.cpp
       connectionwidget.cpp
       cameraevents.cpp
+      auth.cpp
+      authdialog.cpp
     )
 
 set ( core_UIS
       ui/cameraadddialog.ui
+      ui/authdialogwidget.ui
     )
 
 
