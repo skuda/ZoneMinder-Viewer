@@ -216,6 +216,10 @@ QString Stream::zmStreamServer() const
 void Stream::appendZMSString( const QString & s ){
    d->appendString = s;
 }
+
+QString Stream::ZMSStringAppended( ) const{
+    return d->appendString;
+}
 Stream::~Stream()
 {
     delete d;

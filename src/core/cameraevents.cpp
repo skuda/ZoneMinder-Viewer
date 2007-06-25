@@ -70,6 +70,10 @@ void CameraEvents::init()
     connect ( m_view , SIGNAL ( doubleClicked ( QModelIndex ) ), this , SLOT ( showEvent ( QModelIndex ) ) );
 }
 
+void CameraEvents::appendZMSString( const QString & s ){
+    m_appendString = s;
+}
+
 void CameraEvents::showEvent ( const QModelIndex & index )
 {
     m_camera->stopCamera();
@@ -88,6 +92,7 @@ void CameraEvents::showEvent ( const QModelIndex & index )
     m_camera->stream()->setStreamType ( Stream::Event );
     m_camera->stream()->setEvent ( eventId );
     m_camera->stream()->setZMStreamServer ( zms );
+    m_camera->stream()->appendZMSString( m_appendString );
     m_camera->setAutoAdjustImage ( m_FitToWindowCheckBox->isChecked() );
     m_camera->startCamera();
     query.clear();

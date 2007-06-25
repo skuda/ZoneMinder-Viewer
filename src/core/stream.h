@@ -48,6 +48,7 @@ public:
     void restart();
 
     void appendZMSString( const QString & s );
+    QString ZMSStringAppended( ) const;
 public Q_SLOTS:
     void setHost( const QString & host , quint16 port = 80 );
     void setMode ( const StreamMode &mode );

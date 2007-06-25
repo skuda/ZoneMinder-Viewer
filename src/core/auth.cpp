@@ -63,7 +63,6 @@ void Auth::init()
 bool Auth::userLogin( const QString &username , const QString &password ){
     if ( m_AuthType == NONE ){
             qDebug("userLogin::Try to login with NONE ? Please Fix this.");
-            
             return m_isAuth = true;
     }
     if ( m_AuthType == HASHED){

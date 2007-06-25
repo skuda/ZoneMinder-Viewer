@@ -35,6 +35,7 @@ Q_OBJECT
 public:
     CameraEvents( int camId, const QString & connectionName , QWidget * parent = 0 );
     ~CameraEvents();
+    void appendZMSString( const QString & s );
 public Q_SLOTS:
     void showEvent (const QModelIndex & index);
 private:
@@ -45,6 +46,7 @@ private:
     QTableView * m_view;
     CameraWidget * m_camera;
     QCheckBox * m_FitToWindowCheckBox;
+    QString m_appendString;
 };
 
 #endif
