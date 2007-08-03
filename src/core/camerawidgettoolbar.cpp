@@ -21,11 +21,33 @@
 #include "camerawidget.h"
 #include "config.h"
 
-#include <QToolButton>
-#include <QHBoxLayout>
+#include <QAction>
+#include <QMenu>
+
+class CameraWidgetToolBar::Private {
+ public:
+    QAction * m_startAction;
+    QAction * m_stopAction;
+    QAction * m_pauseAction;
+    QAction * m_fullScreenAction;
+    QAction * m_configAction;
+    QAction * m_eventAction;
+    QMenu * m_menu;
+
+    void setupMenu(){
+        m_menu->addAction(m_startAction);
+        m_menu->addAction(m_stopAction);
+        m_menu->addAction(m_pauseAction);
+        m_menu->addSeparator();
+        m_menu->addAction(m_fullScreenAction);
+        m_menu->addAction(m_eventAction);
+        m_menu->addSeparator();
+        m_menu->addAction(m_configAction);
+    }
+};
 
 CameraWidgetToolBar::CameraWidgetToolBar ( QWidget * parent )
-        : QWidget ( parent )
+        : QToolBar ( "Camera ToolBar" , parent ), d( new Private )
 {
     init();
 }
@@ -34,70 +56,74 @@ void CameraWidgetToolBar::init()
 {
 
     setSizePolicy ( QSizePolicy::Minimum , QSizePolicy::Minimum );
-    QLayout * m_buttonsLayout = new QHBoxLayout ( this );
-    m_buttonsLayout->setMargin ( 0 );
-    setLayout ( m_buttonsLayout );
-    //buttons
-    m_startButton = new QToolButton ( this );
-    m_startButton->setIcon ( QIcon ( ":/icons/Start" ) );
+    setIconSize( QSize ( 16 , 16 ) );
 
-    m_buttonsLayout->addWidget ( m_startButton );
-    m_startButton->setToolTip ( _("Play Video Camera") );
-    m_stopButton = new QToolButton ( this );
-    m_stopButton->setIcon ( QIcon ( ":/icons/Stop" ) );
-    m_stopButton->setToolTip ( _("Stop Video Camera") );
+    d->m_startAction = new QAction ( _("Play") , this );
+    d->m_startAction->setIcon ( QIcon ( ":/icons/Start" ) );
+    addAction ( d->m_startAction );
 
-    m_buttonsLayout->addWidget ( m_stopButton );
-    m_pauseButton = new QToolButton ( this );
-    m_pauseButton->setIcon ( QIcon ( ":/icons/Pause" ) );
-    m_pauseButton->setToolTip ( _("Pause Video Camera") );
+    d->m_startAction->setToolTip ( _("Play Video Camera") );
+    d->m_stopAction = new QAction ( _("Stop") , this );
+    d->m_stopAction->setIcon ( QIcon ( ":/icons/Stop" ) );
+    d->m_stopAction->setToolTip ( _("Stop Video Camera") );
+    addAction ( d->m_stopAction );
 
-    m_buttonsLayout->addWidget ( m_pauseButton );
-    m_fullScreenButton = new QToolButton ( this );
-    m_fullScreenButton->setIcon ( QIcon ( ":/icons/FullScreen" ) );
-    m_fullScreenButton->setToolTip ( _("FullScreen Mode" ) );
+    d->m_pauseAction = new QAction ( _("Pause") , this );
+    d->m_pauseAction->setIcon ( QIcon ( ":/icons/Pause" ) );
+    d->m_pauseAction->setToolTip ( _("Pause Video Camera") );
+    addAction ( d->m_pauseAction );
 
-    m_buttonsLayout->addWidget ( m_fullScreenButton );
-    m_removeButton = new QToolButton ( this );
-    m_removeButton->setIcon ( QIcon ( ":/icons/Remove" ) );
-    m_removeButton->setToolTip ( _("Delete Video Camera") );
-    m_buttonsLayout->addWidget ( m_removeButton );
+    addSeparator();
 
-    m_eventButton = new QToolButton ( this );
-    m_eventButton->setIcon ( QIcon ( ":/icons/Events" ) );
-    m_eventButton->setToolTip ( _("Event List") );
-    m_buttonsLayout->addWidget ( m_eventButton );
+    d->m_fullScreenAction = new QAction (_("FullScreen Mode"), this );
+    d->m_fullScreenAction->setIcon ( QIcon ( ":/icons/FullScreen" ) );
+    d->m_fullScreenAction->setToolTip ( _("FullScreen Mode" ) );
+    addAction ( d->m_fullScreenAction );
 
-    m_configButton = new QToolButton ( this );
-    m_configButton->setIcon ( QIcon ( ":/icons/Setup" ) );
-    m_configButton->setToolTip ( _("Setup Video Camera") );
-    m_buttonsLayout->addWidget ( m_configButton );
+    d->m_eventAction = new QAction ( _("Event List...") , this );
+    d->m_eventAction->setIcon ( QIcon ( ":/icons/Events" ) );
+    d->m_eventAction->setToolTip ( _("Event List") );
+    addAction ( d->m_eventAction );
+    
+    addSeparator();
 
-    QSpacerItem * spacerItem = new QSpacerItem ( 40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );
-    m_buttonsLayout->addItem ( spacerItem );
+    d->m_configAction = new QAction ( _("Setup...") , this );
+    d->m_configAction->setIcon ( QIcon ( ":/icons/Setup" ) );
+    d->m_configAction->setToolTip ( _("Setup Video Camera") );
+    addAction ( d->m_configAction );
+
+    toggleViewAction()->setText( _( "Show ToolBar" ) );
+    //toggleViewAction()->setIcon( QIcon(":/icons/Remove") );
+    toggleViewAction()->setToolTip( _("Hide/Show Camera's ToolBar") );
+    addAction ( toggleViewAction() );
+
+    d->m_menu = new QMenu ("Actions" , this );
+    d->setupMenu();
+    d->m_menu->addAction( toggleViewAction() );
 
 }
 
 void CameraWidgetToolBar::autoConnectWith ( CameraWidget * camera )
 {
-    connect ( m_startButton , SIGNAL ( clicked() ) , camera , SLOT ( startCamera() ) );
-    connect ( m_stopButton , SIGNAL ( clicked() ) , camera , SLOT ( stopCamera() ) );
-    connect ( m_pauseButton , SIGNAL ( clicked() ) , camera , SLOT ( pauseCamera() ) );
-    connect ( m_fullScreenButton , SIGNAL ( clicked() ) , camera , SLOT ( fullScreen() ) );
-    connect ( m_removeButton , SIGNAL ( clicked() ) , camera , SLOT ( remove() ) );
-    connect ( m_eventButton , SIGNAL ( clicked() ) , camera , SLOT ( cameraEvents() ) );
-    connect ( m_configButton , SIGNAL ( clicked() ) , camera , SLOT ( configCamera() ) );
+    connect ( d->m_startAction , SIGNAL ( triggered() ) , camera , SLOT ( startCamera() ) );
+    connect ( d->m_stopAction , SIGNAL ( triggered() ) , camera , SLOT ( stopCamera() ) );
+    connect ( d->m_pauseAction , SIGNAL ( triggered() ) , camera , SLOT ( pauseCamera() ) );
+    connect ( d->m_fullScreenAction , SIGNAL ( triggered() ) , camera , SLOT ( fullScreen() ) );
+    connect ( d->m_eventAction , SIGNAL ( triggered() ) , camera , SLOT ( cameraEvents() ) );
+    connect ( d->m_configAction , SIGNAL ( triggered() ) , camera , SLOT ( configCamera() ) );
 }
 
-void CameraWidgetToolBar::setRemoveActionState( bool state ){
-    m_removeButton->setEnabled( state );
-}
 void CameraWidgetToolBar::setConfigActionState( bool state ){
-    m_configButton->setEnabled( state );
+    d->m_configAction->setEnabled( state );
 }
 
+QMenu * CameraWidgetToolBar::menu() const{
+    return d->m_menu;
+}
 CameraWidgetToolBar::~CameraWidgetToolBar()
-{}
+{
+    delete d;
+}
 
 
 #include "camerawidgettoolbar.moc"

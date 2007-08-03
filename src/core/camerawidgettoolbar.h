@@ -20,33 +20,29 @@
 #ifndef CAMERAWIDGETTOOLBAR_H
 #define CAMERAWIDGETTOOLBAR_H
 
-#include <QWidget>
+#include <QToolBar>
 
 /**
 	@author Leandro Emanuel López <lopezlean@gmail.com>
-        ToolBar de las camaras
+        Cameras ToolBar
 */
 
-class QToolButton;
+class QAction;
 class CameraWidget;
+class QMenu;
 
-class CameraWidgetToolBar : public QWidget
+class CameraWidgetToolBar : public QToolBar
 {
 public:
     CameraWidgetToolBar( QWidget * parent = 0 );
     void autoConnectWith( CameraWidget * camera );
     ~CameraWidgetToolBar();
-    void setRemoveActionState( bool state );
     void setConfigActionState( bool state );
+    QMenu * menu() const;
 private:
     void init();
-    QToolButton * m_startButton;
-    QToolButton * m_stopButton;
-    QToolButton * m_pauseButton;
-    QToolButton * m_fullScreenButton;
-    QToolButton * m_configButton;
-    QToolButton * m_eventButton;
-    QToolButton * m_removeButton;
+    class Private;
+    Private *d;
 };
 
 #endif

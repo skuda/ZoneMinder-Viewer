@@ -27,6 +27,7 @@ class QToolButton;
 class QFrame;
 class CameraWidgetToolBar;
 class QSpacerItem;
+class QMenu;
 
 /**
 	@author Leandro Emanuel López <lopezlean@gmail.com>
@@ -47,7 +48,6 @@ public:
     */
     Stream * stream();
     void setStream( Stream * stream);
-    void setRemoveActionState( bool state );
     void setConfigActionState( bool state );
     /**
         
@@ -81,6 +81,9 @@ Q_SIGNALS:
 
 protected:
     bool event ( QEvent * event );
+
+private Q_SLOTS:
+    void popupMenu ( const QPoint & );
 private:
     void init();
     QLabel * m_camView;
@@ -92,6 +95,7 @@ private:
     bool m_autoAdjustImage;
     QAction * m_toggleViewAction;
     QString m_conectionName;
+    QMenu * m_menu;
 
 
 

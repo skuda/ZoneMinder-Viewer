@@ -27,6 +27,7 @@
 #include <QToolButton>
 #include <QMessageBox>
 #include <QFrame>
+#include <QMenu>
 
 //local includes
 #include "stream.h"
@@ -56,8 +57,9 @@ CameraWidget::CameraWidget( const CameraWidget & other ){
 void CameraWidget::init(){
     setWindowIcon ( QIcon (":/icons/MdiIcon"));
     setSizePolicy(QSizePolicy::Minimum , QSizePolicy::Minimum);
+    setWidgetResizable ( true );
+
     m_stream = new Stream( this );
-    //m_toolbar = new CameraToolBar( m_container );
     m_frame = new QFrame ( this );
     m_frame->setSizePolicy(QSizePolicy::Expanding , QSizePolicy::Expanding );
     QLayout * m_frameLayout = new QVBoxLayout ( m_frame );
@@ -79,6 +81,11 @@ void CameraWidget::init(){
     m_layout->addWidget ( m_toolbar );
     m_layout->addWidget ( m_frame );
     m_layout->addItem(m_spacerV);
+
+    m_menu = m_toolbar->menu ();
+    setContextMenuPolicy ( Qt::CustomContextMenu );
+    connect ( this, SIGNAL(customContextMenuRequested ( const QPoint &  )) , this , SLOT( popupMenu ( const QPoint & ) ) );
+
     adjustSize( );
 }
 
@@ -177,9 +184,6 @@ void CameraWidget::remove(){
     }
 }
 
-void CameraWidget::setRemoveActionState( bool state ){
-    m_toolbar->setRemoveActionState( state );
-}
 void CameraWidget::setConfigActionState( bool state ){
     m_toolbar->setConfigActionState( state );
 }
@@ -206,6 +210,9 @@ void CameraWidget::cameraEvents(){
     e->show();
 }
 
+void CameraWidget::popupMenu ( const QPoint & p){
+    m_menu->popup( parentWidget()->pos() + p + pos() );
+}
 CameraWidget::~CameraWidget()
 {
     delete m_stream;

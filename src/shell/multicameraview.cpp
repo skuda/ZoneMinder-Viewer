@@ -49,7 +49,6 @@ void MultiCameraView::setStream( QList <Stream * > stream ){
     for ( int i = 0 ; i < stream.size(); i++ ){
             copy.insert( i , new CameraWidget ( NULL, this ) );
             copy.at( i )->setStream( stream.at(i));
-            copy.at( i )->setRemoveActionState(false);
             copy.at( i )->setConfigActionState(false);
             copy.at( i )->startCamera();
             
