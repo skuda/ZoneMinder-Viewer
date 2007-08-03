@@ -27,16 +27,8 @@ class QAction;
 class QSettings;
 class QMenu;
 
-#if QT_VERSION >= 0x040300
-    class QMdiArea;
-    #define MDICLASS QMdiArea
-#elif QT_VERSION >= 0x040200
-    class QWorkspace;
-    #define MDICLASS QWorkspace
-#else
-    #error "Qt Version to old"
-#endif
 class Monitors;
+class QMdiArea;
 
 class MainWindow: public QMainWindow{
 Q_OBJECT
@@ -85,7 +77,7 @@ private:
     QAction *closeAllAction;
     QAction * m_cascadeAction;
     QAction * m_tileAction;
-    QAction * m_arrangeIconsAction;
+    //QAction * m_arrangeIconsAction;
     QAction * m_nextWindowAction;
     QAction * m_previusWindowAction;
 
@@ -98,7 +90,7 @@ private:
     //cantidad de camaras
     int m_cameras;
 
-    MDICLASS  *m_centralWidget;
+    QMdiArea  *m_centralWidget;
     Monitors * m_monitors;
     
 };

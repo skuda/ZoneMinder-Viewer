@@ -1,5 +1,7 @@
 project (zmviewer)
 
+SET(QT_MIN_VERSION "4.3.0")
+
 find_package ( Qt4 REQUIRED )
  
 include ( ${QT_USE_FILE} )

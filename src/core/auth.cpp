@@ -24,11 +24,15 @@
 #include <QSqlQuery>
 #include <QString>
 #include <QVariant>
+#include <QCryptographicHash>
+#include <QDateTime>
+#include <QHostInfo>
+
 
 #include <QSettings>
 
 Auth::Auth ( const QString & db , QObject * parent )
-        :QObject ( parent ),m_isAuth(false)
+        :QObject ( parent ),m_isAuth(false),m_AuthType ( NONE ),m_needAuth(false)
 {
     m_db = db;
     init();
@@ -37,6 +41,8 @@ Auth::Auth ( const QString & db , QObject * parent )
 void Auth::init()
 {
     QSqlDatabase db = QSqlDatabase::database ( m_db );
+    if ( !db.isOpen() )
+        return;
     QSqlQuery query = db.exec ( "SELECT Value from Config where Name='ZM_OPT_USE_AUTH'" );
     query.next();
     m_needAuth = query.value ( 0 ).toBool();
@@ -53,10 +59,6 @@ void Auth::init()
 
     loadSettings();
     userLogin( m_userName , m_password );
-        
-    
-
-
 
 }
 
@@ -65,10 +67,10 @@ bool Auth::userLogin( const QString &username , const QString &password ){
             qDebug("userLogin::Try to login with NONE ? Please Fix this.");
             return m_isAuth = true;
     }
-    if ( m_AuthType == HASHED){
+    /*if ( m_AuthType == HASHED){
             qDebug("userLogin::HASHED Auth not implemented yet!");
             return m_isAuth = true;
-    }
+    }*/
     QSqlDatabase db = QSqlDatabase::database ( m_db );
     QSqlQuery query = db.exec ( QString("SELECT * from Users where Username = '%1' and Password = password('%2') and Enabled = 1" ).arg(username).arg(password));
     query.next();
@@ -83,6 +85,8 @@ bool Auth::userLogin( const QString &username , const QString &password ){
 }
 
 QString Auth::zmsString( ) const{
+    if (m_AuthType == HASHED)
+           return QString("auth="+authKey());
     QString r("user="+m_userName+"&pass="+m_password);
     return r;
 }
@@ -100,6 +104,40 @@ bool Auth::isAuth() const{
     return m_isAuth;
 }
 
+/**
+    TODO: this not work
+*/
+QByteArray Auth::authKey( ) const{
+
+    QDateTime dateTime = QDateTime::currentDateTime();
+    QSqlDatabase db = QSqlDatabase::database ( m_db );
+    QSqlQuery query = db.exec ( QString("SELECT Value from Config where Name = 'ZM_AUTH_HASH_SECRET'" ) );
+    QString auth_key;
+    query.next();
+    auth_key = query.value(0).toString(); // HASH Secret
+    query.clear();
+    query = db.exec ( QString("SELECT Value from Config where Name = 'ZM_AUTH_HASH_IPS'" ) );
+    bool use_remote_addr = false;;
+    query.next();
+    use_remote_addr = query.value(0).toBool(); // Include remote addr?
+    query.clear();
+    if ( use_remote_addr ){
+        QHostInfo hinfo = QHostInfo::fromName ( db.hostName() );
+         if (!hinfo.addresses().isEmpty()) {
+            QHostAddress address = hinfo.addresses().first();
+            auth_key+=address.toString();
+         }
+    }
+
+    auth_key += m_userName;
+    auth_key += m_password;
+    auth_key += QString::number(dateTime.time().hour());//hour
+    auth_key += QString::number(dateTime.date().day());//day of month
+    auth_key += QString::number(dateTime.date().month());//month
+    auth_key += QString::number( dateTime.date().year() - 1900 );//years since 1900
+    return QCryptographicHash::hash ( qPrintable(auth_key) , QCryptographicHash::Md5 );
+
+}
 void Auth::loadSettings(){
     QSettings s;
     s.beginGroup( m_db );

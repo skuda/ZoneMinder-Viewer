@@ -39,13 +39,8 @@
 #include <QMessageBox>
 
 
-#if QT_VERSION >= 0x040300
 #include <QMdiArea>
 #include <QMdiSubWindow>
-#elif QT_VERSION >= 0x040200
-#include <QWorkspace>
-#endif
-
 
 
 MainWindow::MainWindow ( QWidget * parent, Qt::WindowFlags flags )
@@ -65,7 +60,7 @@ void MainWindow::init()
     m_settings = new QSettings ( this );
     m_cameraToggleAction = new QList < QAction *>;
     m_cameraRemoveAction = new QList < QAction *>;
-    m_centralWidget = new MDICLASS ( this );
+    m_centralWidget = new QMdiArea ( this );
     setCentralWidget ( m_centralWidget );
     initSettings();
 
@@ -88,20 +83,20 @@ void MainWindow::initActions()
     m_quitAction = new QAction ( QIcon ( ":/icons/Quit" ),_ ( "&Quit" ) , this );
     connect ( m_quitAction, SIGNAL ( triggered() ), this , SLOT ( close() ) );
     m_cascadeAction = new QAction ( _ ( "&Cascade" ) , this );
-    connect ( m_cascadeAction , SIGNAL ( triggered() ) , m_centralWidget , SLOT ( cascade() ) );
+    connect ( m_cascadeAction , SIGNAL ( triggered() ) , m_centralWidget , SLOT ( cascadeSubWindows() ) );
     m_tileAction = new QAction ( _ ( "&Tile" ) , this );
-    connect ( m_tileAction , SIGNAL ( triggered() ) , m_centralWidget , SLOT ( tile() ) );
-    m_arrangeIconsAction = new QAction ( _ ( "&Arrange Icons" ),this );
-    connect ( m_arrangeIconsAction , SIGNAL ( triggered() ) , m_centralWidget , SLOT ( arrangeIcons() ) );
+    connect ( m_tileAction , SIGNAL ( triggered() ) , m_centralWidget , SLOT ( tileSubWindows() ) );
+/*    m_arrangeIconsAction = new QAction ( _ ( "&Arrange Icons" ),this );
+    connect ( m_arrangeIconsAction , SIGNAL ( triggered() ) , workspace() , SLOT ( arrangeIcons() ) );*/
 
     closeAction = new QAction ( _ ( "&Close" ), this );
     closeAction->setShortcut ( _ ( "Ctrl+F4" ) );
     closeAction->setStatusTip ( _ ( "Close active window" ) );
-    connect ( closeAction, SIGNAL ( triggered() ), m_centralWidget, SLOT ( closeActiveWindow() ) );
+    connect ( closeAction, SIGNAL ( triggered() ), m_centralWidget, SLOT ( closeActiveSubWindow() ) );
 
     closeAllAction = new QAction ( _ ( "Close &All" ), this );
     closeAllAction->setStatusTip ( _ ( "Close All &Windows" ) );
-    connect ( closeAllAction, SIGNAL ( triggered() ),m_centralWidget, SLOT ( closeAllWindows() ) );
+    connect ( closeAllAction, SIGNAL ( triggered() ),m_centralWidget, SLOT ( closeAllSubWindows() ) );
 
     m_updateAllMonitorsActions = new QAction ( _ ( "Update All Monitors" ), this );
     m_updateAllMonitorsActions->setStatusTip ( _ ( "Update all session's monitors" ) );
@@ -129,7 +124,7 @@ void MainWindow::initMenuBar()
     {
         m_cameraMenu->addAction ( m_cameraToggleAction->at ( i ) );
         m_cameraRemoveAction->insert ( i , m_camRemoveMenu->addAction ( m_cameraToggleAction->at ( i )->text() ) );
-        connect ( m_cameraRemoveAction->at ( i ), SIGNAL ( triggered() ), ( CameraWidget * ) m_centralWidget->windowList().at ( i ) , SLOT ( remove () ) );
+        connect ( m_cameraRemoveAction->at ( i ), SIGNAL ( triggered() ), ( CameraWidget * ) m_centralWidget->subWindowList().at ( i )->widget() , SLOT ( remove () ) );
 
     }
     m_viewMenu->addSeparator();
@@ -141,7 +136,7 @@ void MainWindow::initMenuBar()
     m_windowMenu->addSeparator();
     m_windowMenu->addAction ( m_cascadeAction );
     m_windowMenu->addAction ( m_tileAction );
-    m_windowMenu->addAction ( m_arrangeIconsAction );
+    //m_windowMenu->addAction ( m_arrangeIconsAction );
     QMenu * m_helpMenu = menuBar()->addMenu ( _ ( "&Help" ) );
     connect ( m_helpMenu->addAction ( _ ( "About..." ) ), SIGNAL ( triggered () ), this, SLOT ( aboutDialog() ) );
     connect ( m_helpMenu->addAction ( _ ( "About Qt..." ) ), SIGNAL ( triggered () ), qApp, SLOT ( aboutQt() ) );
@@ -175,7 +170,7 @@ void MainWindow::initSettings()
     m_monitors = new Monitors ( this );
     foreach ( cam , m_monitors->cameras() )
     {
-        m_centralWidget->addWindow ( cam );
+        m_centralWidget->addSubWindow ( cam );
         m_cameraToggleAction->append ( ((CameraWidget *)cam)->toggleViewAction() );
     }
 }
@@ -231,7 +226,7 @@ void MainWindow::addCamera ( const QString & name , const QString &host , int po
     m_cameraRemoveAction->append ( a );
     connect ( a, SIGNAL ( triggered() ), camera , SLOT ( remove () ) );
     camera->startCamera();
-    QWidget *w = m_centralWidget->addWindow ( camera );
+    QWidget *w = m_centralWidget->addSubWindow ( camera );
     w->show();
 }
 void MainWindow::cameraAddSlot()
@@ -272,7 +267,7 @@ void MainWindow::selectedCamerasSlot ()
 {
     CameraSelectDialog csd ( this );
     QStringList names;
-    QList <QWidget *> all_cameras = m_centralWidget->windowList();
+    QList <QMdiSubWindow *> all_cameras = m_centralWidget->subWindowList();
     for ( int i = 0 ; i < all_cameras.size() ; i ++ )
     {
         names << all_cameras.at ( i )->windowTitle();
@@ -286,7 +281,7 @@ void MainWindow::selectedCamerasSlot ()
         for ( int i = 0 ; i < all_cameras.size() ; i ++ )
             if ( names.contains ( all_cameras.at ( i )->windowTitle() ) )
             {
-                stream.insert ( pos , ( ( CameraWidget * ) all_cameras.at ( i ) )->stream() );
+                stream.insert ( pos , ( ( CameraWidget * ) all_cameras.at ( i )->widget( ))->stream() );
                 pos++;
             }
         MultiCameraView * v = new MultiCameraView( );
@@ -298,7 +293,7 @@ void MainWindow::selectedCamerasSlot ()
 
 bool MainWindow::cameraListContainsName ( const QString & name )
 {
-    QList <QWidget *> all_cameras = m_centralWidget->windowList();
+    QList <QMdiSubWindow *> all_cameras = m_centralWidget->subWindowList();
     for ( int i = 0 ; i <  all_cameras.size() ; i ++ )
         if ( name ==   all_cameras.at ( i )->windowTitle() )
             return true;
@@ -308,7 +303,7 @@ bool MainWindow::cameraListContainsName ( const QString & name )
 QStringList MainWindow::cameraNames()
 {
     QStringList names;
-    QList <QWidget *> all_cameras = m_centralWidget->windowList();
+    QList <QMdiSubWindow *> all_cameras = m_centralWidget->subWindowList();
     for ( int i = 0 ; i < all_cameras.size() ; i ++ )
         names << all_cameras.at ( i )->windowTitle();
     return names;
@@ -345,13 +340,13 @@ void MainWindow::aboutDialog()
 }
 void MainWindow::update ( )
 {
-    QWidget *w;
-    foreach ( w , m_centralWidget->windowList () ) delete w;
+    QMdiSubWindow *w;
+    foreach ( w , m_centralWidget->subWindowList () ) delete w;
     m_monitors->updateMonitors();
     QWidget * cam;
     foreach ( cam , m_monitors->cameras() )
     {
-        m_centralWidget->addWindow ( cam )->show();
+        m_centralWidget->addSubWindow ( cam )->show();
     }
 }
 

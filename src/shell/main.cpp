@@ -23,8 +23,6 @@
 
 #include "mainwindow.h"
 
-//solucion temporal
-#include <QWorkspace>
 
 int main(int argc, char *argv[])
 {
@@ -34,8 +32,6 @@ int main(int argc, char *argv[])
       QApplication app(argc, argv);
       MainWindow * m = new MainWindow;
       m->show();
-      //solucion temporal
-      ((QWorkspace *)m->centralWidget())->tile();
       int r = app.exec(); 
       return r;
 }

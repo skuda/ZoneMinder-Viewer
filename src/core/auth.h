@@ -37,7 +37,7 @@ public:
     ~Auth();
     bool userLogin( const QString &username , const QString &password );
     QString zmsString( ) const;
-
+    QByteArray authKey( ) const;
 private:
     QString m_db;
     AuthType m_AuthType;
