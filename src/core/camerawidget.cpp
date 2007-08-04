@@ -154,8 +154,11 @@ void CameraWidget::setPixmap ( QPixmap * p){
 
 void CameraWidget::configCamera(){
     CameraAddDialog d( this );
-    d.setWindowTitle("Configure Video Camera");
+    d.setEditable( false );
+    d.setWindowTitle("View Setup");
     d.setValues( windowTitle(), stream()->host() , QString::number(stream()->port() ) , QString::number(stream()->monitor()), stream()->zmStreamServer() );
+    d.exec();
+    /*
     if ( d.exec() == QDialog::Accepted ){
             setWindowTitle(d.m_name->text());
             stream()->setHost( d.m_host->text()  , d.m_port->text().toInt() );
@@ -164,6 +167,7 @@ void CameraWidget::configCamera(){
             restartCamera();
             emit ( windowTitleChanged( d.m_name->text() ) );
     }
+    */
 }
 
 void CameraWidget::fullScreen(){

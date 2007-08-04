@@ -87,9 +87,9 @@ void CameraWidgetToolBar::init()
     
     addSeparator();
 
-    d->m_configAction = new QAction ( _("Setup...") , this );
+    d->m_configAction = new QAction ( _("View Setup...") , this );
     d->m_configAction->setIcon ( QIcon ( ":/icons/Setup" ) );
-    d->m_configAction->setToolTip ( _("Setup Video Camera") );
+    d->m_configAction->setToolTip ( _("View Setup of Current Video Camera") );
     addAction ( d->m_configAction );
 
     toggleViewAction()->setText( _( "Show ToolBar" ) );

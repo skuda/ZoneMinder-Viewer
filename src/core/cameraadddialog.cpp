@@ -19,6 +19,8 @@
  ***************************************************************************/
 #include "cameraadddialog.h"
 
+#include <QPushButton>
+
 CameraAddDialog::CameraAddDialog(QWidget * parent )
 :QDialog( parent )
 {
@@ -39,6 +41,14 @@ void CameraAddDialog::completeDefaults(){
     m_zms->setText("/cgi-bin/nph-zms");
 }
 
+void CameraAddDialog::setEditable( bool b ){
+    m_name->setReadOnly ( !b );
+    m_host->setReadOnly ( !b );
+    m_port->setReadOnly ( !b );
+    m_monitor->setReadOnly ( !b );
+    m_zms->setReadOnly ( !b );
+    m_buttonBox->button (QDialogButtonBox::Cancel )->setVisible( b );
+}
 
 CameraAddDialog::~CameraAddDialog()
 {
