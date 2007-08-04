@@ -191,8 +191,10 @@ QAction * CameraWidget::toggleViewAction(){
     if (!m_toggleViewAction){
         m_toggleViewAction = new QAction (windowTitle() , this );
         m_toggleViewAction->setCheckable ( true );
-        //m_toggleViewAction->setChecked( true );
-        connect ( m_toggleViewAction , SIGNAL (triggered( bool )), this , SLOT (setVisible(bool) ) );
+        if ( parentWidget() )
+            connect ( m_toggleViewAction , SIGNAL (triggered( bool )), parentWidget() , SLOT (setVisible(bool) ) );
+        else
+            connect ( m_toggleViewAction , SIGNAL (triggered( bool )), this , SLOT (setVisible(bool) ) );
     }
    return m_toggleViewAction;
 }

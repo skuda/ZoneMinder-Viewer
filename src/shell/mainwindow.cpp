@@ -59,7 +59,7 @@ void MainWindow::init()
     setWindowTitle ( About::applicationName() );
     m_settings = new QSettings ( this );
     m_cameraToggleAction = new QList < QAction *>;
-    m_cameraRemoveAction = new QList < QAction *>;
+    //m_cameraRemoveAction = new QList < QAction *>;
     m_centralWidget = new QMdiArea ( this );
     setCentralWidget ( m_centralWidget );
     initSettings();
@@ -89,14 +89,14 @@ void MainWindow::initActions()
 /*    m_arrangeIconsAction = new QAction ( _ ( "&Arrange Icons" ),this );
     connect ( m_arrangeIconsAction , SIGNAL ( triggered() ) , workspace() , SLOT ( arrangeIcons() ) );*/
 
-    closeAction = new QAction ( _ ( "&Close" ), this );
+    closeAction = new QAction ( _ ( "&Hide" ), this );
     closeAction->setShortcut ( _ ( "Ctrl+F4" ) );
-    closeAction->setStatusTip ( _ ( "Close active window" ) );
-    connect ( closeAction, SIGNAL ( triggered() ), m_centralWidget, SLOT ( closeActiveSubWindow() ) );
+    closeAction->setStatusTip ( _ ( "Hide active window" ) );
+    connect ( closeAction, SIGNAL ( triggered() ), this , SLOT ( hideActiveSubWindow() ) );
 
-    closeAllAction = new QAction ( _ ( "Close &All" ), this );
-    closeAllAction->setStatusTip ( _ ( "Close All &Windows" ) );
-    connect ( closeAllAction, SIGNAL ( triggered() ),m_centralWidget, SLOT ( closeAllSubWindows() ) );
+    closeAllAction = new QAction ( _ ( "Hide &All" ), this );
+    closeAllAction->setStatusTip ( _ ( "Hide All Sub&Windows" ) );
+    connect ( closeAllAction, SIGNAL ( triggered() ),this, SLOT ( hideAllSubWindows() ) );
 
     m_updateAllMonitorsActions = new QAction ( _ ( "Update All Monitors" ), this );
     m_updateAllMonitorsActions->setStatusTip ( _ ( "Update all session's monitors" ) );
@@ -113,7 +113,7 @@ void MainWindow::initMenuBar()
 
     QMenu * camMenu = menuBar()->addMenu ( _ ( "Monitors" ) );
     camMenu->addAction ( m_newCameraAction );
-    m_camRemoveMenu = camMenu->addMenu ( _ ( "Delete" ) );
+    //m_camRemoveMenu = camMenu->addMenu ( _ ( "Delete" ) );
     camMenu->addAction ( m_updateAllMonitorsActions );
 
     QMenu * m_viewMenu = menuBar()->addMenu ( _ ( "View" ) );
@@ -123,8 +123,8 @@ void MainWindow::initMenuBar()
     for ( int i = 0 ; i < m_cameraToggleAction->count() ; i++ )
     {
         m_cameraMenu->addAction ( m_cameraToggleAction->at ( i ) );
-        m_cameraRemoveAction->insert ( i , m_camRemoveMenu->addAction ( m_cameraToggleAction->at ( i )->text() ) );
-        connect ( m_cameraRemoveAction->at ( i ), SIGNAL ( triggered() ), ( CameraWidget * ) m_centralWidget->subWindowList().at ( i )->widget() , SLOT ( remove () ) );
+        //m_cameraRemoveAction->insert ( i , m_camRemoveMenu->addAction ( m_cameraToggleAction->at ( i )->text() ) );
+        //connect ( m_cameraRemoveAction->at ( i ), SIGNAL ( triggered() ), ( CameraWidget * ) m_centralWidget->subWindowList().at ( i )->widget() , SLOT ( remove () ) );
 
     }
     m_viewMenu->addSeparator();
@@ -222,9 +222,9 @@ void MainWindow::addCamera ( const QString & name , const QString &host , int po
     camera->stream()->setZMStreamServer ( zms );
     //m_cameraToggleAction->append ( camera->toggleViewAction() );
     //m_cameraMenu->addAction( camera->toggleViewAction() );
-    QAction * a = m_camRemoveMenu->addAction ( name );
-    m_cameraRemoveAction->append ( a );
-    connect ( a, SIGNAL ( triggered() ), camera , SLOT ( remove () ) );
+    //QAction * a = m_camRemoveMenu->addAction ( name );
+    //m_cameraRemoveAction->append ( a );
+    //connect ( a, SIGNAL ( triggered() ), camera , SLOT ( remove () ) );
     camera->startCamera();
     QWidget *w = m_centralWidget->addSubWindow ( camera );
     w->show();
@@ -250,6 +250,7 @@ void MainWindow::fullScreen()
     setWindowState ( Qt::WindowFullScreen );
 }
 
+#if 0
 void MainWindow::removeCamera ( CameraWidget * w )
 {
     /** TODO: */
@@ -262,6 +263,7 @@ void MainWindow::removeCamera ( CameraWidget * w )
     //m_cameraRemoveAction->removeAt( pos );
     //delete w;
 }
+#endif
 
 void MainWindow::selectedCamerasSlot ()
 {
@@ -350,10 +352,20 @@ void MainWindow::update ( )
     }
 }
 
+void MainWindow::hideActiveSubWindow(){
+    if ( m_centralWidget->activeSubWindow() )
+            m_centralWidget->activeSubWindow()->hide();
+}
+void MainWindow::hideAllSubWindows(){
+    QWidget * sw;
+    foreach ( sw , m_centralWidget->subWindowList() )
+        sw->hide();
+}
+
 MainWindow::~MainWindow()
 {
     delete m_cameraToggleAction;
-    delete m_cameraRemoveAction;
+    //delete m_cameraRemoveAction;
     delete m_cameraMenu;
     delete m_settings;
 }

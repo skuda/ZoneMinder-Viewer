@@ -39,7 +39,7 @@ public:
 public Q_SLOTS:
     void cameraAddSlot();
     void fullScreen();
-    void removeCamera( CameraWidget *);
+    //void removeCamera( CameraWidget *);
     void selectedCamerasSlot ();
     void aboutDialog();
     void newSession();
@@ -50,6 +50,8 @@ protected:
 private Q_SLOTS:
     void setCentralWidgetCamera ( QWidget * w );
     void update ( );
+    void hideActiveSubWindow();
+    void hideAllSubWindows();
 
 private:
     void init();
@@ -62,7 +64,7 @@ private:
     void addCamera(const QString & name , const QString &host ="localhost", int port =80 , int monitor=1 , const QString &zms = "/cgi-bin/nph-zms");
     
     QList <QAction *> *m_cameraToggleAction;
-    QList <QAction *> *m_cameraRemoveAction;
+    //QList <QAction *> *m_cameraRemoveAction;
 
     QAction * m_newCameraAction;
     QAction * m_quitAction;
@@ -84,7 +86,7 @@ private:
     QAction * m_updateAllMonitorsActions;
 
     QMenu * m_cameraMenu;
-    QMenu * m_camRemoveMenu;
+    //QMenu * m_camRemoveMenu;
 
     QSettings * m_settings;
     //cantidad de camaras
