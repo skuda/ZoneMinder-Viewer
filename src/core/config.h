@@ -25,13 +25,9 @@
 /**
     default translation function
 */
-#ifdef Q_WS_X11
- #define _(str) QObject::trUtf8( str)
- #define __(str,comment) QObject::trUtf8( str,comment)
-#else
- #define _(str) QObject::tr( str)
- #define __(str,comment) QObject::tr( str,comment)
-#endif
+
+#define _(str) QObject::tr( str)
+#define __(str,comment) QObject::tr( str,comment)
 
 #define ZMVIEWER_VERSION 0.1
 static char * ApplicationName = "ZoneMinder Viewer";
