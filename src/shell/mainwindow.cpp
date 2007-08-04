@@ -37,6 +37,7 @@
 #include <QSettings>
 #include <QEvent>
 #include <QMessageBox>
+#include <QStyleFactory>
 
 
 #include <QMdiArea>
@@ -118,6 +119,12 @@ void MainWindow::initMenuBar()
 
     QMenu * m_viewMenu = menuBar()->addMenu ( _ ( "View" ) );
     m_cameraMenu = m_viewMenu->addMenu ( _ ( "&Monitors" ) );
+    QMenu * styleMenu = m_viewMenu->addMenu ( _ ( "&Style Select" ) );
+    QString style;
+    foreach ( style , QStyleFactory::keys() ){
+        QAction *act = styleMenu->addAction( style );
+        connect (act, SIGNAL(triggered() ), this , SLOT ( changeStyle() ) );
+    }
     QAction * t = m_viewMenu->addAction ( _ ( "Customized View..." ) );
     connect ( t, SIGNAL ( triggered() ), this , SLOT ( selectedCamerasSlot () ) );
     for ( int i = 0 ; i < m_cameraToggleAction->count() ; i++ )
@@ -145,6 +152,12 @@ void MainWindow::initMenuBar()
 
 void MainWindow::initSettings()
 {
+    m_settings->beginGroup ( "Application" );
+    QString styleString =m_settings->value ( "style" ).toString();
+    if ( !styleString.isNull())
+            QApplication::setStyle(QStyleFactory::create(styleString));
+    m_settings->endGroup();
+
     m_settings->beginGroup ( "MainWindow" );
     int ws = m_settings->value ( "windowState" , Qt::WindowMaximized ).toInt();
     setWindowState ( ( Qt::WindowStates ) ws );
@@ -360,6 +373,14 @@ void MainWindow::hideAllSubWindows(){
     QWidget * sw;
     foreach ( sw , m_centralWidget->subWindowList() )
         sw->hide();
+}
+
+void MainWindow::changeStyle(){
+    QString styleString = ((QAction *)sender())->text();
+    QApplication::setStyle(QStyleFactory::create(styleString));
+    m_settings->beginGroup ( "Application" );
+    m_settings->setValue ( "style" , styleString );
+    m_settings->endGroup();
 }
 
 MainWindow::~MainWindow()

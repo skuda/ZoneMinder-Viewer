@@ -52,6 +52,7 @@ private Q_SLOTS:
     void update ( );
     void hideActiveSubWindow();
     void hideAllSubWindows();
+    void changeStyle();
 
 private:
     void init();
