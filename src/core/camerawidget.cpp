@@ -219,6 +219,11 @@ void CameraWidget::cameraEvents(){
 void CameraWidget::popupMenu ( const QPoint & p){
     m_menu->popup( parentWidget()->pos() + p + pos() );
 }
+
+CameraWidgetToolBar * CameraWidget::toolBar() const{
+    return m_toolbar;
+}
+
 CameraWidget::~CameraWidget()
 {
     delete m_stream;

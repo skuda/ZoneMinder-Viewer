@@ -20,6 +20,7 @@
 #include "multicameraview.h"
 
 #include "camerawidget.h"
+#include "camerawidgettoolbar.h"
 #include "stream.h"
 #include "config.h"
 
@@ -48,6 +49,7 @@ void MultiCameraView::setStream( QList <Stream * > stream ){
     QList <CameraWidget * > copy;
     for ( int i = 0 ; i < stream.size(); i++ ){
             copy.insert( i , new CameraWidget ( NULL, this ) );
+            copy.at( i )->toolBar()->hide();
             copy.at( i )->setStream( stream.at(i));
             copy.at( i )->setConfigActionState(false);
             copy.at( i )->startCamera();

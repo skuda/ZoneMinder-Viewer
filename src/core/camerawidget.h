@@ -53,6 +53,7 @@ public:
         
     */
     QAction * toggleViewAction();
+    CameraWidgetToolBar * toolBar() const;
 protected Q_SLOTS:
     /**
         setea la imagen en el widget que representa la camara
