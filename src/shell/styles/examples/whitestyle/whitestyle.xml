@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<zmviewerstyle version="0.1">
+  <name>White Style</name>
+  <author>Leandro Emanuel López</author>
+  <authoremail>lopezlean@gmail.com</authoremail>
+  <version>0.1</version>
+  <style>Cleanlooks</style>
+  <stylesheet>whitestyle.qss</stylesheet>
+</zmviewerstyle>

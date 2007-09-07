@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<zmviewerstyle version="0.1">
+  <name>Black Style</name>
+  <author>Leandro Emanuel López</author>
+  <authoremail>lopezlean@gmail.com</authoremail>
+  <version>0.1</version>
+  <style>Plastik</style>
+  <stylesheet>blackstyle.qss</stylesheet>
+</zmviewerstyle>

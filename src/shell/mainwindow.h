@@ -44,6 +44,7 @@ public Q_SLOTS:
     void aboutDialog();
     void newSession();
     void sessionList();
+    void selectStyle();
 protected:
     bool event ( QEvent * event );
 
@@ -52,7 +53,6 @@ private Q_SLOTS:
     void update ( );
     void hideActiveSubWindow();
     void hideAllSubWindows();
-    void changeStyle();
 
 private:
     void init();
