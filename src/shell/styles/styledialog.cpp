@@ -20,6 +20,8 @@
 #include "styledialog.h"
 #include "style.h"
 
+#include <config-zmviewer.h>
+
 #include <QList>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
@@ -130,20 +132,28 @@ StyleDialog::StyleDialog( QWidget * parent )
 }
 
 void StyleDialog::init(){
-
 QDir dir ( DATADIR );
     if ( !dir.exists() ){
         if ( !dir.mkdir( DATADIR ) ){
-                qWarning("StyleDialog::init(): error creating data directory. Styles disabled!");
-                return;
+                qWarning("StyleDialog::init(): error creating data directory.");
+                //return;
             }
     }
 dir.setPath( STYLESDIR );
     if ( !dir.exists() ){
         if ( !dir.mkdir( STYLESDIR ) ){
-                qWarning("StyleDialog::init(): error creating style directory. Styles disabled!");
-                return;
+                qWarning("StyleDialog::init(): error creating style directory.");
+                //return;
             }
+    }
+    QDir sharedStyleDir ( ZMVIEWER_STYLE_DIR );
+    foreach ( QFileInfo info , sharedStyleDir.entryInfoList() ){
+        if ( info.fileName() == "." || info.fileName()=="..") continue;
+        qDebug ( qPrintable(info.fileName() ) );
+        if ( info.isDir () ){
+                Style style ( info.absolutePath()+ QDir::separator()+  info.fileName() +  QDir::separator() + info.fileName() + ".xml");
+                d->styles.append ( style );
+        }
     }
     foreach ( QFileInfo info , dir.entryInfoList() ){
         if ( info.fileName() == "." || info.fileName()=="..") continue;
