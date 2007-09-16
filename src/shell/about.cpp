@@ -18,7 +18,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 #include "about.h"
-#include "config.h"
+#include <config-zmviewer.h>
 
 #include <QDialog>
 #include <QPushButton>
@@ -37,11 +37,11 @@ About::About ( )
 void About::showAboutDialog()
 {
     m_dialog = new QDialog ( QApplication::focusWidget() );
-    m_dialog->setWindowTitle ( _( "About..." ) );
+    m_dialog->setWindowTitle ( QObject::tr( "About..." ) );
     QVBoxLayout * layout = new QVBoxLayout ( m_dialog );
 
     QHBoxLayout * titleLayout = new QHBoxLayout ( );
-    QLabel * programName = new QLabel ( QString ( "<b>" ) + _(ApplicationName) + QString ( " " ) +QString::number ( ZMVIEWER_VERSION ) + QString ( "</b>" ), m_dialog );
+    QLabel * programName = new QLabel ( QString ( "<b>" ) + QObject::tr(ApplicationName) + QString ( " " ) +QString::number ( ZMVIEWER_VERSION ) + QString ( "</b>" ), m_dialog );
     titleLayout->addWidget ( programName );
     QLabel * programIcon = new QLabel ( m_dialog );
     programIcon->setPixmap ( qApp->windowIcon().pixmap ( 32,32 ) );
@@ -50,18 +50,18 @@ void About::showAboutDialog()
 
     QTabWidget * tab = new QTabWidget ( m_dialog );
     QLabel * label = new QLabel ( aboutText (), m_dialog );
-    tab->addTab ( label , _( "About" ) );
+    tab->addTab ( label , QObject::tr( "About" ) );
 
     QTextBrowser * authors = new QTextBrowser ( m_dialog );
     authors->setHtml ( authorsText () );
     authors->setReadOnly ( true );
     authors->setOpenExternalLinks ( m_dialog );
 
-    tab->addTab ( authors , _( "Authors and Thanks" ) );
+    tab->addTab ( authors , QObject::tr( "Authors and Thanks" ) );
 
 
     layout->addWidget ( tab );
-    QPushButton * button = new QPushButton ( _( "Ok" ) , m_dialog );
+    QPushButton * button = new QPushButton ( QObject::tr( "Ok" ) , m_dialog );
     QHBoxLayout * buttonLayout = new QHBoxLayout ( );
     buttonLayout->addItem ( new QSpacerItem ( 20,30, QSizePolicy::Expanding ) );
     buttonLayout->addWidget ( button );
@@ -73,12 +73,12 @@ void About::showAboutDialog()
 
 
 /*static char * About::applicationName(){
-    return qPrintable(QObject::tr( "ZoneMinder Viewer" ));
+    return qPrintable(QObject::QObject::tr( "ZoneMinder Viewer" ));
 }*/
 
 QString About::applicationName()
 {
-    return _( ApplicationName );
+    return QObject::tr( ApplicationName );
 };
 
 QString About::versionString()
@@ -88,11 +88,11 @@ QString About::versionString()
 
 QString About::aboutText()
 {
-    return _( "%1 is a zoneminder client written in Qt Framework.\nCopyright(c)2007 Leandro Emanuel López\n").arg(ApplicationShortName );
+    return QObject::tr( "%1 is a zoneminder client written in Qt Framework.\nCopyright(c)2007 Leandro Emanuel López\n").arg(ApplicationShortName );
 }
 
 QString About::authorsText(){
-    return _("<b>Developers:</b><br/><ul>\
+    return QObject::tr("<b>Developers:</b><br/><ul>\
                        <li>Leandro Emanuel López ( Maintainer and main developer ) <br>\
                        <a href=mailto:lopezlean@gmail.com>lopezlean@gmail.com</a><br>\
                        <a href=mailto:lopezlean@silix.com.ar>lopezlean@silix.com.ar</a><br></li>\

@@ -23,7 +23,6 @@
 #include "stream.h"
 #include "auth.h"
 #include "authdialog.h"
-#include "config.h"
 
 #include<QSqlQuery>
 #include<QStringList>
@@ -66,7 +65,7 @@ void Monitors::init()
         while ( query.next() )
         {
             CameraWidget * camera = new CameraWidget ( connection );
-            camera->setWindowTitle ( query.value ( query.record().indexOf ( "Name" ) ).toString() + _ ( " at " ) + db.hostName() );
+            camera->setWindowTitle ( query.value ( query.record().indexOf ( "Name" ) ).toString() + tr( " at " ) + db.hostName() );
             camera->stream()->setHost ( db.hostName() ,query.value ( query.record().indexOf ( "Port" ) ).toInt() );
             camera->stream()->setMonitor ( query.value ( query.record().indexOf ( "Id" ) ).toUInt() );
             camera->stream()->setZMStreamServer ( zms );

@@ -18,7 +18,6 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 #include "camerawidget.h"
-#include "config.h"
 #include "cameraevents.h"
 
 #include <QLabel>
@@ -74,7 +73,7 @@ void CameraWidget::init(){
     m_layout = new QVBoxLayout ( this );
     m_layout->setMargin(0);
 
-    m_camView->setText (_("<b>No signal</b>"));
+    m_camView->setText (tr("<b>No signal</b>"));
 
     m_spacerV = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
 
@@ -115,7 +114,7 @@ void CameraWidget::pauseCamera( ){
 void CameraWidget::stopCamera(){
     m_stream->stop();
     disconnect ( m_stream , SIGNAL ( frameReady ( QPixmap *) ) , this , SLOT (setPixmap (QPixmap *)));
-    m_camView->setText(_("<b>Stopped Video Camera</b>"));
+    m_camView->setText(tr("<b>Stopped Video Camera</b>"));
 }
 void CameraWidget::restartCamera(){
     stopCamera();
@@ -178,8 +177,8 @@ void CameraWidget::fullScreen(){
 
 }
 void CameraWidget::remove(){
-    int ret = QMessageBox::warning(this, _("ZoneMinder Viewer"),
-                   _("Really you want to delete Video Camera?"),
+    int ret = QMessageBox::warning(this, tr("ZoneMinder Viewer"),
+                   tr("Really you want to delete Video Camera?"),
                    QMessageBox::Ok | QMessageBox::Cancel );
     if (ret ==QMessageBox::Ok){
         stopCamera();
@@ -212,7 +211,7 @@ void CameraWidget::cameraEvents(){
     CameraEvents * e = new CameraEvents ( stream()->monitor() , m_conectionName , this );
     
     e->appendZMSString( stream()->ZMSStringAppended() );
-    e->setWindowTitle(_( "Events for Monitor %1").arg( windowTitle() ) );
+    e->setWindowTitle(tr( "Events for Monitor %1").arg( windowTitle() ) );
     e->show();
 }
 

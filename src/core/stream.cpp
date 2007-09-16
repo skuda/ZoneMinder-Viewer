@@ -31,7 +31,7 @@ class Stream::Private
         Private ( QObject * parent )
         {
             http = new QHttp( parent );
-            http->setUser("admin","admin");
+            //http->setUser("admin","admin");
             mode = "jpeg";
             host = "localhost";
             port = 80;

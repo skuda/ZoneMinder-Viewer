@@ -18,7 +18,6 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 #include "authdialog.h"
-#include "config.h"
 
 #include <QMessageBox>
 AuthDialog::AuthDialog( Auth * auth ,  QWidget * parent )
@@ -35,7 +34,7 @@ void AuthDialog::checkAuth(){
     bool b = m_auth->userLogin( leUser->text() , lePassword->text() );
     if ( b )
         done( QDialog::Accepted );
-    else QMessageBox::critical( this , _("Bad Login") , _("User Name or Password are wrong!"));
+    else QMessageBox::critical( this , tr("Bad Login") , tr("User Name or Password are wrong!"));
 }
 
 AuthDialog::~AuthDialog()

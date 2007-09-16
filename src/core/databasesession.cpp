@@ -19,7 +19,6 @@
  ***************************************************************************/
 #include "databasesession.h"
 #include "connectionmanager.h"
-#include "config.h"
 
 #include <QComboBox>
 #include <QMessageBox>
@@ -63,7 +62,7 @@ void DatabaseSession::init(){
 
     QHBoxLayout * hboxLayout = new QHBoxLayout(frame);
     QLabel * label = new QLabel(frame);
-    label->setText( _("<b>New Database Connection</b>") );
+    label->setText( tr("<b>New Database Connection</b>") );
     hboxLayout->addWidget(label);
 
     QLabel * img = new QLabel(frame);
@@ -79,14 +78,14 @@ void DatabaseSession::init(){
 
     QGridLayout * gridLayout = new QGridLayout();
     QLabel * hostLabel = new QLabel( this );
-    hostLabel->setText(_("&Server"));
+    hostLabel->setText(tr("&Server"));
     gridLayout->addWidget( hostLabel, 0, 0, 1, 1);
 
     m_hostLE = new QLineEdit( this );
     gridLayout->addWidget( m_hostLE, 0, 1, 1, 1);
 
     QLabel * userNameLabel = new QLabel( this );
-    userNameLabel->setText(_("&User"));
+    userNameLabel->setText(tr("&User"));
 
     gridLayout->addWidget( userNameLabel , 1, 0, 1, 1);
 
@@ -95,7 +94,7 @@ void DatabaseSession::init(){
     gridLayout->addWidget( m_userNameLE , 1, 1, 1, 1);
 
     QLabel * passwordLabel = new QLabel( this );
-    passwordLabel->setText(_("&Password"));
+    passwordLabel->setText(tr("&Password"));
 
     gridLayout->addWidget(passwordLabel, 2, 0, 1, 1);
 
@@ -107,12 +106,12 @@ void DatabaseSession::init(){
     vboxLayout->addLayout(gridLayout);
 
     QGroupBox * advancedBox = new QGroupBox( this );
-    advancedBox->setWindowTitle( _("Advanced Settings" ));
+    advancedBox->setWindowTitle( tr("Advanced Settings" ));
     QVBoxLayout * vboxLayout1 = new QVBoxLayout(advancedBox);
     QGridLayout * gridLayout1 = new QGridLayout();
     
     QLabel * databaseLabel = new QLabel(advancedBox);
-    databaseLabel->setText(_("&Database"));
+    databaseLabel->setText(tr("&Database"));
     gridLayout1->addWidget( databaseLabel, 0, 0, 1, 1);
 
     m_databaseNameLE = new QLineEdit(advancedBox);
@@ -120,7 +119,7 @@ void DatabaseSession::init(){
     gridLayout1->addWidget(m_databaseNameLE, 0, 1, 1, 1);
 
     QLabel * driversLabel = new QLabel(advancedBox);
-    driversLabel->setText( _("D&river") );
+    driversLabel->setText( tr("D&river") );
     gridLayout1->addWidget( driversLabel, 1, 0, 1, 1);
 
     m_driversCB = new QComboBox(advancedBox);
@@ -129,7 +128,7 @@ void DatabaseSession::init(){
     gridLayout1->addWidget( m_driversCB, 1, 1, 1, 1);
 
     QLabel * portLabel = new QLabel(advancedBox);
-    portLabel->setText( _("&Port") );
+    portLabel->setText( tr("&Port") );
     gridLayout1->addWidget( portLabel , 2, 0, 1, 1);
 
     m_portLE = new QLineEdit(advancedBox);
@@ -143,13 +142,13 @@ void DatabaseSession::init(){
     QHBoxLayout * hboxLayout1 = new QHBoxLayout();
     QDialogButtonBox * buttonBox = new QDialogButtonBox( this );
     buttonBox->setStandardButtons(QDialogButtonBox::Cancel|QDialogButtonBox::NoButton);
-    QPushButton * btnOk = buttonBox->addButton( _("Ok") , QDialogButtonBox::AcceptRole );
+    QPushButton * btnOk = buttonBox->addButton( tr("Ok") , QDialogButtonBox::AcceptRole );
     connect (btnOk, SIGNAL(clicked()), this , SLOT(tryConnect()));
 
     hboxLayout1->addWidget(buttonBox);
 
     QPushButton *pushButton = new QPushButton( this );
-    pushButton->setText( _("More.." ) );
+    pushButton->setText( tr("More.." ) );
     pushButton->setCheckable(true);
     connect (pushButton , SIGNAL ( clicked( bool ) ) , advancedBox , SLOT (setVisible( bool )));
 
@@ -182,7 +181,7 @@ void DatabaseSession::tryConnect(){
     ConnectionManager c;
     bool  b = c.addConnection( m_driversCB->currentText() , m_hostLE->text() , m_databaseNameLE->text(), m_userNameLE->text() , m_passwordLE->text(), m_portLE->text().toInt() );
     if (!b)
-        QMessageBox::critical( this , _("Error"), _("Database connection error: %1").arg( ConnectionManager::lastErrorString() ) );
+        QMessageBox::critical( this , tr("Error"), tr("Database connection error: %1").arg( ConnectionManager::lastErrorString() ) );
     else {
         emit( needUpdate());
         done(QDialog::Accepted);

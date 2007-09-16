@@ -19,7 +19,6 @@
  ***************************************************************************/
 #include "connectionwidget.h"
 #include "connectionmanager.h"
-#include "config.h"
 
 #include <QTableWidget>
 #include <QTableWidgetItem>
@@ -39,7 +38,7 @@ ConnectionWidget::ConnectionWidget ( QWidget * parent )
 
 void ConnectionWidget::init()
 {
-    setWindowTitle( _("Session List") );
+    setWindowTitle( tr("Session List") );
     m_table = new QTableWidget ( this );
     m_table->setContextMenuPolicy ( Qt::ActionsContextMenu );
     m_table->setEditTriggers ( QAbstractItemView::NoEditTriggers );
@@ -50,7 +49,7 @@ void ConnectionWidget::init()
     m_table->setColumnCount ( 6 );
     QStringList labels;
     int r=0;
-    labels << _ ( "Host" ) << _ ( "Database" ) << _ ( "User" ) << _ ( "Driver" ) << _ ( "Port" ) << _ ( "State" );
+    labels << tr( "Host" ) << tr( "Database" ) << tr( "User" ) << tr( "Driver" ) << tr( "Port" ) << tr( "State" );
     m_table->setHorizontalHeaderLabels ( labels );
     foreach ( QString  connection , ConnectionManager::connectionNames() )
     {
@@ -61,7 +60,7 @@ void ConnectionWidget::init()
         m_table->setItem ( r , 2 , new QTableWidgetItem ( db.userName() ) );
         m_table->setItem ( r , 3 , new QTableWidgetItem ( db.driverName() ) );
         m_table->setItem ( r , 4 , new QTableWidgetItem ( QString::number ( db.port() ) ) );
-        m_table->setItem ( r , 5 , new QTableWidgetItem ( db.isOpenError() ? _("Failed") : _("Connected") ) ) ;
+        m_table->setItem ( r , 5 , new QTableWidgetItem ( db.isOpenError() ? tr("Failed") : tr("Connected") ) ) ;
         r++;
     }
     resize ( 650 , 300 );
@@ -70,7 +69,7 @@ void ConnectionWidget::init()
 
 void ConnectionWidget::setupActions()
 {
-    QAction * actRemove = new QAction ( QIcon ( ":/icons/Remove" ),_ ( "Remove" ), this );
+    QAction * actRemove = new QAction ( QIcon ( ":/icons/Remove" ),tr( "Remove" ), this );
     m_table->addAction ( actRemove );
     connect ( actRemove,SIGNAL ( triggered() ), this , SLOT ( removeConnection () ) );
 }

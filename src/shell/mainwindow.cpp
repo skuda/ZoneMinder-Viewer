@@ -27,7 +27,6 @@
 #include "cameraadddialog.h"
 #include "multicameraview.h"
 #include "cameraselectdialog.h"
-#include "config.h"
 
 //core
 #include "databasesession.h"
@@ -70,60 +69,60 @@ void MainWindow::init()
 
 void MainWindow::initActions()
 {
-    m_sessionNew = new QAction ( _ ( "&New Session..." ) , this );
+    m_sessionNew = new QAction ( tr( "&New Session..." ) , this );
     connect ( m_sessionNew , SIGNAL ( triggered() ), this , SLOT ( newSession() ) );
 
-    m_sessionList = new QAction ( _ ( "&Session List..." ) , this );
+    m_sessionList = new QAction ( tr( "&Session List..." ) , this );
     connect ( m_sessionList , SIGNAL ( triggered() ), this , SLOT ( sessionList() ) );
 
-    m_newCameraAction = new QAction ( QIcon ( ":/icons/AddCameraIcon" ),_ ( "&Add" ) , this );
+    m_newCameraAction = new QAction ( QIcon ( ":/icons/AddCameraIcon" ),tr( "&Add" ) , this );
     connect ( m_newCameraAction , SIGNAL ( triggered() ), this , SLOT ( cameraAddSlot() ) );
-    m_closeFullScreenAction = new QAction ( QIcon ( ":/icons/Restore" ),_ ( "&Close FullScreen View" ) , this );
+    m_closeFullScreenAction = new QAction ( QIcon ( ":/icons/Restore" ),tr( "&Close FullScreen View" ) , this );
     connect ( m_closeFullScreenAction , SIGNAL ( triggered() ), this , SLOT ( showNormal() ) );
-    m_fullScreenAction = new QAction ( QIcon ( ":icons/FullScreen" ),_ ( "&FullScreen" ), this );
+    m_fullScreenAction = new QAction ( QIcon ( ":icons/FullScreen" ),tr( "&FullScreen" ), this );
     connect ( m_fullScreenAction, SIGNAL ( triggered() ), this , SLOT ( fullScreen() ) );
-    m_quitAction = new QAction ( QIcon ( ":/icons/Quit" ),_ ( "&Quit" ) , this );
+    m_quitAction = new QAction ( QIcon ( ":/icons/Quit" ),tr( "&Quit" ) , this );
     connect ( m_quitAction, SIGNAL ( triggered() ), this , SLOT ( close() ) );
-    m_cascadeAction = new QAction ( _ ( "&Cascade" ) , this );
+    m_cascadeAction = new QAction ( tr( "&Cascade" ) , this );
     connect ( m_cascadeAction , SIGNAL ( triggered() ) , m_centralWidget , SLOT ( cascadeSubWindows() ) );
-    m_tileAction = new QAction ( _ ( "&Tile" ) , this );
+    m_tileAction = new QAction ( tr( "&Tile" ) , this );
     connect ( m_tileAction , SIGNAL ( triggered() ) , m_centralWidget , SLOT ( tileSubWindows() ) );
-/*    m_arrangeIconsAction = new QAction ( _ ( "&Arrange Icons" ),this );
+/*    m_arrangeIconsAction = new QAction ( tr( "&Arrange Icons" ),this );
     connect ( m_arrangeIconsAction , SIGNAL ( triggered() ) , workspace() , SLOT ( arrangeIcons() ) );*/
 
-    closeAction = new QAction ( _ ( "&Hide" ), this );
-    closeAction->setShortcut ( _ ( "Ctrl+F4" ) );
-    closeAction->setStatusTip ( _ ( "Hide active window" ) );
+    closeAction = new QAction ( tr( "&Hide" ), this );
+    closeAction->setShortcut ( tr( "Ctrl+F4" ) );
+    closeAction->setStatusTip ( tr( "Hide active window" ) );
     connect ( closeAction, SIGNAL ( triggered() ), this , SLOT ( hideActiveSubWindow() ) );
 
-    closeAllAction = new QAction ( _ ( "Hide &All" ), this );
-    closeAllAction->setStatusTip ( _ ( "Hide All Sub&Windows" ) );
+    closeAllAction = new QAction ( tr( "Hide &All" ), this );
+    closeAllAction->setStatusTip ( tr( "Hide All Sub&Windows" ) );
     connect ( closeAllAction, SIGNAL ( triggered() ),this, SLOT ( hideAllSubWindows() ) );
 
-    m_updateAllMonitorsActions = new QAction ( _ ( "Update All Monitors" ), this );
-    m_updateAllMonitorsActions->setStatusTip ( _ ( "Update all session's monitors" ) );
+    m_updateAllMonitorsActions = new QAction ( tr( "Update All Monitors" ), this );
+    m_updateAllMonitorsActions->setStatusTip ( tr( "Update all session's monitors" ) );
     connect ( m_updateAllMonitorsActions, SIGNAL ( triggered() ),this, SLOT ( update() ) );
 }
 
 void MainWindow::initMenuBar()
 {
-    QMenu * sessionMenu = menuBar()->addMenu ( _ ( "Session" ) );
+    QMenu * sessionMenu = menuBar()->addMenu ( tr( "Session" ) );
     sessionMenu->addAction ( m_sessionNew );
     sessionMenu->addAction ( m_sessionList );
     sessionMenu->addSeparator();
     sessionMenu->addAction ( m_quitAction );
 
-    QMenu * camMenu = menuBar()->addMenu ( _ ( "Monitors" ) );
+    QMenu * camMenu = menuBar()->addMenu ( tr( "Monitors" ) );
     camMenu->addAction ( m_newCameraAction );
-    //m_camRemoveMenu = camMenu->addMenu ( _ ( "Delete" ) );
+    //m_camRemoveMenu = camMenu->addMenu ( tr( "Delete" ) );
     camMenu->addAction ( m_updateAllMonitorsActions );
 
-    QMenu * m_viewMenu = menuBar()->addMenu ( _ ( "View" ) );
-    m_cameraMenu = m_viewMenu->addMenu ( _ ( "&Monitors" ) );
-    QAction *m_selectStyleAction = m_viewMenu->addAction ( _ ( "&Select Style..." ) );
+    QMenu * m_viewMenu = menuBar()->addMenu ( tr( "View" ) );
+    m_cameraMenu = m_viewMenu->addMenu ( tr( "&Monitors" ) );
+    QAction *m_selectStyleAction = m_viewMenu->addAction ( tr( "&Select Style..." ) );
     connect ( m_selectStyleAction , SIGNAL (triggered()), this , SLOT ( selectStyle() ) );
 
-    QAction * t = m_viewMenu->addAction ( _ ( "Customized View..." ) );
+    QAction * t = m_viewMenu->addAction ( tr( "Customized View..." ) );
     connect ( t, SIGNAL ( triggered() ), this , SLOT ( selectedCamerasSlot () ) );
     for ( int i = 0 ; i < m_cameraToggleAction->count() ; i++ )
     {
@@ -135,16 +134,16 @@ void MainWindow::initMenuBar()
     m_viewMenu->addSeparator();
     m_viewMenu->addAction ( m_fullScreenAction );
     m_viewMenu->addAction ( m_closeFullScreenAction );
-    QMenu * m_windowMenu = menuBar()->addMenu ( _ ( "&Window" ) );
+    QMenu * m_windowMenu = menuBar()->addMenu ( tr( "&Window" ) );
     m_windowMenu->addAction ( closeAction );
     m_windowMenu->addAction ( closeAllAction );
     m_windowMenu->addSeparator();
     m_windowMenu->addAction ( m_cascadeAction );
     m_windowMenu->addAction ( m_tileAction );
     //m_windowMenu->addAction ( m_arrangeIconsAction );
-    QMenu * m_helpMenu = menuBar()->addMenu ( _ ( "&Help" ) );
-    connect ( m_helpMenu->addAction ( _ ( "About..." ) ), SIGNAL ( triggered () ), this, SLOT ( aboutDialog() ) );
-    connect ( m_helpMenu->addAction ( _ ( "About Qt..." ) ), SIGNAL ( triggered () ), qApp, SLOT ( aboutQt() ) );
+    QMenu * m_helpMenu = menuBar()->addMenu ( tr( "&Help" ) );
+    connect ( m_helpMenu->addAction ( tr( "About..." ) ), SIGNAL ( triggered () ), this, SLOT ( aboutDialog() ) );
+    connect ( m_helpMenu->addAction ( tr( "About Qt..." ) ), SIGNAL ( triggered () ), qApp, SLOT ( aboutQt() ) );
 
 }
 
@@ -168,7 +167,7 @@ void MainWindow::initSettings()
         m_settings->beginGroup ( name );
         bool b = ConnectionManager::addConnection ( m_settings->value ( "driver" ).toString() , m_settings->value ( "host" ).toString() , m_settings->value ( "database" ).toString(),m_settings->value ( "user" ).toString(),m_settings->value ( "password" ).toString(),m_settings->value ( "port" , 0 ).toInt() , false );
         if (!b)
-            QMessageBox::critical( this , _("Database Error") , _("Can not connect with Database %1 at host %2").arg(m_settings->value ( "database" ).toString()).arg(m_settings->value ( "host" ).toString()) );
+            QMessageBox::critical( this , tr("Database Error") , tr("Can not connect with Database %1 at host %2").arg(m_settings->value ( "database" ).toString()).arg(m_settings->value ( "host" ).toString()) );
         m_settings->endGroup();
     }
     QWidget *cam;
@@ -238,13 +237,13 @@ void MainWindow::cameraAddSlot()
 {
     CameraAddDialog dlg ( this );
     dlg.completeDefaults();
-    dlg.setWindowTitle ( _ ( "Add Video Camera" ) );
+    dlg.setWindowTitle ( tr( "Add Video Camera" ) );
     int r = dlg.exec();
     if ( r == QDialog::Accepted )
     {
         if ( cameraListContainsName ( dlg.m_name->text() ) )
         {
-            QMessageBox::critical ( this, _ ( "Add Video Camera" ), _ ( "Name is already in use.\n Please select other" ) );
+            QMessageBox::critical ( this, tr( "Add Video Camera" ), tr( "Name is already in use.\n Please select other" ) );
         }
         else addCamera ( dlg.m_name->text() , dlg.m_host->text() , dlg.m_port->text().toInt() , dlg.m_monitor->text().toInt() , dlg.m_zms->text() );
     }

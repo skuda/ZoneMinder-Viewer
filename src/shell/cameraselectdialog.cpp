@@ -18,7 +18,6 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 #include "cameraselectdialog.h"
-#include "config.h"
 
 #include <QVBoxLayout>
 #include <QCheckBox>
@@ -35,7 +34,7 @@ CameraSelectDialog::CameraSelectDialog( QWidget * parent )
 }
 
 void CameraSelectDialog::init(){
-    setWindowTitle (_("Select Video Cameras"));
+    setWindowTitle (tr("Select Video Cameras"));
 }
 
 void CameraSelectDialog::setNames (  const QStringList &names ){
@@ -53,7 +52,7 @@ void CameraSelectDialog::setNames (  const QStringList &names ){
     line->setFrameShadow(QFrame::Sunken);
     l->addWidget ( line );
 
-    m_groupByView = new QCheckBox (_("Four Video Cameras by View"), this );
+    m_groupByView = new QCheckBox (tr("Four Video Cameras by View"), this );
     l->addWidget(m_groupByView);
     QDialogButtonBox * bx = new QDialogButtonBox(this);
     QPushButton * ok = bx->addButton(QDialogButtonBox::Ok);
@@ -79,7 +78,7 @@ bool CameraSelectDialog::groupViewView() const {
 
 void CameraSelectDialog::selectCameras(){
     if (names().size() == 0 ){
-        QMessageBox::warning(this, _("No Video Camera Selected"), _("You must select one Video Cameras at least") );
+        QMessageBox::warning(this, tr("No Video Camera Selected"), tr("You must select one Video Cameras at least") );
         return;
     }
     emit(accept ());

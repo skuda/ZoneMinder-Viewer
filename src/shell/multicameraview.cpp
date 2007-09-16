@@ -22,7 +22,6 @@
 #include "camerawidget.h"
 #include "camerawidgettoolbar.h"
 #include "stream.h"
-#include "config.h"
 
 #include <QLabel>
 #include <QGridLayout>
@@ -62,7 +61,7 @@ void MultiCameraView::setStream( QList <Stream * > stream ){
 
 void MultiCameraView::layoutCameras( QList <CameraWidget * > m_cameras ){
     QPushButton * quit = new QPushButton ( this );
-    quit->setText(_("&Close View"));
+    quit->setText(tr("&Close View"));
     connect ( quit , SIGNAL(clicked()), this , SLOT(close() ));
     QVBoxLayout *parentLayout = new QVBoxLayout ( this );
     parentLayout->addWidget( quit );
@@ -102,7 +101,7 @@ void MultiCameraView::layoutCameras( QList <CameraWidget * > m_cameras ){
 void MultiCameraView::layoutCamerasWithTabs ( QList <CameraWidget * > m_cameras , int camerasPerPage){
   
    QPushButton * quit = new QPushButton ( this );
-    quit->setText(_("&Close View"));
+    quit->setText(tr("&Close View"));
     connect ( quit , SIGNAL(clicked()), this , SLOT(close() ));
     QVBoxLayout *parentLayout = new QVBoxLayout ( this );
     parentLayout->addWidget( quit );
@@ -135,7 +134,7 @@ void MultiCameraView::layoutCamerasWithTabs ( QList <CameraWidget * > m_cameras 
                     w = new QWidget;
                      l = new QGridLayout (  w );
                     w->setLayout( l );
-                    cameraContainer->addTab( w , _("View ") + QString::number(  viewcount ) ); 
+                    cameraContainer->addTab( w , tr("View ") + QString::number(  viewcount ) ); 
                      viewcount++;
             }
 

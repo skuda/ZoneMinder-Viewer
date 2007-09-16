@@ -19,7 +19,6 @@
  ***************************************************************************/
 #include "camerawidgettoolbar.h"
 #include "camerawidget.h"
-#include "config.h"
 
 #include <QAction>
 #include <QMenu>
@@ -58,43 +57,43 @@ void CameraWidgetToolBar::init()
     setSizePolicy ( QSizePolicy::Minimum , QSizePolicy::Minimum );
     setIconSize( QSize ( 16 , 16 ) );
 
-    d->m_startAction = new QAction ( _("Play") , this );
+    d->m_startAction = new QAction ( tr("Play") , this );
     d->m_startAction->setIcon ( QIcon ( ":/icons/Start" ) );
     addAction ( d->m_startAction );
 
-    d->m_startAction->setToolTip ( _("Play Video Camera") );
-    d->m_stopAction = new QAction ( _("Stop") , this );
+    d->m_startAction->setToolTip ( tr("Play Video Camera") );
+    d->m_stopAction = new QAction ( tr("Stop") , this );
     d->m_stopAction->setIcon ( QIcon ( ":/icons/Stop" ) );
-    d->m_stopAction->setToolTip ( _("Stop Video Camera") );
+    d->m_stopAction->setToolTip ( tr("Stop Video Camera") );
     addAction ( d->m_stopAction );
 
-    d->m_pauseAction = new QAction ( _("Pause") , this );
+    d->m_pauseAction = new QAction ( tr("Pause") , this );
     d->m_pauseAction->setIcon ( QIcon ( ":/icons/Pause" ) );
-    d->m_pauseAction->setToolTip ( _("Pause Video Camera") );
+    d->m_pauseAction->setToolTip ( tr("Pause Video Camera") );
     addAction ( d->m_pauseAction );
 
     addSeparator();
 
-    d->m_fullScreenAction = new QAction (_("FullScreen Mode"), this );
+    d->m_fullScreenAction = new QAction (tr("FullScreen Mode"), this );
     d->m_fullScreenAction->setIcon ( QIcon ( ":/icons/FullScreen" ) );
-    d->m_fullScreenAction->setToolTip ( _("FullScreen Mode" ) );
+    d->m_fullScreenAction->setToolTip ( tr("FullScreen Mode" ) );
     addAction ( d->m_fullScreenAction );
 
-    d->m_eventAction = new QAction ( _("Event List...") , this );
+    d->m_eventAction = new QAction ( tr("Event List...") , this );
     d->m_eventAction->setIcon ( QIcon ( ":/icons/Events" ) );
-    d->m_eventAction->setToolTip ( _("Event List") );
+    d->m_eventAction->setToolTip ( tr("Event List") );
     addAction ( d->m_eventAction );
     
     addSeparator();
 
-    d->m_configAction = new QAction ( _("View Setup...") , this );
+    d->m_configAction = new QAction ( tr("View Setup...") , this );
     d->m_configAction->setIcon ( QIcon ( ":/icons/Setup" ) );
-    d->m_configAction->setToolTip ( _("View Setup of Current Video Camera") );
+    d->m_configAction->setToolTip ( tr("View Setup of Current Video Camera") );
     addAction ( d->m_configAction );
 
-    toggleViewAction()->setText( _( "Show ToolBar" ) );
+    toggleViewAction()->setText( tr( "Show ToolBar" ) );
     //toggleViewAction()->setIcon( QIcon(":/icons/Remove") );
-    toggleViewAction()->setToolTip( _("Hide/Show Camera's ToolBar") );
+    toggleViewAction()->setToolTip( tr("Hide/Show Camera's ToolBar") );
     addAction ( toggleViewAction() );
 
     d->m_menu = new QMenu ("Actions" , this );

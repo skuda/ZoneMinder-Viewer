@@ -19,7 +19,6 @@
  ***************************************************************************/
 #include "fullscreencamera.h"
 #include "stream.h"
-#include "config.h"
 
 #include <QLabel>
 #include <QVBoxLayout>
@@ -34,7 +33,7 @@ FullScreenCamera::FullScreenCamera(QWidget * parent)
 
 void FullScreenCamera::init(){
     QVBoxLayout * layout = new QVBoxLayout( this );
-    QPushButton * pb = new QPushButton ( _("&Close"), this );
+    QPushButton * pb = new QPushButton ( tr("&Close"), this );
     connect ( pb , SIGNAL (clicked()), this , SLOT ( close() ) );
     m_label = new QLabel( this );
     layout->addWidget ( pb ); 
