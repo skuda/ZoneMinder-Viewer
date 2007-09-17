@@ -31,7 +31,7 @@
 class Style::Private
 {
     public:
-        Private( ):setButton( 0 ){}
+        Private( ):setButton( 0 ),isValid(true){}
         bool canManageStyleVersion ( const QString & version )
         {
             if ( version.isNull() )
@@ -50,6 +50,7 @@ class Style::Private
         QString version;
         QString xmlFile;
         bool fullscreen;
+        bool isValid;
         QPushButton * setButton;
 };
 
@@ -67,6 +68,7 @@ void Style::init()
     if ( !file.open ( QIODevice::ReadOnly ) )
     {
         qDebug ( "Style::init: could not open xml file: %s", qPrintable ( d->xmlFile ) );
+        d->isValid = false;
         return;
     }
     QXmlSimpleReader reader;
@@ -78,6 +80,7 @@ void Style::init()
     if ( !document.setContent ( &source, &reader, &errorMsg, &line , &column ) )
     {
         qWarning ( "Invalid Style Format: %s at line %d , column %d", qPrintable ( errorMsg ), line, column );
+        d->isValid = false;
         return;
     }
     QDomElement docElem = document.documentElement();
@@ -86,6 +89,7 @@ void Style::init()
     if ( docElem.tagName() =="zmviewerstyle" && !d->canManageStyleVersion ( docElem.attribute ( "version" ) ) )
     {
         qWarning ( "Style::init():Style version not supported" );
+        d->isValid = false;
         return;
     }
     while ( !n.isNull() )
@@ -154,6 +158,14 @@ QString Style::styleSheet() const{
             return QString();
     }
     return file.readAll();
+}
+
+QString Style::fileName()const{
+    return d->xmlFile;
+}
+
+bool Style::isValid() const{
+    return d->isValid;
 }
 
 bool Style::fullscreen() const{

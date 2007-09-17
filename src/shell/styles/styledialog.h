@@ -55,7 +55,7 @@ class StyleDialog : public QDialog
 Q_OBJECT
 public:
     StyleDialog( QWidget * parent = 0 );
-
+    static void loadFromSettings();
     ~StyleDialog();
 private Q_SLOTS:
     void urlSelected(const QString&);

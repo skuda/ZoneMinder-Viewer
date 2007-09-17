@@ -61,6 +61,8 @@ public:
         @return style sheet's contents
     */
     QString styleSheet() const;
+    QString fileName()const;
+    bool isValid() const;
     bool fullscreen() const;
     
     Style operator=( const Style & other);

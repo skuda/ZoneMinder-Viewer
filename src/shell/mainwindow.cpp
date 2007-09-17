@@ -177,6 +177,8 @@ void MainWindow::initSettings()
         m_centralWidget->addSubWindow ( cam );
         m_cameraToggleAction->append ( ((CameraWidget *)cam)->toggleViewAction() );
     }
+
+    StyleDialog::loadFromSettings();
 }
 
 void MainWindow::saveSettings()

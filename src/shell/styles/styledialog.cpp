@@ -36,6 +36,7 @@
 #include <QMap>
 #include <QApplication>
 #include <QStyleFactory>
+#include <QSettings>
 
 
 #ifdef Q_WS_WIN
@@ -216,7 +217,30 @@ void StyleDialog::applyStyle(){
   EntryButton * _sender = (EntryButton *)sender();
   qApp->setStyle( QStyleFactory::create( _sender->style->style() ) );
   qApp->setStyleSheet(  _sender->style->styleSheet() );
+  QSettings s;
+  s.beginGroup( "Style" );
+  s.setValue( "stylefile", _sender->style->fileName() );
+  s.endGroup();
 }
+
+void StyleDialog::loadFromSettings(){
+    QSettings s;
+    s.beginGroup( "Style" );
+    QString file = s.value( "stylefile").toString();
+    s.endGroup();
+    if ( file.isNull() || file == "" )
+            return;
+    QFileInfo info(file);
+    if ( !info.exists() ) return;
+
+    Style style( file );
+    if ( style.isValid() ){
+        qApp->setStyle( QStyleFactory::create( style.style() ) );
+        qApp->setStyleSheet(  style.styleSheet() );
+    }
+}
+
+
 StyleDialog::~StyleDialog()
 {
 }
