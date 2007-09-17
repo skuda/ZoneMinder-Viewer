@@ -125,6 +125,9 @@ void Style::parseStyle ( const QDomElement & e )
     else if ( e.tagName() == "stylesheet" )
     {
         d->styleSheetFile = e.text();
+    }else{
+        if ( !e.tagName().isNull() || e.tagName() !="" )
+            qDebug( "Style::parseStyle(): Unknown tag %s in  style file: %s", qPrintable( e.tagName()), qPrintable(d->xmlFile ) );
     }
 }
 
