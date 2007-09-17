@@ -49,7 +49,6 @@ class Style::Private
         QString style;
         QString version;
         QString xmlFile;
-        bool fullscreen;
         bool isValid;
         QPushButton * setButton;
 };
@@ -168,9 +167,6 @@ bool Style::isValid() const{
     return d->isValid;
 }
 
-bool Style::fullscreen() const{
-  return d->fullscreen;
-}
 Style::Style( const Style & other)
 :QObject( other.parent() ),d( new Private( *other.d) )
 {

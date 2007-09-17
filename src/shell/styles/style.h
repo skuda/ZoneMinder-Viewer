@@ -63,8 +63,7 @@ public:
     QString styleSheet() const;
     QString fileName()const;
     bool isValid() const;
-    bool fullscreen() const;
-    
+
     Style operator=( const Style & other);
     ~Style();
 
