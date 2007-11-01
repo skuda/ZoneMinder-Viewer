@@ -56,7 +56,7 @@ MainWindow::MainWindow ( QWidget * parent, Qt::WindowFlags flags )
 
 void MainWindow::init()
 {
-    qApp->setWindowIcon ( QIcon ( ":/icons/Icon" ) );
+    qApp->setWindowIcon ( QIcon ( ":/shellicons/Icon" ) );
     setWindowTitle ( About::applicationName() );
     m_settings = new QSettings ( this );
     m_cameraToggleAction = new QList < QAction *>;
@@ -75,11 +75,11 @@ void MainWindow::initActions()
     m_sessionList = new QAction ( tr( "&Session List..." ) , this );
     connect ( m_sessionList , SIGNAL ( triggered() ), this , SLOT ( sessionList() ) );
 
-    m_newCameraAction = new QAction ( QIcon ( ":/icons/AddCameraIcon" ),tr( "&Add" ) , this );
+    m_newCameraAction = new QAction ( QIcon ( ":/shellicons/AddCameraIcon" ),tr( "&Add" ) , this );
     connect ( m_newCameraAction , SIGNAL ( triggered() ), this , SLOT ( cameraAddSlot() ) );
-    m_closeFullScreenAction = new QAction ( QIcon ( ":/icons/Restore" ),tr( "&Close FullScreen View" ) , this );
+    m_closeFullScreenAction = new QAction ( QIcon ( ":/shellicons/Restore" ),tr( "&Close FullScreen View" ) , this );
     connect ( m_closeFullScreenAction , SIGNAL ( triggered() ), this , SLOT ( showNormal() ) );
-    m_fullScreenAction = new QAction ( QIcon ( ":icons/FullScreen" ),tr( "&FullScreen" ), this );
+    m_fullScreenAction = new QAction ( QIcon ( ":/icons/FullScreen" ),tr( "&FullScreen" ), this );
     connect ( m_fullScreenAction, SIGNAL ( triggered() ), this , SLOT ( fullScreen() ) );
     m_quitAction = new QAction ( QIcon ( ":/icons/Quit" ),tr( "&Quit" ) , this );
     connect ( m_quitAction, SIGNAL ( triggered() ), this , SLOT ( close() ) );
