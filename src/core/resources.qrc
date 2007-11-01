@@ -9,6 +9,7 @@
         <file alias="Pause">img/pause.png</file>
         <file alias="Events">img/events.png</file>
         <file alias="Setup">img/setup.png</file>
+        <file alias="MdiIcon">img/mdiicon.png</file>
         <file alias="FullScreen">img/view-fullscreen.png</file>
     </qresource>
 </RCC>

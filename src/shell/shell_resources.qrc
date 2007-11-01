@@ -1,7 +1,6 @@
 <RCC>
     <qresource prefix="/shellicons" >
         <file alias="Icon">img/icon.png</file>
-        <file alias="MdiIcon">img/mdiicon.png</file>
         <file alias="Quit">img/application-exit.png</file>
         <file alias="AddCameraIcon">img/cameradd.png</file>
         <file alias="Restore">img/view-restore.png</file>

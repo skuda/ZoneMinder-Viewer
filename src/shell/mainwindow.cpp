@@ -174,7 +174,7 @@ void MainWindow::initSettings()
     m_monitors = new Monitors ( this );
     foreach ( cam , m_monitors->cameras() )
     {
-        m_centralWidget->addSubWindow ( cam );
+        m_centralWidget->addSubWindow ( cam )->setWindowIcon(cam->windowIcon() );
         m_cameraToggleAction->append ( ((CameraWidget *)cam)->toggleViewAction() );
     }
 
@@ -234,6 +234,7 @@ void MainWindow::addCamera ( const QString & name , const QString &host , int po
     camera->startCamera();
     QWidget *w = m_centralWidget->addSubWindow ( camera );
     w->show();
+    w->setWindowIcon(camera->windowIcon() );
 }
 void MainWindow::cameraAddSlot()
 {
@@ -349,13 +350,19 @@ void MainWindow::aboutDialog()
 void MainWindow::update ( )
 {
     QMdiSubWindow *w;
-    foreach ( w , m_centralWidget->subWindowList () ) delete w;
+    foreach ( w , m_centralWidget->subWindowList () ) {
+        w->hide();
+        delete w;
+    }
     m_monitors->updateMonitors();
     QWidget * cam;
     foreach ( cam , m_monitors->cameras() )
     {
-        m_centralWidget->addSubWindow ( cam )->show();
+        QWidget *subWindow = m_centralWidget->addSubWindow ( cam );
+        subWindow->show();
+        subWindow->setWindowIcon( cam->windowIcon() );
     }
+    repaint();
 }
 
 void MainWindow::hideActiveSubWindow(){
