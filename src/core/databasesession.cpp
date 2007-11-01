@@ -141,9 +141,9 @@ void DatabaseSession::init(){
 
     QHBoxLayout * hboxLayout1 = new QHBoxLayout();
     QDialogButtonBox * buttonBox = new QDialogButtonBox( this );
-    buttonBox->setStandardButtons(QDialogButtonBox::Cancel|QDialogButtonBox::NoButton);
-    QPushButton * btnOk = buttonBox->addButton( tr("Ok") , QDialogButtonBox::AcceptRole );
-    connect (btnOk, SIGNAL(clicked()), this , SLOT(tryConnect()));
+    buttonBox->setStandardButtons(QDialogButtonBox::Ok |QDialogButtonBox::Cancel|QDialogButtonBox::NoButton);
+    connect ( buttonBox, SIGNAL(accepted()), this , SLOT(tryConnect()));
+    connect (buttonBox, SIGNAL(rejected()), this , SLOT(reject()));
 
     hboxLayout1->addWidget(buttonBox);
 
