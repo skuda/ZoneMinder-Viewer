@@ -133,20 +133,21 @@ StyleDialog::StyleDialog( QWidget * parent )
 }
 
 void StyleDialog::init(){
-QDir dir ( DATADIR );
-    if ( !dir.exists() ){
-        if ( !dir.mkdir( DATADIR ) ){
-                qWarning("StyleDialog::init(): error creating data directory.");
-                //return;
-            }
-    }
-dir.setPath( STYLESDIR );
-    if ( !dir.exists() ){
-        if ( !dir.mkdir( STYLESDIR ) ){
-                qWarning("StyleDialog::init(): error creating style directory.");
-                //return;
-            }
-    }
+    d->styles.append( Style::defaultStyle() );
+    QDir dir ( DATADIR );
+        if ( !dir.exists() ){
+            if ( !dir.mkdir( DATADIR ) ){
+                    qWarning("StyleDialog::init(): error creating data directory.");
+                    //return;
+                }
+        }
+    dir.setPath( STYLESDIR );
+        if ( !dir.exists() ){
+            if ( !dir.mkdir( STYLESDIR ) ){
+                    qWarning("StyleDialog::init(): error creating style directory.");
+                    //return;
+                }
+        }
     QDir sharedStyleDir ( ZMVIEWER_STYLE_DIR );
     foreach ( QFileInfo info , sharedStyleDir.entryInfoList() ){
         if ( info.fileName() == "." || info.fileName()=="..") continue;

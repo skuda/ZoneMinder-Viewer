@@ -33,6 +33,10 @@ public:
     Style( const QString & xmlFile , QObject * parent = 0);
     Style( const Style & other);
     /**
+        @return system Style;
+    */
+    static Style defaultStyle();
+    /**
         @return style's name
     */
     QString name() const;
@@ -67,6 +71,8 @@ public:
     Style operator=( const Style & other);
     ~Style();
 
+protected:
+    Style( );
 private:
     void init();
     void parseStyle( const QDomElement & e );

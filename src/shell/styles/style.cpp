@@ -130,6 +130,17 @@ void Style::parseStyle ( const QDomElement & e )
             qDebug( "Style::parseStyle(): Unknown tag %s in  style file: %s", qPrintable( e.tagName()), qPrintable(d->xmlFile ) );
     }
 }
+Style::Style():d(new Private){}
+
+Style Style::defaultStyle(){
+    Style retStyle;
+    retStyle.d->name = tr("Default Style");
+    retStyle.d->version = tr("");
+    retStyle.d->author = tr("zmviewer");
+    return retStyle;
+    //d->style = "";
+    //d->styleSheetFile = "";
+}
 
 QString Style::name() const
 { 
