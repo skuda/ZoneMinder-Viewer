@@ -33,6 +33,7 @@ class QMenu;
 
 class CameraWidgetToolBar : public QToolBar
 {
+ Q_OBJECT
 public:
     CameraWidgetToolBar( QWidget * parent = 0 );
     void autoConnectWith( CameraWidget * camera );

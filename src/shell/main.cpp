@@ -20,6 +20,8 @@
 
 
 #include <QApplication>
+#include <QTranslator>
+#include <QLocale>
 
 #include "mainwindow.h"
 
@@ -30,6 +32,16 @@ int main(int argc, char *argv[])
       QCoreApplication::setOrganizationDomain("silix.com.ar");
       QCoreApplication::setApplicationName("zmviewer");
       QApplication app(argc, argv);
+      /* QT translations */
+      QTranslator qtTranslator;
+      if (!qtTranslator.load("qt_" + QLocale::system().name())) qDebug ("Can not load Qt Translations");
+      app.installTranslator(&qtTranslator);
+
+      QTranslator translator;
+      QString locale = QLocale::system().name();
+      qDebug ( qPrintable( locale ) );
+      translator.load(QString::fromUtf8(":/translations/zmviewer_") + locale);
+      app.installTranslator(&translator);
       MainWindow * m = new MainWindow;
       m->show();
       int r = app.exec(); 

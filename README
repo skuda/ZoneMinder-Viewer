@@ -4,7 +4,14 @@ REQUIREMENTS:
 
 BUILD:
 Run: 
-cd zmviewer
-mkdir build && cd build
-cmake ..
-make
+ cd zmviewer
+ mkdir build && cd build
+ cmake ..
+ make
+
+
+Translate zmviewer:
+ Update ts file example:
+  cd path_to_zmviewer_src
+  lupdate . -ts translations/zmviewer_es.ts
+

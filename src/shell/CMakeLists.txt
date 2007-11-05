@@ -9,6 +9,7 @@ set ( shell_SRCS
     )
 
 QT4_ADD_RESOURCES ( shell_SRCS shell_resources.qrc )
+QT4_ADD_RESOURCES ( shell_SRCS ${CMAKE_SOURCE_DIR}/translations.qrc )
 
 
 include_directories ( ${CMAKE_CURRENT_BINARY_DIR}
