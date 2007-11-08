@@ -538,6 +538,11 @@ Copyright(c)2007 Leandro Emanuel López
         <source>&lt;b&gt;Developers:&lt;/b&gt;&lt;br/&gt;&lt;ul&gt;                       &lt;li&gt;Leandro Emanuel L&#xc3;&#xb3;pez ( Maintainer and main developer ) &lt;br&gt;                       &lt;a href=mailto:lopezlean@gmail.com&gt;lopezlean@gmail.com&lt;/a&gt;&lt;br&gt;                       &lt;a href=mailto:lopezlean@silix.com.ar&gt;lopezlean@silix.com.ar&lt;/a&gt;&lt;br&gt;&lt;/li&gt;                       &lt;li&gt;Dardo Sordi Bogado ( Original idea and ZoneMinder Stream connection ) &lt;br&gt;                       &lt;a href=mailto:dardo.sordi@gmail.com&gt;dardo.sordi@gmail.com&lt;/a&gt; &lt;/li&gt;&lt;/ul&gt;&lt;br&gt;                       &lt;b&gt;Thanks to:&lt;/b&gt;&lt;ul&gt;                       &lt;li&gt;SILIX ( ZMViewer is developed here ) &lt;br&gt;                       &lt;a href=http://www.silix.com.ar&gt;http://www.silix.com.ar&lt;/a&gt; &lt;/li&gt;&lt;/ul&gt;                       </source>
         <translation>&lt;b&gt;Desarrolladores:&lt;/b&gt;&lt;br/&gt;&lt;ul&gt;                       &lt;li&gt;Leandro Emanuel López ( Mantenedor y desarrollador principal ) &lt;br&gt;                       &lt;a href=mailto:lopezlean@gmail.com&gt;lopezlean@gmail.com&lt;/a&gt;&lt;br&gt;                       &lt;a href=mailto:lopezlean@silix.com.ar&gt;lopezlean@silix.com.ar&lt;/a&gt;&lt;br&gt;&lt;/li&gt;                       &lt;li&gt;Dardo Sordi Bogado ( Idea original y conexión con el stream de zoneminder ) &lt;br&gt;                       &lt;a href=mailto:dardo.sordi@gmail.com&gt;dardo.sordi@gmail.com&lt;/a&gt; &lt;/li&gt;&lt;/ul&gt;&lt;br&gt;                       &lt;b&gt;Thanks to:&lt;/b&gt;&lt;ul&gt;                       &lt;li&gt;SILIX ( ZMViewer es desarrollado aquí ) &lt;br&gt;                       &lt;a href=http://www.silix.com.ar&gt;http://www.silix.com.ar&lt;/a&gt; &lt;/li&gt;&lt;/ul&gt;                       </translation>
     </message>
+    <message>
+        <location filename="../src/core/connectionmanager.cpp" line="58"/>
+        <source>Access denied for user %1@%2</source>
+        <translation type="unfinished">Acceso denegado para el usuario %1@%2</translation>
+    </message>
 </context>
 <context>
     <name>SessionWidget</name>
@@ -603,11 +608,6 @@ Copyright(c)2007 Leandro Emanuel López
         <location filename="../src/shell/styles/style.cpp" line="139"/>
         <source>zmviewer</source>
         <translation>zmviewer</translation>
-    </message>
-    <message>
-        <location filename="../src/shell/styles/style.cpp" line="138"/>
-        <source></source>
-        <translation></translation>
     </message>
 </context>
 <context>

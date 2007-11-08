@@ -55,6 +55,7 @@ bool ConnectionManager::addConnection ( const QString &d , const QString & h, co
     if ( ! b )
     {
         lastError = db.lastError();
+        lastError.setDatabaseText(QObject::tr("Access denied for user %1@%2").arg(db.userName()).arg(db.hostName()) );
         db.close();
         if( removeiferror )
             db.removeDatabase ( cn );
