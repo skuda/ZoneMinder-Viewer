@@ -22,7 +22,7 @@
 #include <QApplication>
 #include <QTranslator>
 #include <QLocale>
-
+#include <QLibraryInfo>
 #include "mainwindow.h"
 
 
@@ -34,12 +34,11 @@ int main(int argc, char *argv[])
       QApplication app(argc, argv);
       /* QT translations */
       QTranslator qtTranslator;
-      if (!qtTranslator.load("qt_" + QLocale::system().name())) qDebug ("Can not load Qt Translations");
+      if (!qtTranslator.load("qt_" + QLocale::system().name(),QLibraryInfo::location(QLibraryInfo::TranslationsPath))) qDebug ("Can not load Qt Translations");
       app.installTranslator(&qtTranslator);
 
       QTranslator translator;
       QString locale = QLocale::system().name();
-      qDebug ( qPrintable( locale ) );
       translator.load(QString::fromUtf8(":/translations/zmviewer_") + locale);
       app.installTranslator(&translator);
       MainWindow * m = new MainWindow;
