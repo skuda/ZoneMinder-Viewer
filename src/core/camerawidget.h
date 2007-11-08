@@ -44,9 +44,12 @@ public:
 
     ~CameraWidget();
     /**
-     @return el stream que controla el flujo de datos en la cámara
+     @return camera's stream
     */
     Stream * stream();
+    /**
+        set camera's stream
+    */
     void setStream( Stream * stream);
     void setConfigActionState( bool state );
     /**
@@ -56,27 +59,43 @@ public:
     CameraWidgetToolBar * toolBar() const;
 protected Q_SLOTS:
     /**
-        setea la imagen en el widget que representa la camara
+        set pixmap
     */
 void setPixmap ( QPixmap * p);
 
 public Q_SLOTS:
+    /**
+        start camera
+    */
     void startCamera( );
+    /**
+        pause camera
+    */
     void pauseCamera( );
+    /**
+        stop and start camera
+    */
     void restartCamera();
+    /**
+        stop camera
+    */
     void stopCamera();
+    /**
+        launch config dialog
+    */
     void configCamera();
+    /**
+        show camera in fullscreen mode
+    */
     void fullScreen();
     void remove();
+    /** 
+        show events of this camera
+    */
     void cameraEvents();
     void setAutoAdjustImage ( bool b );
 
 Q_SIGNALS:
-    /**
-       Esta señal es emitida en el momento en que la cámara debe borrarse.
-       Automaticamente es conectada al objeto padre de este widget.
-       En caso de no tener padre deberá de conectarse a otro objeto.
-    */
     void removeMe( CameraWidget * me );
     void windowTitleChanged( const QString &);
 
