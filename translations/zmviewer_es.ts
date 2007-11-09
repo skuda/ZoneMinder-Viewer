@@ -541,7 +541,7 @@ Copyright(c)2007 Leandro Emanuel López
     <message>
         <location filename="../src/core/connectionmanager.cpp" line="58"/>
         <source>Access denied for user %1@%2</source>
-        <translation type="unfinished">Acceso denegado para el usuario %1@%2</translation>
+        <translation>Acceso denegado para el usuario %1@%2</translation>
     </message>
 </context>
 <context>
