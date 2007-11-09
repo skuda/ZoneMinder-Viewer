@@ -138,6 +138,11 @@
         <source>Events for Monitor %1</source>
         <translation>Eventos para el monitor %1</translation>
     </message>
+    <message>
+        <location filename="../src/core/camerawidget.cpp" line="157"/>
+        <source>View Setup</source>
+        <translation type="unfinished">Ver configuración</translation>
+    </message>
 </context>
 <context>
     <name>CameraWidgetToolBar</name>
@@ -608,6 +613,11 @@ Copyright(c)2007 Leandro Emanuel López
         <location filename="../src/shell/styles/style.cpp" line="139"/>
         <source>zmviewer</source>
         <translation>zmviewer</translation>
+    </message>
+    <message>
+        <location filename="../src/shell/styles/style.cpp" line="138"/>
+        <source></source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

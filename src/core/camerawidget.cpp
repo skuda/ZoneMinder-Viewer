@@ -154,7 +154,7 @@ void CameraWidget::setPixmap ( QPixmap * p){
 void CameraWidget::configCamera(){
     CameraAddDialog d( this );
     d.setEditable( false );
-    d.setWindowTitle("View Setup");
+    d.setWindowTitle(tr("View Setup"));
     d.setValues( windowTitle(), stream()->host() , QString::number(stream()->port() ) , QString::number(stream()->monitor()), stream()->zmStreamServer() );
     d.exec();
     /*
