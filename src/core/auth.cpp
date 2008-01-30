@@ -22,6 +22,7 @@
 
 #include <QSqlDatabase>
 #include <QSqlQuery>
+#include <QSqlRecord>
 #include <QString>
 #include <QVariant>
 #include <QCryptographicHash>
@@ -81,6 +82,11 @@ bool Auth::userLogin ( const QString &username , const QString &password )
 
     /* OK */
     m_userName = username;
+    if ( m_AuthType == HASHED ){
+	  int passField = query.record().indexOf("Password");
+	  m_hashPassword = query.value( passField ).toString();
+    }
+    
     m_password = password;
     saveSettings();
     return m_isAuth = true;
@@ -114,7 +120,6 @@ bool Auth::isAuth() const
 QByteArray Auth::authKey( ) const
 {
 
-    QDateTime dateTime = QDateTime::currentDateTime();
     QSqlDatabase db = QSqlDatabase::database ( m_db );
     QSqlQuery query = db.exec ( QString ( "SELECT Value from Config where Name = 'ZM_AUTH_HASH_SECRET'" ) );
     QString auth_key;
@@ -126,6 +131,19 @@ QByteArray Auth::authKey( ) const
     query.next();
     use_remote_addr = query.value ( 0 ).toBool(); // Include remote addr?
     query.clear();
+
+    query = db.exec ( QString ( "SELECT now()" ) );
+    query.next();
+    if ( !query.isValid() ) qDebug ("Hash Error: Can not read Server Time. now() function doesn't work");
+    QString dateTimeString = query.value ( 0 ).toString();
+    QDateTime dateTime = QDateTime::fromString( dateTimeString, Qt::ISODate );
+    if ( ! dateTime.isValid() )
+		qDebug ("Hash Error: not iso datetime from server");
+    query.clear();
+    qDebug ( qPrintable (dateTimeString) );
+
+    auth_key += m_userName;
+    auth_key += m_hashPassword;
     if ( use_remote_addr )
     {
         QHostInfo hinfo = QHostInfo::fromName ( db.hostName() );
@@ -135,14 +153,16 @@ QByteArray Auth::authKey( ) const
             auth_key+=address.toString();
         }
     }
-
-    auth_key += m_userName;
-    auth_key += m_password;
-    auth_key += QString::number ( dateTime.time().hour() );//hour
+    dateTime = dateTime.toTimeSpec( Qt::LocalTime );
+    auth_key += QString::number ( ( dateTime.time().hour() ) );//hour
     auth_key += QString::number ( dateTime.date().day() );//day of month
     auth_key += QString::number ( dateTime.date().month() );//month
     auth_key += QString::number ( dateTime.date().year() - 1900 );//years since 1900
-    return QCryptographicHash::hash ( qPrintable ( auth_key ) , QCryptographicHash::Md5 );
+    qDebug ( qPrintable ( "authkey:" + auth_key ));
+    QByteArray ret = QCryptographicHash::hash ( qPrintable(auth_key) , QCryptographicHash::Md5 );
+    qDebug ( qPrintable(QString (auth_key.toUtf8())) );
+    qDebug ( qPrintable(QString (ret.toHex())) );
+    return ret.toHex();
 
 }
 void Auth::loadSettings()

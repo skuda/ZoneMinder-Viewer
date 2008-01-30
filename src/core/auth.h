@@ -48,6 +48,7 @@ private:
     void loadSettings();
     QString m_userName;
     QString m_password;
+    QString m_hashPassword;
 };
 
 #endif
