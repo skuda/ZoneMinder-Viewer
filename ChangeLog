@@ -1,3 +1,9 @@
+2008-01-31
+*ZMViewer 0.1.6 released
+* FIXED stream
+* FIXED hashed auths
+* Added new class called QMultiPartReader to parse boundary
+
 2007-08-04
 * ZMViewer 0.1.5 released.
 database connection

@@ -3,6 +3,7 @@ TODO LIST:
 Bugs and wishes:
 * View recorded events.[WORKING]
 * Support Auth mode [WORKING]
+* [BUG] lost packages in Stream class[ DONE?? need test ]
 * A simple way to copy selected events to a CD (perhaps add to a K3b project)or usb thumb drive.
 * To be able to view the camera live feeds.
 * A widget to select recorded events based on a "After (date)(time) and before (date)(time)" dialog and then view them.
@@ -10,12 +11,11 @@ Bugs and wishes:
 * Audio support?
 * Api Documentation
 * End User documentation
-* [BUG] lost packages in Stream class
-* rename config.h ?
 
 Done:
 English languaje translation (lopezlean)
 Mysql connection with zoneminder's database
+Rename config.h
 
 
 
