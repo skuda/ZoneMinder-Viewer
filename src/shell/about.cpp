@@ -41,7 +41,7 @@ void About::showAboutDialog()
     QVBoxLayout * layout = new QVBoxLayout ( m_dialog );
 
     QHBoxLayout * titleLayout = new QHBoxLayout ( );
-    QLabel * programName = new QLabel ( QString ( "<b>" ) + QObject::tr(ApplicationName) + QString ( " " ) +QString::number ( ZMVIEWER_VERSION ) + QString ( "</b>" ), m_dialog );
+    QLabel * programName = new QLabel ( QString ( "<b>" ) + QObject::tr(ApplicationName) + QString ( " " ) +QString( ZMVIEWER_VERSION_STRING ) + QString ( "</b>" ), m_dialog );
     titleLayout->addWidget ( programName );
     QLabel * programIcon = new QLabel ( m_dialog );
     programIcon->setPixmap ( qApp->windowIcon().pixmap ( 32,32 ) );
@@ -83,7 +83,7 @@ QString About::applicationName()
 
 QString About::versionString()
 {
-    return QString::number ( ZMVIEWER_VERSION );
+    return ZMVIEWER_VERSION_STRING;
 }
 
 QString About::aboutText()

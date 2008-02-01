@@ -1,4 +1,7 @@
-#define ZMVIEWER_VERSION 0.1
+#define ZMVIEWER_VERSION_MAJOR 0
+#define ZMVIEWER_VERSION_MINOR 1
+#define ZMVIEWER_RELEASE 6
+#define ZMVIEWER_VERSION_STRING "0.1.6"
 static char * ApplicationName = "ZoneMinder Viewer";
 static char * ApplicationShortName ="ZMViewer";
 

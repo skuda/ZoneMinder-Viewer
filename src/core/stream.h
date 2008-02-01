@@ -67,10 +67,9 @@ Q_SIGNALS:
     void frameReady ( QPixmap * current_frame );
 private Q_SLOTS:
     void read (const QHttpResponseHeader &header );
+    bool image ( const QByteArray &array );
 private:
 
-    
-    bool image ( QByteArray* array );
     //private class
     class Private;
     Private *d;

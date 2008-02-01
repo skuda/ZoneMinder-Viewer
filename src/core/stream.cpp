@@ -19,6 +19,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 #include "stream.h"
+#include "qmultipartreader.h"
 
 #include <QHttp>
 #include <QString>
@@ -41,9 +42,11 @@ class Stream::Private
             bitrate = 2;
             zms ="/cgi-bin/nph-zms";
             current_frame = new QPixmap;
+            multiPartReader = new QMultiPartReader("--ZoneMinderFrame");
         }
         ~Private(){
             delete current_frame;
+            delete multiPartReader;
 	    }
         QHttp * http;
         QString mode;
@@ -57,6 +60,8 @@ class Stream::Private
         StreamType type;
         QPixmap * current_frame;
         QString appendString;
+        
+        QMultiPartReader * multiPartReader;
 };
 
 Stream::Stream ( QObject * parent )
@@ -111,6 +116,11 @@ void Stream::setEvent ( quint16 event ){
 void Stream::read ( const QHttpResponseHeader &header )
 {
     Q_UNUSED ( header );
+
+    d->multiPartReader->read( d->http->readAll() );
+    
+/** OLD CODE!!!
+    
     QByteArray array = d->http->readAll();
     QByteArray * tmp = new QByteArray;
     int c = 0;
@@ -140,19 +150,21 @@ void Stream::read ( const QHttpResponseHeader &header )
     delete tmp;
 
 
-    c++;
+    c++;*/
 }
 
 
-bool Stream::image ( QByteArray* array )
+bool Stream::image ( const QByteArray &array )
 {
-    if ( d->current_frame->loadFromData ( *array ) )
+    if ( d->current_frame->loadFromData ( array ) )
     {
-        array->clear();
+        //array.clear();
         emit ( frameReady ( d->current_frame ) );
         return true;
     }
+#ifdef DEBUG_PARSING
     qDebug ( "Stream::image: NOT ready" );
+#endif
     return false;
 }
 
@@ -167,14 +179,18 @@ void Stream::start()
             connection = QString ( "%1?mode=%2&frame=1&event=%3&scale=%4&bitrate=%5" ).arg ( d->zms ).arg ( d->mode ).arg ( d->event ).arg ( d->scale ).arg ( d->bitrate);
     if ( !d->appendString.isNull() && d->appendString.size() > 0 )
             connection.append("&"+d->appendString);
+    #ifdef DEBUG_PARSING
     qDebug ( qPrintable ( connection ) );
+    #endif
     d->http->get ( connection );
     connect ( d->http, SIGNAL ( readyRead ( const QHttpResponseHeader& ) ), this, SLOT ( read ( const QHttpResponseHeader & ) ) );
+    connect ( d->multiPartReader, SIGNAL ( frameReady ( QByteArray ) ), this, SLOT ( image ( QByteArray ) ) );
 }
 
 void Stream::stop(){
     d->http->abort ();
     disconnect ( d->http, SIGNAL ( readyRead ( const QHttpResponseHeader& ) ), this, SLOT ( read ( const   QHttpResponseHeader & ) ) );
+    disconnect ( d->multiPartReader, SIGNAL ( frameReady ( QByteArray ) ), this, SLOT ( image ( QByteArray ) ) );
     
 }
 void Stream::restart(){

@@ -11,6 +11,7 @@ set ( core_SRCS
       cameraevents.cpp
       auth.cpp
       authdialog.cpp
+      qmultipartreader.cpp
     )
 
 set ( core_UIS
