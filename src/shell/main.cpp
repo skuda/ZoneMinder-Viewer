@@ -32,6 +32,9 @@ int main(int argc, char *argv[])
       QCoreApplication::setOrganizationDomain("silix.com.ar");
       QCoreApplication::setApplicationName("zmviewer");
       QApplication app(argc, argv);
+      #ifdef Q_WS_WIN
+      QCoreApplication::addLibraryPath ( QCoreApplication::applicationDirPath () );
+      #endif
       /* QT translations */
       QTranslator qtTranslator;
       if (!qtTranslator.load("qt_" + QLocale::system().name(),QLibraryInfo::location(QLibraryInfo::TranslationsPath))) qDebug ("Can not load Qt Translations");
@@ -43,7 +46,7 @@ int main(int argc, char *argv[])
       app.installTranslator(&translator);
       MainWindow * m = new MainWindow;
       m->show();
-      int r = app.exec(); 
+      int r = app.exec();
       return r;
 }
 
