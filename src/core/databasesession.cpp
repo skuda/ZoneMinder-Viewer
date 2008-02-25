@@ -163,6 +163,7 @@ void DatabaseSession::init(){
     userNameLabel->setBuddy(m_userNameLE);
     passwordLabel->setBuddy(m_passwordLE);
     advancedBox->setVisible( pushButton->isChecked() );
+    layout()->setSizeConstraint(QLayout::SetFixedSize);
 
 
     /**
