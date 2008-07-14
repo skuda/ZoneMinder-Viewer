@@ -5,13 +5,13 @@ Bugs and wishes:
 * To be able to view the camera live feeds.
 * The ability to view monitors located on the host running the gui using the raw stream.
 * Audio support?
-* Api Documentation
 * End User documentation
-* Move Language menu to help menu. Add a QDialog to switch languages, like kde
-* Make zmviewer Qt 4.3 compatible. ( QGridLayout::itemAtPosition(int, int) and QWebKit are Qt 4.4 stuff ) 
+* Make zmviewer Qt 4.3 compatible. ? ( QGridLayout::itemAtPosition(int, int) and QWebKit are Qt 4.4 
+stuff ) 
 
 Working:
 * A widget to select recorded events based on a "After (date)(time) and before (date)(time)" dialog and then view them.
+* Api Documentation
 
 Done:
 English languaje translation (lopezlean)
@@ -20,4 +20,6 @@ Rename config.h
 Support Auth mode [ but need testing]
 View recorded events.
 [BUG] lost packages in Stream class
+Move Language menu to help menu. Add a QDialog to switch languages, like kde ( moved to preferences 
+dialog )
 
