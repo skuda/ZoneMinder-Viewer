@@ -310,7 +310,7 @@
     <message>
         <location filename="../src/core/databasesession.cpp" line="151"/>
         <source>More..</source>
-        <translation>Więcej.. </translation>
+        <translation>Więcej..</translation>
     </message>
     <message>
         <location filename="../src/core/databasesession.cpp" line="184"/>
@@ -334,151 +334,166 @@
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../src/shell/mainwindow.cpp" line="72"/>
+        <location filename="../src/shell/mainwindow.cpp" line="235"/>
         <source>&amp;New Session...</source>
         <translation>&amp;Nowa sesja...</translation>
     </message>
     <message>
-        <location filename="../src/shell/mainwindow.cpp" line="75"/>
+        <location filename="../src/shell/mainwindow.cpp" line="236"/>
         <source>&amp;Session List...</source>
         <translation>Lista &amp;sesji...</translation>
     </message>
     <message>
-        <location filename="../src/shell/mainwindow.cpp" line="78"/>
+        <location filename="../src/shell/mainwindow.cpp" line="237"/>
         <source>&amp;Add</source>
         <translation>&amp;Dodaj</translation>
     </message>
     <message>
-        <location filename="../src/shell/mainwindow.cpp" line="80"/>
+        <location filename="../src/shell/mainwindow.cpp" line="238"/>
         <source>&amp;Close FullScreen View</source>
         <translation>&amp;Zamknij pełny ekran</translation>
     </message>
     <message>
-        <location filename="../src/shell/mainwindow.cpp" line="82"/>
+        <location filename="../src/shell/mainwindow.cpp" line="239"/>
         <source>&amp;FullScreen</source>
         <translation>&amp;Pełny ekran</translation>
     </message>
     <message>
-        <location filename="../src/shell/mainwindow.cpp" line="84"/>
+        <location filename="../src/shell/mainwindow.cpp" line="240"/>
         <source>&amp;Quit</source>
         <translation>&amp;Zakończ</translation>
     </message>
     <message>
-        <location filename="../src/shell/mainwindow.cpp" line="86"/>
+        <location filename="../src/shell/mainwindow.cpp" line="241"/>
         <source>&amp;Cascade</source>
         <translation>&amp;Kaskadowo</translation>
     </message>
     <message>
-        <location filename="../src/shell/mainwindow.cpp" line="88"/>
+        <location filename="../src/shell/mainwindow.cpp" line="242"/>
         <source>&amp;Tile</source>
         <translation>&amp;Tile</translation>
     </message>
     <message>
-        <location filename="../src/shell/mainwindow.cpp" line="93"/>
+        <location filename="../src/shell/mainwindow.cpp" line="243"/>
         <source>&amp;Hide</source>
         <translation>&amp;Ukryj</translation>
     </message>
     <message>
-        <location filename="../src/shell/mainwindow.cpp" line="94"/>
+        <location filename="../src/shell/mainwindow.cpp" line="244"/>
         <source>Ctrl+F4</source>
         <translation>Ctrl+F4</translation>
     </message>
     <message>
-        <location filename="../src/shell/mainwindow.cpp" line="95"/>
+        <location filename="../src/shell/mainwindow.cpp" line="245"/>
         <source>Hide active window</source>
         <translation>Ukryj aktywne okna</translation>
     </message>
     <message>
-        <location filename="../src/shell/mainwindow.cpp" line="98"/>
+        <location filename="../src/shell/mainwindow.cpp" line="246"/>
         <source>Hide &amp;All</source>
         <translation>Ukryj &amp;wszystko</translation>
     </message>
     <message>
-        <location filename="../src/shell/mainwindow.cpp" line="99"/>
+        <location filename="../src/shell/mainwindow.cpp" line="247"/>
         <source>Hide All Sub&amp;Windows</source>
-        <translation>Ukry wszystkie &amp;podokna</translation>
+        <translation>Ukryj wszystkie &amp;podokna</translation>
     </message>
     <message>
-        <location filename="../src/shell/mainwindow.cpp" line="102"/>
+        <location filename="../src/shell/mainwindow.cpp" line="248"/>
         <source>Update All Monitors</source>
         <translation>Zaktualizuj wszystkie kamery</translation>
     </message>
     <message>
-        <location filename="../src/shell/mainwindow.cpp" line="103"/>
+        <location filename="../src/shell/mainwindow.cpp" line="249"/>
         <source>Update all session&apos;s monitors</source>
         <translation>Zaktualizuj wszystkie sesje</translation>
     </message>
     <message>
-        <location filename="../src/shell/mainwindow.cpp" line="109"/>
+        <location filename="../src/shell/mainwindow.cpp" line="228"/>
         <source>Session</source>
         <translation>Sesja</translation>
     </message>
     <message>
-        <location filename="../src/shell/mainwindow.cpp" line="115"/>
+        <location filename="../src/shell/mainwindow.cpp" line="229"/>
         <source>Monitors</source>
         <translation>Kamery</translation>
     </message>
     <message>
-        <location filename="../src/shell/mainwindow.cpp" line="120"/>
+        <location filename="../src/shell/mainwindow.cpp" line="230"/>
         <source>View</source>
         <translation>Widok</translation>
     </message>
     <message>
-        <location filename="../src/shell/mainwindow.cpp" line="121"/>
+        <location filename="../src/shell/mainwindow.cpp" line="231"/>
         <source>&amp;Monitors</source>
         <translation>&amp;Kamery</translation>
     </message>
     <message>
-        <location filename="../src/shell/mainwindow.cpp" line="122"/>
+        <location filename="../src/shell/mainwindow.cpp" line="163"/>
         <source>&amp;Select Style...</source>
         <translation>Wybierz &amp;styl...</translation>
     </message>
     <message>
-        <location filename="../src/shell/mainwindow.cpp" line="125"/>
+        <location filename="../src/shell/mainwindow.cpp" line="166"/>
         <source>Customized View...</source>
         <translation>Dostosuj widok...</translation>
     </message>
     <message>
-        <location filename="../src/shell/mainwindow.cpp" line="137"/>
+        <location filename="../src/shell/mainwindow.cpp" line="232"/>
         <source>&amp;Window</source>
         <translation>&amp;Okno</translation>
     </message>
     <message>
         <location filename="../src/shell/mainwindow.cpp" line="144"/>
         <source>&amp;Help</source>
-        <translation>&amp;Pomoc</translation>
+        <translation type="obsolete">&amp;Pomoc</translation>
     </message>
     <message>
-        <location filename="../src/shell/mainwindow.cpp" line="145"/>
+        <location filename="../src/shell/mainwindow.cpp" line="190"/>
         <source>About...</source>
         <translation>Informacje o programie...</translation>
     </message>
     <message>
-        <location filename="../src/shell/mainwindow.cpp" line="146"/>
+        <location filename="../src/shell/mainwindow.cpp" line="191"/>
         <source>About Qt...</source>
         <translation>Informacje o Qt...</translation>
     </message>
     <message>
-        <location filename="../src/shell/mainwindow.cpp" line="170"/>
+        <location filename="../src/shell/mainwindow.cpp" line="273"/>
         <source>Database Error</source>
         <translation>Bład bazy danych</translation>
     </message>
     <message>
-        <location filename="../src/shell/mainwindow.cpp" line="170"/>
+        <location filename="../src/shell/mainwindow.cpp" line="273"/>
         <source>Can not connect with Database %1 at host %2</source>
         <translation>Nie mogę się połączyć z bazą danych %1 hosta %2</translation>
     </message>
     <message>
-        <location filename="../src/shell/mainwindow.cpp" line="249"/>
+        <location filename="../src/shell/mainwindow.cpp" line="352"/>
         <source>Add Video Camera</source>
         <translation>Dodaj kamerę</translation>
     </message>
     <message>
-        <location filename="../src/shell/mainwindow.cpp" line="249"/>
+        <location filename="../src/shell/mainwindow.cpp" line="352"/>
         <source>Name is already in use.
  Please select other</source>
         <translation>Nazwa jest już używana.
  Proszę wybrać inną</translation>
+    </message>
+    <message>
+        <location filename="../src/shell/mainwindow.cpp" line="215"/>
+        <source>&amp;%1 %2</source>
+        <translation>&amp;%1 %2</translation>
+    </message>
+    <message>
+        <location filename="../src/shell/mainwindow.cpp" line="233"/>
+        <source>Help</source>
+        <translation>Pomoc</translation>
+    </message>
+    <message>
+        <location filename="../src/shell/mainwindow.cpp" line="250"/>
+        <source>&amp;Language</source>
+        <translation>&amp;Język</translation>
     </message>
 </context>
 <context>
@@ -527,7 +542,7 @@
     <message>
         <location filename="../src/shell/about.cpp" line="64"/>
         <source>Ok</source>
-        <translation>Ok </translation>
+        <translation>Ok</translation>
     </message>
     <message>
         <location filename="../src/shell/about.cpp" line="91"/>
@@ -614,11 +629,6 @@ Copyright(c)2007 Leandro Emanuel López
         <source>zmviewer</source>
         <translation>zmviewer</translation>
     </message>
-    <message>
-        <location filename="../src/shell/styles/style.cpp" line="138"/>
-        <source></source>
-        <translation></translation>
-    </message>
 </context>
 <context>
     <name>StyleDialog</name>
@@ -641,6 +651,14 @@ Copyright(c)2007 Leandro Emanuel López
         <location filename="../src/shell/styles/styledialog.cpp" line="202"/>
         <source>Close</source>
         <translation>Zamknij</translation>
+    </message>
+</context>
+<context>
+    <name>Translate</name>
+    <message>
+        <location filename="../src/shell/mainwindow.cpp" line="213"/>
+        <source>English</source>
+        <translation>Polski</translation>
     </message>
 </context>
 </TS>

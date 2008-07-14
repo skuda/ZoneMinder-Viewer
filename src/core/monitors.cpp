@@ -26,11 +26,12 @@
 
 #include<QSqlQuery>
 #include<QStringList>
+#include<QPair>
 #include<QVariant>
 #include<QSqlRecord>
 
 
-
+static QList<QPair < QString,QString> > hostList;
 Monitors::Monitors ( QObject * parent )
         :QObject ( parent )
 {
@@ -43,6 +44,7 @@ void Monitors::init()
     foreach ( QString  connection , ConnectionManager::connectionNames() )
     {
         QSqlDatabase db = QSqlDatabase::database ( connection ) ;
+        hostList.append( QPair<QString,QString>(db.hostName(), connection ));
         QSqlQuery query = db.exec ( "SELECT Value from Config where Name='ZM_PATH_ZMS'" );
         query.next();
         QString zms = query.value ( 0 ).toString();
@@ -55,6 +57,7 @@ void Monitors::init()
             if ( ! auth.isAuth() )
             {
                 AuthDialog d ( &auth );
+                d.setHostName( db.hostName() );
                 int r = d.exec();
                 if ( r == QDialog::Accepted )
                     append = true;
@@ -66,6 +69,8 @@ void Monitors::init()
         {
             CameraWidget * camera = new CameraWidget ( connection );
             camera->setWindowTitle ( query.value ( query.record().indexOf ( "Name" ) ).toString() + tr( " at " ) + db.hostName() );
+            camera->setName ( query.value ( query.record().indexOf ( "Name" ) ).toString() );
+
             camera->stream()->setHost ( db.hostName() ,query.value ( query.record().indexOf ( "Port" ) ).toInt() );
             camera->stream()->setMonitor ( query.value ( query.record().indexOf ( "Id" ) ).toUInt() );
             camera->stream()->setZMStreamServer ( zms );
@@ -86,9 +91,15 @@ int Monitors::count()
     return m_cameras.count();
 }
 
+QList<QPair< QString,QString> > Monitors::hosts(){
+    return hostList;
+
+}
+
 void Monitors::updateMonitors()
 {
     m_cameras.clear();
+    hostList.clear();
     init();
 }
 

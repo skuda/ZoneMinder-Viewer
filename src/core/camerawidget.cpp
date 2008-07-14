@@ -19,14 +19,15 @@
  ***************************************************************************/
 #include "camerawidget.h"
 #include "cameraevents.h"
+#include "framewidget.h"
 
 #include <QLabel>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QToolButton>
 #include <QMessageBox>
-#include <QFrame>
 #include <QMenu>
+#include <QPaintEvent>
 
 //local includes
 #include "stream.h"
@@ -34,16 +35,29 @@
 #include "fullscreencamera.h"
 #include "camerawidgettoolbar.h"
 #include "camerawidget.h"
-//
-//TODO:
+
+class CameraWidget::Private{
+    public:
+        Private():highQuality(false),cameraEvent(0){}
+        QSize size;
+        bool highQuality;
+        CameraType cameraType;
+        CameraEvents *cameraEvent;
+        FocusBehavior focusBehavior;
+        Qt::AspectRatioMode aspectRatioMode;
+        QString cameraName;
+        FrameWidget::Status state;
+        FrameWidget::Status savedState;
+        mutable QString uniqueId;
+        bool restoreStateOnShow;
+};
 
 CameraWidget::CameraWidget( const QString &conectionName, QWidget *parent)
- : QScrollArea( parent),m_autoAdjustImage( false ),m_toggleViewAction(0)
+ : QFrame( parent),m_autoAdjustImage( false ),m_toggleViewAction(0),m_focusAction(0),m_promoteToMainCameraAction(0),m_promoteToSecondCameraAction(0),
+d( new Private )
 {
     m_conectionName = conectionName;
     init();
-    if (parent)
-        connect ( this , SIGNAL ( removeMe(CameraWidget *)), parent , SLOT    (removeCamera(CameraWidget *)));
 }
 
 CameraWidget::CameraWidget( const CameraWidget & other ){
@@ -51,29 +65,30 @@ CameraWidget::CameraWidget( const CameraWidget & other ){
     this->m_stream = other.m_stream;
     this->m_autoAdjustImage = other.m_autoAdjustImage;
     this->m_conectionName = other.m_conectionName;
+    this->d = other.d;
 }
 
 void CameraWidget::init(){
     setWindowIcon ( QIcon (":/icons/MdiIcon"));
     setSizePolicy(QSizePolicy::Minimum , QSizePolicy::Minimum);
-    setWidgetResizable ( true );
 
     m_stream = new Stream( this );
     m_frame = new QFrame ( this );
     m_frame->setSizePolicy(QSizePolicy::Expanding , QSizePolicy::Expanding );
     QLayout * m_frameLayout = new QVBoxLayout ( m_frame );
     m_frameLayout->setMargin(0);
-    m_camView = new QLabel ( m_frame );
-    m_frameLayout->addWidget ( m_camView );
+    m_frameWidget = new FrameWidget ( m_frame );
+    m_frameLayout->addWidget ( m_frameWidget );
 
     m_toolbar = new CameraWidgetToolBar ( this );
     m_toolbar->autoConnectWith( this );
 
     //widget
     m_layout = new QVBoxLayout ( this );
-    m_layout->setMargin(0);
+    m_layout->setMargin(1);
+    m_layout->setAlignment( Qt::AlignVCenter | Qt::AlignHCenter );
+    m_frameWidget->setStatus( FrameWidget::NoSignal );
 
-    m_camView->setText (tr("<b>No signal</b>"));
 
     m_spacerV = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
 
@@ -86,6 +101,14 @@ void CameraWidget::init(){
     connect ( this, SIGNAL(customContextMenuRequested ( const QPoint &  )) , this , SLOT( popupMenu ( const QPoint & ) ) );
 
     adjustSize( );
+    setFocusPolicy( Qt::StrongFocus );
+    setBackgroundRole( QPalette::Shadow );
+    setAutoFillBackground( true );
+    d->cameraType = Monitor;
+    d->focusBehavior = None;
+    d->aspectRatioMode = Qt::KeepAspectRatio;
+    d->restoreStateOnShow = false;
+
 }
 
 Stream * CameraWidget::stream(){
@@ -103,18 +126,28 @@ void CameraWidget::setAutoAdjustImage ( bool b ){
     m_autoAdjustImage = b;
 }
 void CameraWidget::startCamera(){
+    d->state = FrameWidget::Playing;
     m_stream->start();
     connect ( m_stream , SIGNAL ( frameReady ( QPixmap *) ) , this , SLOT (setPixmap (QPixmap *)));
+    connect ( m_stream , SIGNAL ( done ( QString ) ) , m_frameWidget , SLOT ( setErrorMessage ( QString ) ) );
+    m_frameWidget->setStatus( FrameWidget::Playing );
 }
 
 void CameraWidget::pauseCamera( ){
+    d->state = FrameWidget::Paused;
     m_stream->stop();
     disconnect ( m_stream , SIGNAL ( frameReady ( QPixmap *) ) , this , SLOT (setPixmap (QPixmap *)));
+    disconnect ( m_stream , SIGNAL ( done ( QString ) ) , m_frameWidget , SLOT ( setErrorMessage ( QString ) ) );
+    m_frameWidget->setStatus( FrameWidget::Paused );
+    m_frameWidget->update();
 }
 void CameraWidget::stopCamera(){
+    d->state = FrameWidget::Stopped;
     m_stream->stop();
     disconnect ( m_stream , SIGNAL ( frameReady ( QPixmap *) ) , this , SLOT (setPixmap (QPixmap *)));
-    m_camView->setText(tr("<b>Stopped Video Camera</b>"));
+    disconnect ( m_stream , SIGNAL ( done ( QString ) ) , m_frameWidget , SLOT ( setErrorMessage ( QString ) ) );
+    m_frameWidget->setStatus( FrameWidget::Stopped );
+    m_frameWidget->setPixmap( QPixmap());
 }
 void CameraWidget::restartCamera(){
     stopCamera();
@@ -123,32 +156,26 @@ void CameraWidget::restartCamera(){
 }
 
 void CameraWidget::setPixmap ( QPixmap * p){
-  if ( isVisible() ) {
-    if (p->isNull()){
-        qDebug( "CameraWidget::setPixmap: is Null" );
-        return;
-    }
-    if (m_autoAdjustImage){
-        /**
-            TODO: check if height and width are ok.
-        */
-        QSize s;
-        int w,h = 0;
-        h = size().height();
-        w = size().width();
-        if ( w < h ){
-            s.setHeight ( 10 );
-            s.setWidth ( w  - 10 );
-            }
-        else{
-            s.setHeight ( h - m_toolbar->size().height() - 10 );
-            s.setWidth ( 10 );
+  QWidget * window = this->window();
+  if ( isVisible() && isVisibleTo( window ) ) {
+        if (p->isNull()){
+            qDebug( "CameraWidget::setPixmap: is Null" );
+            return;
         }
-        m_camView->setPixmap ( p->scaled( s , Qt::KeepAspectRatioByExpanding) );
-    }
-    else m_camView->setPixmap ( *p );
 
-}
+        if (m_autoAdjustImage){
+            m_frameWidget->setPixmap ( *p );
+        }
+        m_frameWidget->setStatus( FrameWidget::Playing );
+
+    }else{
+        if ( !d->restoreStateOnShow ){
+            d->restoreStateOnShow = true;
+            saveState();
+            pauseCamera();
+        }
+    }
+
 }
 
 void CameraWidget::configCamera(){
@@ -170,21 +197,15 @@ void CameraWidget::configCamera(){
 }
 
 void CameraWidget::fullScreen(){
-    FullScreenCamera * w = new FullScreenCamera();
-    w->setStream ( m_stream );
-    w->setWindowState( Qt::WindowFullScreen );
-    w->show();
+    FullScreenCamera w( this );
+    w.setStream ( m_stream, d->state );
+    if ( d->cameraType == EventViewer ) m_stream->start();
+    emit( fullScreen ( this ) );
+    w.exec();
+    emit( fullScreenClosed ( this ) );
+    d->state = w.status();
+    loadFromState();
 
-}
-void CameraWidget::remove(){
-    int ret = QMessageBox::warning(this, tr("ZoneMinder Viewer"),
-                   tr("Really you want to delete Video Camera?"),
-                   QMessageBox::Ok | QMessageBox::Cancel );
-    if (ret ==QMessageBox::Ok){
-        stopCamera();
-        m_camView->setText("<b>Signal removeMe was not connected. Please fix this</b>");
-        emit( removeMe ( this ) );
-    }
 }
 
 void CameraWidget::setConfigActionState( bool state ){
@@ -194,40 +215,202 @@ QAction * CameraWidget::toggleViewAction(){
     if (!m_toggleViewAction){
         m_toggleViewAction = new QAction (windowTitle() , this );
         m_toggleViewAction->setCheckable ( true );
-        if ( parentWidget() )
-            connect ( m_toggleViewAction , SIGNAL (triggered( bool )), parentWidget() , SLOT (setVisible(bool) ) );
-        else
-            connect ( m_toggleViewAction , SIGNAL (triggered( bool )), this , SLOT (setVisible(bool) ) );
+        connect ( m_toggleViewAction , SIGNAL (triggered( bool )), this , SLOT (setVisible(bool) ) );
     }
    return m_toggleViewAction;
 }
+QAction * CameraWidget::focusAction(){
+    if (!m_focusAction){
+        m_focusAction = new QAction (windowTitle() , this );
+        m_focusAction->setCheckable ( true );
+        connect ( m_focusAction , SIGNAL (triggered ( bool ) ), this , SLOT ( setFocus (bool) ) );
+        connect ( m_focusAction , SIGNAL( changed() ), this, SLOT( changeCameraNumber() ) );
+    }
+   return m_focusAction;
+}
 
+QAction * CameraWidget::promoteToMainCameraAction(){
+    if ( !m_promoteToMainCameraAction ){
+            m_promoteToMainCameraAction = new QAction ( tr("Set as &Main Camera") , this );
+            connect ( m_promoteToMainCameraAction , SIGNAL ( triggered ( bool ) ), this , SLOT ( promoteToMainWidget( ) ) );
+    }
+    return m_promoteToMainCameraAction;
+}
+
+QAction * CameraWidget::promoteToSecondCameraAction(){
+    if ( !m_promoteToSecondCameraAction ){
+            m_promoteToSecondCameraAction = new QAction ( tr("Set as &Secondary Main Camera") , this );
+            connect ( m_promoteToSecondCameraAction , SIGNAL ( triggered ( bool ) ), this , SLOT ( promoteToSecondWidget( ) ) );
+    }
+    return m_promoteToSecondCameraAction;
+}
+
+void CameraWidget::setFocus ( bool b ){
+    if( b ) {
+        QFrame::setFocus();
+        switch ( d->focusBehavior ){
+            case PopUpMenu: m_menu->popup( QWidget::mapToGlobal ( QPoint(0,0) ) ); break;
+            case PromoteToMainWidget: promoteToMainWidget(); break;
+            default: break;
+        }
+    }
+}
 bool CameraWidget::event ( QEvent * event ){
     if (m_toggleViewAction ) m_toggleViewAction->setChecked ( this->isVisible());
-    return QWidget::event( event );
+    return QFrame::event( event );
 }
 
 void CameraWidget::cameraEvents(){
-    CameraEvents * e = new CameraEvents ( stream()->monitor() , m_conectionName , this );
-    
-    e->appendZMSString( stream()->ZMSStringAppended() );
-    e->setWindowTitle(tr( "Events for Monitor %1").arg( windowTitle() ) );
-    e->show();
+    if (!d->cameraEvent) d->cameraEvent = new CameraEvents ( stream()->monitor() , m_conectionName , this );
+    d->cameraEvent->cameraWidget()->frameWidget()->setAspectRatioMode( m_frameWidget->aspectRatioMode() );
+    d->cameraEvent->appendZMSString( stream()->ZMSStringAppended() );
+    d->cameraEvent->setWindowTitle(tr( "Events for Monitor %1").arg( windowTitle() ) );
+    d->cameraEvent->show();
 }
 
 void CameraWidget::popupMenu ( const QPoint & p){
-    m_menu->popup( parentWidget()->pos() + p + pos() );
+    m_menu->popup( QWidget::mapToGlobal ( p ) );
 }
 
+void CameraWidget::focusInEvent ( QFocusEvent * event ){
+    focusAction()->setChecked( true );
+    setBackgroundRole( QPalette::Highlight );
+    emit( focused( this ) );
+}
+
+void CameraWidget::focusOutEvent ( QFocusEvent * event ){
+    focusAction()->setChecked( false );
+    setBackgroundRole( QPalette::Shadow );
+}
+
+void CameraWidget::resizeEvent ( QResizeEvent * event ){
+    QFrame::resizeEvent( event );
+    d->size = cameraPixmapSizeHint();
+}
+QSize CameraWidget::cameraPixmapSizeHint() const{
+    QSize s = size();
+   if ( m_toolbar->isVisible() )
+                s.setHeight ( s.height() - m_toolbar->size().height() );
+    return s;
+}
+void CameraWidget::setHighQuality( bool b ){
+    d->highQuality = b ;
+    m_frameWidget->setTransformationMode( !b ? Qt::FastTransformation : Qt::SmoothTransformation );
+}
 CameraWidgetToolBar * CameraWidget::toolBar() const{
     return m_toolbar;
+}
+
+QSize CameraWidget::imageSize()const
+{
+    return QSize(320,240);
+}
+
+void CameraWidget::setImageSize( QSize s ){
+    d->size = s;
+}
+
+void CameraWidget::setCameraType ( const CameraType &type ){
+    d->cameraType = type;
+    if ( type == EventViewer ) m_toolbar->eventViewerSetup();
+}
+
+void CameraWidget::setFocusBehavior( const FocusBehavior & behavior ){
+    d->focusBehavior = behavior;
+}
+
+FrameWidget * CameraWidget::frameWidget() const{
+    return m_frameWidget;
+}
+
+void CameraWidget::mouseDoubleClickEvent ( QMouseEvent * event ){
+if ( d->focusBehavior == PromoteToMainWidget )
+    promoteToMainWidget();
+
+ QFrame::mouseDoubleClickEvent( event );
+}
+
+void CameraWidget::showEvent ( QShowEvent * event ){
+    if ( d->restoreStateOnShow ){
+        restoreState();
+        d->restoreStateOnShow = false;
+    }
+    QWidget::showEvent ( event );
+}
+
+QString CameraWidget::name() const{
+    return d->cameraName;
+}
+void CameraWidget::setName( const QString &name ){
+    d->cameraName = name;
+}
+
+void CameraWidget::saveState(){
+    d->savedState = d->state;
+}
+void CameraWidget::restoreState(){
+    d->state = d->savedState;
+    loadFromState();
+}
+void CameraWidget::loadFromState(){
+    switch ( d->state ){
+        case FrameWidget::Playing: startCamera();break;
+        case FrameWidget::Stopped: stopCamera();break;
+        case FrameWidget::Paused: pauseCamera();break;
+        default: restartCamera();break;
+    }
+}
+
+void CameraWidget::promoteToMainWidget(){
+    emit( promotedToMainWidget (this ) );
+}
+
+void CameraWidget::promoteToSecondWidget(){
+    emit( promotedToSecondWidget (this ) );
+}
+
+void CameraWidget::activateMainCameraAction(){
+    QAction *act = promoteToMainCameraAction();
+    m_menu->addSeparator();
+    m_menu->addAction( act );
+}
+void CameraWidget::activateSecondCameraAction(){
+    QAction *act = promoteToSecondCameraAction();
+    m_menu->addAction( act );
+}
+
+void CameraWidget::removeMainCameraAction(){
+    QAction *act = promoteToMainCameraAction();
+    m_menu->removeAction( act );
+}
+void CameraWidget::removeSecondCameraAction(){
+    QAction *act = promoteToSecondCameraAction();
+    m_menu->removeAction( act );
+}
+
+void CameraWidget::setVisible(bool b ){
+    QFrame::setVisible( b );
+    if ( b ) QFrame::setFocus();
+}
+void CameraWidget::changeCameraNumber(){
+    if ( m_frameWidget )
+        m_frameWidget->setFrameId(  m_focusAction->text() );
+}
+
+QString CameraWidget::uniqueId() const{
+    if ( d->uniqueId.isEmpty() ){
+        Q_ASSERT( m_stream );
+        d->uniqueId = m_conectionName + "_" + QString::number( m_stream->port() ) + "_" + QString::number( m_stream->monitor() );
+    }
+    return d->uniqueId;
 }
 
 CameraWidget::~CameraWidget()
 {
     delete m_stream;
-    delete m_camView;
     delete m_toolbar;
+    delete d->cameraEvent;
+    delete d;
 }
 
 

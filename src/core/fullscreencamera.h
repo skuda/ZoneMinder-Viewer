@@ -20,24 +20,36 @@
 #ifndef FULLSCREENCAMERA_H
 #define FULLSCREENCAMERA_H
 
-#include <QWidget>
-
+#include <QDialog>
+#include "framewidget.h"
 class Stream;
-class QLabel;
 class QPixmap;
-class FullScreenCamera: public QWidget{
+class QMenu;
+class CameraWidgetToolBar;
+class FullScreenCamera: public QDialog{
 Q_OBJECT
 public:
     FullScreenCamera( QWidget * parent = 0 );
-    void setStream ( Stream * s  );
+    void setStream ( Stream * s  , const FrameWidget::Status &state );
+    FrameWidget::Status status() const;
     ~FullScreenCamera();
+
 public Q_SLOTS:
     void setPixmap( QPixmap *);
+    void startCamera( );
+    void pauseCamera( );
+    void stopCamera();
+    void setHighQuality( bool b );
+
+protected Q_SLOTS:
+    void popupMenu ( const QPoint & p );
 
 private:
     void init();
-    QLabel *m_label;
+    FrameWidget *m_frameWidget;
     Stream * m_stream;
+    QMenu * m_menu;
+    CameraWidgetToolBar * m_toolBar;
 };
 
 #endif

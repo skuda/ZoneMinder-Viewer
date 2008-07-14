@@ -36,9 +36,17 @@ class CameraWidgetToolBar : public QToolBar
  Q_OBJECT
 public:
     CameraWidgetToolBar( QWidget * parent = 0 );
+    CameraWidgetToolBar( bool fullScreenMode, QWidget * parent = 0 );
+
     void autoConnectWith( CameraWidget * camera );
+    void eventViewerSetup();
     ~CameraWidgetToolBar();
     void setConfigActionState( bool state );
+    QAction * playAction();
+    QAction * pauseAction();
+    QAction * stopAction();
+    QAction * fullScreenAction();
+    QAction * highQualityAction();
     QMenu * menu() const;
 private:
     void init();

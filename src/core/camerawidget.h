@@ -20,11 +20,10 @@
 #ifndef CAMERAWIDGET_H
 #define CAMERAWIDGET_H
 
-#include <QScrollArea>
-class QLabel;
+#include <QFrame>
+class FrameWidget;
 class Stream;
 class QToolButton;
-class QFrame;
 class CameraWidgetToolBar;
 class QSpacerItem;
 class QMenu;
@@ -32,10 +31,13 @@ class QMenu;
 /**
 	@author Leandro Emanuel López <lopezlean@gmail.com>
 */
-class CameraWidget : public QScrollArea
+class CameraWidget : public QFrame
 {
 Q_OBJECT
 public:
+    enum CameraState { Playing, Stopped, Paused };
+    enum CameraType{ Monitor, EventViewer };
+    enum FocusBehavior{ PopUpMenu, PromoteToMainWidget, None };
     /**
         @param conectionName is used to take events from database.
     */
@@ -52,11 +54,40 @@ public:
     */
     void setStream( Stream * stream);
     void setConfigActionState( bool state );
+    void setImageSize( QSize s );
+    void setCameraType ( const CameraType &type );
+    void setFocusBehavior( const FocusBehavior & behavior  );
+
+    /**
+        @return a permanent uniqueid. This is useful for save settings of a particular camera
+    */
+    QString uniqueId() const;
+
+    /**
+       @return the name
+    */
+    QString name() const;
+    void setName( const QString &name );
     /**
         
     */
     QAction * toggleViewAction();
+    QAction * focusAction();
+    QAction * promoteToMainCameraAction();
+    QAction * promoteToSecondCameraAction();
+
+    FrameWidget * frameWidget() const;
+
+    void activateMainCameraAction();
+    void activateSecondCameraAction();
+    void removeMainCameraAction();
+    void removeSecondCameraAction();
+
     CameraWidgetToolBar * toolBar() const;
+    QSize cameraPixmapSizeHint() const;
+    QSize sizeHint()const{ return QSize(320,240); } 
+    void saveState();
+    void restoreState();
 protected Q_SLOTS:
     /**
         set pixmap
@@ -88,25 +119,42 @@ public Q_SLOTS:
         show camera in fullscreen mode
     */
     void fullScreen();
-    void remove();
     /** 
         show events of this camera
     */
     void cameraEvents();
     void setAutoAdjustImage ( bool b );
+    void setHighQuality( bool b );
+    QSize imageSize() const;
+    void promoteToMainWidget( );
+    void promoteToSecondWidget( );
+    void setVisible(bool);
 
 Q_SIGNALS:
-    void removeMe( CameraWidget * me );
     void windowTitleChanged( const QString &);
+    void promotedToMainWidget( QWidget *);
+    void promotedToSecondWidget( QWidget *);
+
+    void focused( QWidget *);
+    void fullScreen( QWidget * pointerToThis );
+    void fullScreenClosed( QWidget * pointerToThis );
 
 protected:
     bool event ( QEvent * event );
+    void focusInEvent ( QFocusEvent * event );
+    void focusOutEvent ( QFocusEvent * event );
+    void resizeEvent ( QResizeEvent * event );
+    void mouseDoubleClickEvent ( QMouseEvent * event );
+    void showEvent ( QShowEvent * event );
 
 private Q_SLOTS:
     void popupMenu ( const QPoint & );
+    void setFocus ( bool b );
+    void changeCameraNumber();
 private:
     void init();
-    QLabel * m_camView;
+    void loadFromState();
+    FrameWidget * m_frameWidget;
     QSpacerItem * m_spacerV;
     Stream * m_stream;
     QFrame * m_frame;
@@ -114,9 +162,15 @@ private:
     CameraWidgetToolBar * m_toolbar;
     bool m_autoAdjustImage;
     QAction * m_toggleViewAction;
+    QAction * m_focusAction;
+    QAction * m_promoteToMainCameraAction;
+    QAction * m_promoteToSecondCameraAction;
+
     QString m_conectionName;
     QMenu * m_menu;
-
+    class Private;
+    Private *d;
+  
 
 
 };

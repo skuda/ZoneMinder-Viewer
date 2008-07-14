@@ -3,6 +3,7 @@ set ( core_SRCS
       camerawidgettoolbar.cpp
       cameraadddialog.cpp
       camerawidget.cpp
+      framewidget.cpp
       connectionmanager.cpp
       fullscreencamera.cpp
       databasesession.cpp
@@ -12,6 +13,12 @@ set ( core_SRCS
       auth.cpp
       authdialog.cpp
       qmultipartreader.cpp
+      cameralayout.cpp
+      cameraviewerpage.cpp
+      maincamerawidget.cpp
+      doublecamerawidget.cpp
+      blackwidget.cpp
+      commandlistener.cpp
     )
 
 set ( core_UIS

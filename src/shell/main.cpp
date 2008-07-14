@@ -20,33 +20,32 @@
 
 
 #include <QApplication>
-#include <QTranslator>
+#include <QSplashScreen>
 #include <QLocale>
 #include <QLibraryInfo>
+#include <QTextCodec>
 #include "mainwindow.h"
 
 
 int main(int argc, char *argv[])
 {
-      QCoreApplication::setOrganizationName("SiliX");
-      QCoreApplication::setOrganizationDomain("silix.com.ar");
+      QCoreApplication::setOrganizationDomain("zmviewer.sf.net");
       QCoreApplication::setApplicationName("zmviewer");
       QApplication app(argc, argv);
+      QTextCodec::setCodecForTr(QTextCodec::codecForName("utf8"));
+      QSplashScreen splash( QPixmap(":/img/Splash"));
+      splash.show();
+      splash.showMessage( QObject::tr("Loading...") );
+      app.processEvents();
       #ifdef Q_WS_WIN
       QCoreApplication::addLibraryPath ( QCoreApplication::applicationDirPath () );
       #endif
-      /* QT translations */
-      QTranslator qtTranslator;
-      if (!qtTranslator.load("qt_" + QLocale::system().name(),QLibraryInfo::location(QLibraryInfo::TranslationsPath))) qDebug ("Can not load Qt Translations");
-      app.installTranslator(&qtTranslator);
 
-      QTranslator translator;
-      QString locale = QLocale::system().name();
-      translator.load(QString::fromUtf8(":/translations/zmviewer_") + locale);
-      app.installTranslator(&translator);
       MainWindow * m = new MainWindow;
       m->show();
+      splash.finish( m );
       int r = app.exec();
+      delete m;
       return r;
 }
 

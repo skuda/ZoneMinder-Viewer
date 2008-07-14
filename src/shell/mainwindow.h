@@ -21,14 +21,21 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QTranslator>
+#include <QActionGroup>
+
 class CameraWidget;
 class Stream;
 class QAction;
 class QSettings;
 class QMenu;
-
+class AdminPanel;
 class Monitors;
-class QMdiArea;
+class CameraViewer;
+class LayoutBar;
+class ControlBar;
+class CommandListener;
+class Translator;
 
 class MainWindow: public QMainWindow{
 Q_OBJECT
@@ -36,65 +43,72 @@ public:
 
     MainWindow( QWidget * parent = 0, Qt::WindowFlags flags = 0  );
     ~MainWindow();
+    QTranslator *appTranslator, *qtTranslator;
+    void retranslateStrings();
+    void show();
 public Q_SLOTS:
-    void cameraAddSlot();
     void fullScreen();
-    //void removeCamera( CameraWidget *);
-    void selectedCamerasSlot ();
     void aboutDialog();
     void newSession();
     void sessionList();
     void selectStyle();
+    void adminServer();
+    void showPreferences();
 protected:
     bool event ( QEvent * event );
-
 private Q_SLOTS:
     void setCentralWidgetCamera ( QWidget * w );
     void update ( );
-    void hideActiveSubWindow();
-    void hideAllSubWindows();
+    void switchLanguage( const QString &locale );
 
 private:
     void init();
     void initActions();
     void initMenuBar();
     void initSettings();
+    void initCameraSetting( CameraWidget * camera );
     void saveSettings();
-    bool cameraListContainsName ( const QString & name );
-    QStringList cameraNames();
-    void addCamera(const QString & name , const QString &host ="localhost", int port =80 , int monitor=1 , const QString &zms = "/cgi-bin/nph-zms");
-    
+    void saveCameraSetting( CameraWidget * camera );
+
     QList <QAction *> *m_cameraToggleAction;
     //QList <QAction *> *m_cameraRemoveAction;
 
-    QAction * m_newCameraAction;
     QAction * m_quitAction;
     QAction * m_fullScreenAction;
     QAction * m_closeFullScreenAction;
     
     QAction * m_sessionNew;
     QAction * m_sessionList;
-    
-    //MDI Actions
-    QAction *closeAction;
-    QAction *closeAllAction;
-    QAction * m_cascadeAction;
-    QAction * m_tileAction;
-    //QAction * m_arrangeIconsAction;
-    QAction * m_nextWindowAction;
-    QAction * m_previusWindowAction;
+
 
     QAction * m_updateAllMonitorsActions;
+    QAction * m_selectStyleAction;
+    QAction * aboutAction;
+    QAction * aboutQtAction;
 
-    QMenu * m_cameraMenu;
-    //QMenu * m_camRemoveMenu;
+    QAction * m_preferencesAction;
+
+    QMenu * sessionMenu;
+    QMenu * camMenu;
+    QMenu * m_viewMenu;
+    QMenu * m_helpMenu;
+    QMenu * m_adminMonitorsMenu;
+
 
     QSettings * m_settings;
     //cantidad de camaras
     int m_cameras;
 
-    QMdiArea  *m_centralWidget;
+    CameraViewer  *m_centralWidget;
     Monitors * m_monitors;
+    
+    LayoutBar  * m_layoutBar;
+    ControlBar * m_controlBar;
+    AdminPanel * m_adminPanel;
+
+    Translator * m_translator;
+
+    CommandListener * m_commandListener;
     
 };
 

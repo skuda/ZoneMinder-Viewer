@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2007 by Leandro Emanuel López                           *
- *   lopezlean@gmail.com  				                   *
+ *   Copyright (C) 2008 by Leandro Emanuel López                           *
+ *   lopezlean@gmail.com                                                   *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -17,30 +17,41 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef CAMERASELECTDIALOG_H
-#define CAMERASELECTDIALOG_H
+#include "configdialogpage.h"
 
-#include <QDialog>
-#include <QList>
-class QCheckBox;
-class Stream;
+#include <QIcon>
 
-class CameraSelectDialog: public QDialog{
-Q_OBJECT
+class ConfigDialogPage::Private{
 public:
-    CameraSelectDialog( QWidget * parent = 0 );
-    void setNames (  const QStringList &names );
-    QStringList names();
-    ~CameraSelectDialog();
-    bool groupViewView() const;
-public Q_SLOTS:
-    void selectCameras();
-private:
-    void init();
-
-   QCheckBox * m_groupByView;
-    QList<QCheckBox *> m_checkBoxes;
-
+    QString title;
+    QString subTitle;
+    QIcon icon;
 };
+ConfigDialogPage::ConfigDialogPage( QWidget * parent ):
+QWidget( parent ),d( new Private ) { }
 
-#endif
+void ConfigDialogPage::setTitle( const QString & title ){
+    d->title = title;
+}
+
+QString ConfigDialogPage::title() const{
+    return d->title;
+}
+void ConfigDialogPage::setSubTitle( const QString &subtitle ){
+    d->subTitle = subtitle;
+}
+QString ConfigDialogPage::subTitle()const{
+    return d->subTitle;
+}
+void ConfigDialogPage::setIcon( const QIcon & icon ){
+    d->icon = icon;
+}
+QIcon ConfigDialogPage::icon()const{
+    return d->icon;
+}
+
+ConfigDialogPage::~ConfigDialogPage()
+{
+}
+
+#include "configdialogpage.moc"

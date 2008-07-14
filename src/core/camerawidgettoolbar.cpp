@@ -31,23 +31,38 @@ class CameraWidgetToolBar::Private {
     QAction * m_fullScreenAction;
     QAction * m_configAction;
     QAction * m_eventAction;
+    QAction * m_highQualityAction;
     QMenu * m_menu;
-
+    bool isFullScreenMode;
     void setupMenu(){
         m_menu->addAction(m_startAction);
         m_menu->addAction(m_stopAction);
         m_menu->addAction(m_pauseAction);
+        if (!isFullScreenMode){
+            m_menu->addSeparator();
+            m_menu->addAction(m_fullScreenAction);
+            m_menu->addAction(m_eventAction);
+        }
         m_menu->addSeparator();
-        m_menu->addAction(m_fullScreenAction);
-        m_menu->addAction(m_eventAction);
-        m_menu->addSeparator();
-        m_menu->addAction(m_configAction);
+        m_menu->addAction(m_highQualityAction);
+        if (!isFullScreenMode){
+            m_menu->addSeparator();
+            m_menu->addAction(m_configAction);
+        }
     }
 };
 
 CameraWidgetToolBar::CameraWidgetToolBar ( QWidget * parent )
         : QToolBar ( "Camera ToolBar" , parent ), d( new Private )
 {
+    d->isFullScreenMode = false;
+    init();
+}
+
+CameraWidgetToolBar::CameraWidgetToolBar ( bool fullScreenMode, QWidget * parent )
+        : QToolBar ( "Camera ToolBar" , parent ), d( new Private )
+{
+    d->isFullScreenMode = fullScreenMode;
     init();
 }
 
@@ -73,26 +88,36 @@ void CameraWidgetToolBar::init()
     addAction ( d->m_pauseAction );
 
     addSeparator();
+    if (!d->isFullScreenMode){
+        d->m_fullScreenAction = new QAction (tr("FullScreen Mode"), this );
+        d->m_fullScreenAction->setIcon ( QIcon ( ":/icons/FullScreen" ) );
+        d->m_fullScreenAction->setToolTip ( tr("FullScreen Mode" ) );
+        addAction ( d->m_fullScreenAction );
 
-    d->m_fullScreenAction = new QAction (tr("FullScreen Mode"), this );
-    d->m_fullScreenAction->setIcon ( QIcon ( ":/icons/FullScreen" ) );
-    d->m_fullScreenAction->setToolTip ( tr("FullScreen Mode" ) );
-    addAction ( d->m_fullScreenAction );
-
-    d->m_eventAction = new QAction ( tr("Event List...") , this );
-    d->m_eventAction->setIcon ( QIcon ( ":/icons/Events" ) );
-    d->m_eventAction->setToolTip ( tr("Event List") );
-    addAction ( d->m_eventAction );
-    
+        d->m_eventAction = new QAction ( tr("Event List...") , this );
+        d->m_eventAction->setIcon ( QIcon ( ":/icons/Events" ) );
+        d->m_eventAction->setToolTip ( tr("Event List") );
+        addAction ( d->m_eventAction );
+    }
     addSeparator();
 
-    d->m_configAction = new QAction ( tr("View Setup...") , this );
-    d->m_configAction->setIcon ( QIcon ( ":/icons/Setup" ) );
-    d->m_configAction->setToolTip ( tr("View Setup of Current Video Camera") );
-    addAction ( d->m_configAction );
+    d->m_highQualityAction = new QAction ( tr("Bilinear Filtering") , this );
+    d->m_highQualityAction->setCheckable( true );
+    d->m_highQualityAction->setChecked( false );
+    d->m_highQualityAction->setIcon ( QIcon ( ":/icons/HighQuality" ) );
+    d->m_highQualityAction->setToolTip ( tr("Transform image using bilinear filtering") );
+    addAction ( d->m_highQualityAction );
+
+    addSeparator();
+    if (!d->isFullScreenMode){
+        d->m_configAction = new QAction ( tr("View Setup...") , this );
+        d->m_configAction->setIcon ( QIcon ( ":/icons/Setup" ) );
+        d->m_configAction->setToolTip ( tr("View Setup of Current Video Camera") );
+        addAction ( d->m_configAction );
+    }
 
     toggleViewAction()->setText( tr( "Show ToolBar" ) );
-    //toggleViewAction()->setIcon( QIcon(":/icons/Remove") );
+    toggleViewAction()->setIcon( QIcon(":/icons/ToolBar") );
     toggleViewAction()->setToolTip( tr("Hide/Show Camera's ToolBar") );
     addAction ( toggleViewAction() );
 
@@ -100,6 +125,10 @@ void CameraWidgetToolBar::init()
     d->setupMenu();
     d->m_menu->addAction( toggleViewAction() );
 
+    setBackgroundRole( QPalette::Base );
+    setAutoFillBackground( true );
+
+    setStyleSheet("QToolBar{ background-color:qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 gray, stop: 1 black);}");
 }
 
 void CameraWidgetToolBar::autoConnectWith ( CameraWidget * camera )
@@ -110,6 +139,7 @@ void CameraWidgetToolBar::autoConnectWith ( CameraWidget * camera )
     connect ( d->m_fullScreenAction , SIGNAL ( triggered() ) , camera , SLOT ( fullScreen() ) );
     connect ( d->m_eventAction , SIGNAL ( triggered() ) , camera , SLOT ( cameraEvents() ) );
     connect ( d->m_configAction , SIGNAL ( triggered() ) , camera , SLOT ( configCamera() ) );
+    connect ( d->m_highQualityAction , SIGNAL ( toggled( bool ) ) , camera , SLOT ( setHighQuality( bool ) ) );
 }
 
 void CameraWidgetToolBar::setConfigActionState( bool state ){
@@ -119,6 +149,27 @@ void CameraWidgetToolBar::setConfigActionState( bool state ){
 QMenu * CameraWidgetToolBar::menu() const{
     return d->m_menu;
 }
+void CameraWidgetToolBar::eventViewerSetup(){
+    removeAction( d->m_eventAction );
+    d->m_menu->removeAction( d->m_eventAction );
+}
+
+QAction * CameraWidgetToolBar::playAction(){
+    return d->m_startAction;
+}
+QAction * CameraWidgetToolBar::pauseAction(){
+    return d->m_pauseAction;
+}
+QAction * CameraWidgetToolBar::stopAction(){
+    return d->m_stopAction;
+}
+QAction * CameraWidgetToolBar::fullScreenAction(){
+    return d->m_fullScreenAction;
+}
+QAction * CameraWidgetToolBar::highQualityAction(){
+    return d->m_highQualityAction;
+}
+
 CameraWidgetToolBar::~CameraWidgetToolBar()
 {
     delete d;

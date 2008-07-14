@@ -115,7 +115,7 @@ bool Auth::isAuth() const
 }
 
 /**
-    TODO: this not work
+    TODO: now this work but need test
 */
 QByteArray Auth::authKey( ) const
 {
@@ -146,9 +146,13 @@ QByteArray Auth::authKey( ) const
     auth_key += m_hashPassword;
     if ( use_remote_addr )
     {
-        QHostInfo hinfo = QHostInfo::fromName ( db.hostName() );
+        QHostInfo hinfo = QHostInfo::fromName ( QHostInfo::localHostName()  );
+        QHostInfo checkLocalHost = QHostInfo::fromName ( db.hostName()  );
+        if ( checkLocalHost.addresses().first().toString() == "127.0.0.1" ) hinfo = checkLocalHost;
+
         if ( !hinfo.addresses().isEmpty() )
         {
+            //TODO: fix this. Use the correct interface address and not the first
             QHostAddress address = hinfo.addresses().first();
             auth_key+=address.toString();
         }
@@ -156,10 +160,12 @@ QByteArray Auth::authKey( ) const
     dateTime = dateTime.toTimeSpec( Qt::LocalTime );
     auth_key += QString::number ( ( dateTime.time().hour() ) );//hour
     auth_key += QString::number ( dateTime.date().day() );//day of month
-    auth_key += QString::number ( dateTime.date().month() );//month
+    auth_key += QString::number ( dateTime.date().month() -1 );//month
     auth_key += QString::number ( dateTime.date().year() - 1900 );//years since 1900
+
     qDebug ( qPrintable ( "authkey:" + auth_key ));
-    QByteArray ret = QCryptographicHash::hash ( qPrintable(auth_key) , QCryptographicHash::Md5 );
+
+    QByteArray ret = QCryptographicHash::hash ( auth_key.toUtf8()  , QCryptographicHash::Md5 );
     qDebug ( qPrintable(QString (auth_key.toUtf8())) );
     qDebug ( qPrintable(QString (ret.toHex())) );
     return ret.toHex();

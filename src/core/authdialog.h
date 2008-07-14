@@ -30,11 +30,11 @@
 #include "auth.h"
 
 
-class AuthDialog: public QDialog, public Ui::AuthDialogWidget{
+class AuthDialog: public QDialog, private Ui::AuthDialogWidget{
 Q_OBJECT
 public:
     AuthDialog( Auth * auth ,  QWidget * parent = 0 );
-
+    void setHostName( const QString & host );
     ~AuthDialog();
 
 public Q_SLOTS:

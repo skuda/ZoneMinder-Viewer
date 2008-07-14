@@ -29,15 +29,48 @@ class QSqlTableModel;
 class QTableView;
 class CameraWidget;
 class QCheckBox;
+class QDate;
+class QPushButton;
+
+class CameraEventCalendar;
 
 class CameraEvents: public QDialog{
 Q_OBJECT
 public:
+    enum DatabaseFields{
+        Id,
+        MonitorId,
+        Name,
+        Cause,
+        StartTime,
+        EndTime,
+        Width,
+        Height,
+        Length,
+        Frames,
+        AlarmFrames,
+        TotScore,
+        AvgScore,
+        MaxScore,
+        Archivied,
+        Videoed,
+        Uploaded,   
+        Emailed,
+        Messaged,
+        Executed,
+        LearnState,
+        Notes
+    };
     CameraEvents( int camId, const QString & connectionName , QWidget * parent = 0 );
     ~CameraEvents();
     void appendZMSString( const QString & s );
+    CameraWidget * cameraWidget( ) const;
 public Q_SLOTS:
     void showEvent (const QModelIndex & index);
+    void filterEventDate( const QDate & date );
+    void restoreFilter( );
+protected:
+    void resizeEvent ( QResizeEvent * event );
 private:
     void init();
     int m_cameraId;
@@ -45,8 +78,9 @@ private:
     QSqlTableModel * m_model;
     QTableView * m_view;
     CameraWidget * m_camera;
-    QCheckBox * m_FitToWindowCheckBox;
     QString m_appendString;
+    CameraEventCalendar * m_calendarWidget;
+    QPushButton *m_clearFilterButton;
 };
 
 #endif

@@ -21,6 +21,7 @@
 #define MONITORS_H
 
 #include <QObject>
+#include <QPair>
 
 /**
 	@author Leandro Emanuel López <lopezlean@gmail.com>
@@ -28,11 +29,13 @@
 
 class CameraWidget;
 
+
 class Monitors: public QObject{
 Q_OBJECT
 public:
     Monitors( QObject * parent = 0 );
     int count();
+    static QList<QPair< QString,QString> > hosts();
     ~Monitors();
     QList<CameraWidget *> cameras(){ return m_cameras;}
 public Q_SLOTS:

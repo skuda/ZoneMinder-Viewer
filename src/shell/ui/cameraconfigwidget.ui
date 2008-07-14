@@ -1,0 +1,64 @@
+<ui version="4.0" >
+ <class>CameraConfigWidget</class>
+ <widget class="QWidget" name="CameraConfigWidget" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>555</width>
+    <height>380</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Form</string>
+  </property>
+  <layout class="QFormLayout" name="formLayout" >
+   <item row="0" column="0" >
+    <widget class="QLabel" name="label" >
+     <property name="text" >
+      <string>Aspect Ratio:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1" >
+    <widget class="QComboBox" name="m_aspectRatioComboBox" />
+   </item>
+   <item row="1" column="0" >
+    <widget class="QCheckBox" name="m_showCameraNumbersCheckBox" >
+     <property name="text" >
+      <string>Show Camera Numbers</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0" >
+    <widget class="QLabel" name="label_2" >
+     <property name="text" >
+      <string>Camera Numbers Position:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1" >
+    <widget class="QComboBox" name="m_cameraNumbersPositionComboBox" />
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>m_showCameraNumbersCheckBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>m_cameraNumbersPositionComboBox</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>211</x>
+     <y>147</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>355</x>
+     <y>180</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

@@ -39,12 +39,12 @@ Q_SIGNALS:
     void frameReady( const QByteArray & data );
     void completed();
 public Q_SLOTS:
-    void read( const QByteArray  &data );
+    QByteArray read( const QByteArray  &data );
 
 protected:
     void startHeader();
     void startOfData();
-    void endOfData();
+    QByteArray endOfData();
 private Q_SLOTS:
 private:
     class Private;

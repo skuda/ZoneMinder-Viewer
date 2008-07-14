@@ -25,7 +25,6 @@
 #include <QString>
 #include <QPixmap>
 
-
 class Stream::Private
 {
     public:
@@ -42,7 +41,7 @@ class Stream::Private
             bitrate = 2;
             zms ="/cgi-bin/nph-zms";
             current_frame = new QPixmap;
-            multiPartReader = new QMultiPartReader("--ZoneMinderFrame");
+            multiPartReader = new QMultiPartReader("--ZoneMinderFrame", parent );
         }
         ~Private(){
             delete current_frame;
@@ -60,7 +59,7 @@ class Stream::Private
         StreamType type;
         QPixmap * current_frame;
         QString appendString;
-        
+
         QMultiPartReader * multiPartReader;
 };
 
@@ -112,13 +111,11 @@ void Stream::setZMStreamServer ( const QString &zms )
 void Stream::setEvent ( quint16 event ){
     d->event = event;
 }
-
 void Stream::read ( const QHttpResponseHeader &header )
 {
-    Q_UNUSED ( header );
-
-    d->multiPartReader->read( d->http->readAll() );
-    
+    QByteArray r = d->multiPartReader->read( d->http->readAll() );
+    if ( !r.isNull() )
+        image( r );
 /** OLD CODE!!!
     
     QByteArray array = d->http->readAll();
@@ -153,12 +150,10 @@ void Stream::read ( const QHttpResponseHeader &header )
     c++;*/
 }
 
-
 bool Stream::image ( const QByteArray &array )
 {
     if ( d->current_frame->loadFromData ( array ) )
     {
-        //array.clear();
         emit ( frameReady ( d->current_frame ) );
         return true;
     }
@@ -184,7 +179,8 @@ void Stream::start()
     #endif
     d->http->get ( connection );
     connect ( d->http, SIGNAL ( readyRead ( const QHttpResponseHeader& ) ), this, SLOT ( read ( const QHttpResponseHeader & ) ) );
-    connect ( d->multiPartReader, SIGNAL ( frameReady ( QByteArray ) ), this, SLOT ( image ( QByteArray ) ) );
+    connect ( d->http, SIGNAL ( done ( bool ) ), this, SLOT ( stopRead ( bool ) ) );
+    //connect ( d->multiPartReader, SIGNAL ( frameReady ( QByteArray ) ), this, SLOT ( image ( QByteArray ) ) );
 }
 
 void Stream::stop(){
@@ -236,6 +232,18 @@ void Stream::appendZMSString( const QString & s ){
 QString Stream::ZMSStringAppended( ) const{
     return d->appendString;
 }
+
+void Stream::stopRead ( bool error ){
+        if ( error )
+            emit (done( d->http->errorString() ) );
+        else{
+            if ( d->type == Event )
+                emit ( done( tr( "Event finished.") ) );
+            else emit ( done( tr( "Stopped by server. Press play to try again") ) );
+        }
+
+}
+
 Stream::~Stream()
 {
     delete d;

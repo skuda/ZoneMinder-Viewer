@@ -4,5 +4,21 @@
         <file alias="Quit">img/application-exit.png</file>
         <file alias="AddCameraIcon">img/cameradd.png</file>
         <file alias="Restore">img/view-restore.png</file>
+        <file alias="Grid1">img/grid-1-camera.png</file>
+        <file alias="Grid2">img/grid-2-cameras.png</file>
+        <file alias="Grid3">img/grid-3-cameras.png</file>
+        <file alias="Grid4">img/grid-4-cameras.png</file>
+        <file alias="Grid5">img/grid-5-cameras.png</file>
+        <file alias="GridMainCamera">img/grid-main-camera.png</file>
+        <file alias="GridTwoMainCamera">img/grid-two-main-camera.png</file>
+        <file alias="GridDynamicCameras">img/grid-dynamic-cameras.png</file>
+        <file alias="MiniCamera">img/minicamera.png</file>
+    </qresource>
+    <qresource prefix="/img" >
+         <file alias="Splash">img/splash.png</file>
+    </qresource>
+    <qresource prefix="/config" >
+        <file alias="CameraConfig">img/config/cameras-config.png</file>
+        <file alias="Language">img/config/language.png</file>
     </qresource>
 </RCC>

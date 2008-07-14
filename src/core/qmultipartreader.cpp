@@ -24,7 +24,7 @@
 #include <QByteArray>
 #include <QBuffer>
 #include <QHttpResponseHeader>
-
+//#define DEBUG_PARSING
 class QMultiPartReader::Private{
     public:
     bool m_bParsingHeader;
@@ -95,11 +95,6 @@ QMultiPartReader::QMultiPartReader( const QByteArray &boundary, QObject * parent
 }
 
 void QMultiPartReader::startHeader(){
-    if ( !d->buffer.data().isNull() ){
-            //we have a Frame!!!
-            emit ( frameReady( d->buffer.data() ) );
-            d->buffer.reset();
-    }
     d->m_bParsingHeader = true; // we expect a header to come first
     d->m_bGotAnyHeader = false;
     d->m_gzip = false;
@@ -108,7 +103,7 @@ void QMultiPartReader::startHeader(){
 //    m_haveMimeType = false;
 }
 
-void QMultiPartReader::read( const QByteArray  &data ){
+QByteArray QMultiPartReader::read( const QByteArray  &data ){
     for ( int i = 0; i < data.size() ; ++i )
     {
         // Store char. Skip if '\n' and currently parsing a header.
@@ -191,8 +186,10 @@ void QMultiPartReader::read( const QByteArray  &data ){
         #ifdef DEBUG_PARSING
                         qDebug() << "Completed!";
         #endif
-                        endOfData();
+                        QByteArray ret = endOfData();
                         emit completed();
+                        m_lineParser->clearLine();
+                        return ret;
                     } else
                     {
                         char nextChar = *(line.data() + d->m_boundaryLength);
@@ -200,8 +197,10 @@ void QMultiPartReader::read( const QByteArray  &data ){
                         qDebug() << "QMultiPartReader::slotData nextChar='" << nextChar << "'";
         #endif
                         if ( nextChar == '\n' || nextChar == '\r' ) {
-                            endOfData();
+                            QByteArray ret = endOfData();
+                            m_lineParser->clearLine();
                             startHeader();
+                            return ret;
                         }
                         else {
                             // otherwise, false hit, it has trailing stuff
@@ -218,6 +217,7 @@ void QMultiPartReader::read( const QByteArray  &data ){
     //d->c_frame->loadFromData( d->http->readAll() );
     //d->label->setPixmap( *d->c_frame );
     //qDebug ( qPrintable ( con ) );
+    return QByteArray();
 }
 
 void QMultiPartReader::startOfData()
@@ -251,9 +251,16 @@ QString QMultiPartReader::setBoundaryFromHeader( const QHttpResponseHeader & hea
     return d->m_boundary;
 }
 
-void QMultiPartReader::endOfData()
+QByteArray QMultiPartReader::endOfData()
 {
-    
+        if ( !d->buffer.data().isNull() ){
+            //we have a Frame!!!
+            QByteArray ret = d->buffer.data();
+            emit ( frameReady( ret ) );
+            d->buffer.reset();
+            return ret;
+        }
+    else return QByteArray();
 }
 
 QMultiPartReader::~QMultiPartReader()

@@ -42,7 +42,7 @@ void ConnectionWidget::init()
     m_table = new QTableWidget ( this );
     m_table->setContextMenuPolicy ( Qt::ActionsContextMenu );
     m_table->setEditTriggers ( QAbstractItemView::NoEditTriggers );
-    connect ( m_table , SIGNAL ( cellClicked ( int , int ) ) , this , SLOT ( removeConnectionCheck ( int ,int ) ) );
+    //connect ( m_table , SIGNAL ( cellClicked ( int , int ) ) , this , SLOT ( removeConnectionCheck ( int ,int ) ) );
     m_table->setSelectionBehavior ( QAbstractItemView::SelectRows );
     QVBoxLayout * v = new QVBoxLayout ( this );
     v->addWidget ( m_table );

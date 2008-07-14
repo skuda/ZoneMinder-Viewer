@@ -27,8 +27,12 @@ AuthDialog::AuthDialog( Auth * auth ,  QWidget * parent )
     setupUi( this );
     connect (okButton , SIGNAL(clicked() ) , this , SLOT(checkAuth()) );
     leUser->setFocus();
+    setWindowTitle( tr("Auth") );
 }
 
+void AuthDialog::setHostName( const QString & host ){
+    m_infoLabel->setText( tr("Monitors at <b>%1</b> need auth.").arg( host ) );
+}
 
 void AuthDialog::checkAuth(){
     bool b = m_auth->userLogin( leUser->text() , lePassword->text() );

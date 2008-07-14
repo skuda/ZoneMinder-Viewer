@@ -17,136 +17,173 @@
 *   Free Software Foundation, Inc.,                                       *
 *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
 ***************************************************************************/
+
 #include "mainwindow.h"
+#include "cameraviewer.h"
+#include "layoutbar.h"
+#include "controlbar.h"
+#include "translator.h"
+
 #include "stream.h"
 #include "camerawidget.h"
+#include "camerawidgettoolbar.h"
 #include "about.h"
 #include "monitors.h"
 #include "styles/styledialog.h"
 
-#include "cameraadddialog.h"
-#include "multicameraview.h"
-#include "cameraselectdialog.h"
+#include "adminpanel.h"
+#include "preferencesdialog.h"
 
 //core
 #include "databasesession.h"
 #include "connectionwidget.h"
 #include "connectionmanager.h"
+#include "commandlistener.h"
 
 #include <QMenuBar>
 #include <QSettings>
 #include <QEvent>
+#include <QVBoxLayout>
 #include <QMessageBox>
 #include <QStyleFactory>
+#include <QApplication>
+#include <QDir>
 
-
-#include <QMdiArea>
-#include <QMdiSubWindow>
-
+static QStringList hosts;
 
 MainWindow::MainWindow ( QWidget * parent, Qt::WindowFlags flags )
         :QMainWindow ( parent , flags ),m_fullScreenAction ( 0 ),
-        m_closeFullScreenAction ( 0 )
+        m_closeFullScreenAction ( 0 ),
+        m_adminPanel(0)
 {
     init();
     initActions();
     initMenuBar();
+    retranslateStrings();
 
 }
 
 void MainWindow::init()
 {
+    m_commandListener = new CommandListener( this );
     qApp->setWindowIcon ( QIcon ( ":/shellicons/Icon" ) );
     setWindowTitle ( About::applicationName() );
     m_settings = new QSettings ( this );
     m_cameraToggleAction = new QList < QAction *>;
     //m_cameraRemoveAction = new QList < QAction *>;
-    m_centralWidget = new QMdiArea ( this );
+    m_centralWidget = new CameraViewer ( this );
     setCentralWidget ( m_centralWidget );
-    initSettings();
 
+    m_controlBar = new ControlBar( this );
+    m_layoutBar = new LayoutBar( this );
+    initSettings();
+    m_controlBar->updateControls();
+    m_translator = Translator::instance();
+    m_translator->setParent( this );
+    connect ( m_translator , SIGNAL ( languageChanged( QString ) ), this, SLOT( switchLanguage( QString ) ) );
+
+    installEventFilter( m_commandListener );
 }
 
 void MainWindow::initActions()
 {
-    m_sessionNew = new QAction ( tr( "&New Session..." ) , this );
+    m_sessionNew = new QAction(this);
     connect ( m_sessionNew , SIGNAL ( triggered() ), this , SLOT ( newSession() ) );
 
-    m_sessionList = new QAction ( tr( "&Session List..." ) , this );
+    m_sessionList = new QAction(this);
     connect ( m_sessionList , SIGNAL ( triggered() ), this , SLOT ( sessionList() ) );
 
-    m_newCameraAction = new QAction ( QIcon ( ":/shellicons/AddCameraIcon" ),tr( "&Add" ) , this );
-    connect ( m_newCameraAction , SIGNAL ( triggered() ), this , SLOT ( cameraAddSlot() ) );
-    m_closeFullScreenAction = new QAction ( QIcon ( ":/shellicons/Restore" ),tr( "&Close FullScreen View" ) , this );
+    m_closeFullScreenAction = new QAction(this);
+    m_closeFullScreenAction -> setIcon( QIcon( ":/shellicons/Restore") );
     connect ( m_closeFullScreenAction , SIGNAL ( triggered() ), this , SLOT ( showNormal() ) );
-    m_fullScreenAction = new QAction ( QIcon ( ":/icons/FullScreen" ),tr( "&FullScreen" ), this );
+
+    m_fullScreenAction = new QAction(this);
+    m_fullScreenAction -> setIcon( QIcon( ":/icons/FullScreen") );
     connect ( m_fullScreenAction, SIGNAL ( triggered() ), this , SLOT ( fullScreen() ) );
-    m_quitAction = new QAction ( QIcon ( ":/icons/Quit" ),tr( "&Quit" ) , this );
+  
+    m_quitAction = new QAction(this);
+    m_quitAction -> setIcon( QIcon( ":/icons/Quit") );
+
     connect ( m_quitAction, SIGNAL ( triggered() ), this , SLOT ( close() ) );
-    m_cascadeAction = new QAction ( tr( "&Cascade" ) , this );
-    connect ( m_cascadeAction , SIGNAL ( triggered() ) , m_centralWidget , SLOT ( cascadeSubWindows() ) );
-    m_tileAction = new QAction ( tr( "&Tile" ) , this );
-    connect ( m_tileAction , SIGNAL ( triggered() ) , m_centralWidget , SLOT ( tileSubWindows() ) );
-/*    m_arrangeIconsAction = new QAction ( tr( "&Arrange Icons" ),this );
-    connect ( m_arrangeIconsAction , SIGNAL ( triggered() ) , workspace() , SLOT ( arrangeIcons() ) );*/
 
-    closeAction = new QAction ( tr( "&Hide" ), this );
-    closeAction->setShortcut ( tr( "Ctrl+F4" ) );
-    closeAction->setStatusTip ( tr( "Hide active window" ) );
-    connect ( closeAction, SIGNAL ( triggered() ), this , SLOT ( hideActiveSubWindow() ) );
-
-    closeAllAction = new QAction ( tr( "Hide &All" ), this );
-    closeAllAction->setStatusTip ( tr( "Hide All Sub&Windows" ) );
-    connect ( closeAllAction, SIGNAL ( triggered() ),this, SLOT ( hideAllSubWindows() ) );
-
-    m_updateAllMonitorsActions = new QAction ( tr( "Update All Monitors" ), this );
-    m_updateAllMonitorsActions->setStatusTip ( tr( "Update all session's monitors" ) );
+    m_updateAllMonitorsActions = new QAction(this);
     connect ( m_updateAllMonitorsActions, SIGNAL ( triggered() ),this, SLOT ( update() ) );
+
+    m_selectStyleAction = new QAction(this);
+    connect ( m_selectStyleAction , SIGNAL (triggered()), this , SLOT ( selectStyle() ) );
+
+    m_preferencesAction = new QAction( this );
+    connect ( m_preferencesAction, SIGNAL ( triggered() ),this, SLOT ( showPreferences() ) );
+
+    aboutAction = new QAction(this);
+    aboutQtAction = new QAction(this);
+    connect ( aboutAction, SIGNAL ( triggered () ), this, SLOT ( aboutDialog() ) );
+    connect ( aboutQtAction, SIGNAL ( triggered () ), qApp, SLOT ( aboutQt() ) );
 }
 
 void MainWindow::initMenuBar()
 {
-    QMenu * sessionMenu = menuBar()->addMenu ( tr( "Session" ) );
+    sessionMenu = new QMenu(this);
     sessionMenu->addAction ( m_sessionNew );
     sessionMenu->addAction ( m_sessionList );
     sessionMenu->addSeparator();
     sessionMenu->addAction ( m_quitAction );
+    menuBar() -> addMenu(sessionMenu);
 
-    QMenu * camMenu = menuBar()->addMenu ( tr( "Monitors" ) );
-    camMenu->addAction ( m_newCameraAction );
-    //m_camRemoveMenu = camMenu->addMenu ( tr( "Delete" ) );
+    camMenu = new QMenu(this);
+    m_adminMonitorsMenu = new QMenu( this );
+    camMenu->addMenu( m_adminMonitorsMenu );
+
     camMenu->addAction ( m_updateAllMonitorsActions );
+    menuBar() -> addMenu(camMenu);
 
-    QMenu * m_viewMenu = menuBar()->addMenu ( tr( "View" ) );
-    m_cameraMenu = m_viewMenu->addMenu ( tr( "&Monitors" ) );
-    QAction *m_selectStyleAction = m_viewMenu->addAction ( tr( "&Select Style..." ) );
-    connect ( m_selectStyleAction , SIGNAL (triggered()), this , SLOT ( selectStyle() ) );
+    m_viewMenu = new QMenu(this);
+    menuBar() -> addMenu(m_viewMenu);
 
-    QAction * t = m_viewMenu->addAction ( tr( "Customized View..." ) );
-    connect ( t, SIGNAL ( triggered() ), this , SLOT ( selectedCamerasSlot () ) );
-    for ( int i = 0 ; i < m_cameraToggleAction->count() ; i++ )
-    {
-        m_cameraMenu->addAction ( m_cameraToggleAction->at ( i ) );
-        //m_cameraRemoveAction->insert ( i , m_camRemoveMenu->addAction ( m_cameraToggleAction->at ( i )->text() ) );
-        //connect ( m_cameraRemoveAction->at ( i ), SIGNAL ( triggered() ), ( CameraWidget * ) m_centralWidget->subWindowList().at ( i )->widget() , SLOT ( remove () ) );
-
+    QPair <QString, QString> host;
+    foreach( host, Monitors::hosts() ){
+        QAction *action = m_adminMonitorsMenu->addAction( host.first );
+        action->setData( host.second );
+        connect( action, SIGNAL ( triggered () ) , this, SLOT ( adminServer() ) );
     }
-    m_viewMenu->addSeparator();
     m_viewMenu->addAction ( m_fullScreenAction );
     m_viewMenu->addAction ( m_closeFullScreenAction );
-    QMenu * m_windowMenu = menuBar()->addMenu ( tr( "&Window" ) );
-    m_windowMenu->addAction ( closeAction );
-    m_windowMenu->addAction ( closeAllAction );
-    m_windowMenu->addSeparator();
-    m_windowMenu->addAction ( m_cascadeAction );
-    m_windowMenu->addAction ( m_tileAction );
-    //m_windowMenu->addAction ( m_arrangeIconsAction );
-    QMenu * m_helpMenu = menuBar()->addMenu ( tr( "&Help" ) );
-    connect ( m_helpMenu->addAction ( tr( "About..." ) ), SIGNAL ( triggered () ), this, SLOT ( aboutDialog() ) );
-    connect ( m_helpMenu->addAction ( tr( "About Qt..." ) ), SIGNAL ( triggered () ), qApp, SLOT ( aboutQt() ) );
+    m_viewMenu->addSeparator();
+    m_viewMenu->addAction(m_selectStyleAction);
+    m_viewMenu->addAction ( m_preferencesAction );
+
+    m_helpMenu = new QMenu(this);
+    menuBar() -> addMenu(m_helpMenu);
+
+    m_helpMenu -> addAction(aboutAction);
+    m_helpMenu -> addAction(aboutQtAction);
+
 
 }
+void MainWindow::retranslateStrings()
+{
+//menus
+    sessionMenu -> setTitle( tr("&Session") );
+    camMenu -> setTitle( tr("&Cameras") );
+    m_viewMenu -> setTitle( tr("&View") );
+    m_helpMenu -> setTitle( tr("&Help") );
+    m_adminMonitorsMenu->setTitle( "&Admin Panel" );
 
+//actions
+    m_sessionNew -> setText( tr( "&New Session..." ) );
+    m_sessionList -> setText( tr( "&Session List..." ) );
+    m_closeFullScreenAction -> setText( tr( "&Close FullScreen View" ) );
+    m_fullScreenAction -> setText( tr( "&FullScreen" ) );
+    m_quitAction -> setText( tr("&Quit") );
+
+    m_updateAllMonitorsActions -> setText( tr("Update All Cameras") );
+    m_updateAllMonitorsActions -> setStatusTip( tr("Update all session's cameras") );
+
+    m_selectStyleAction -> setText( tr( "&Select Style..." ) );
+    m_preferencesAction->setText( tr( "&Preferences..."  ) );
+    aboutAction -> setText( tr("About...") );
+    aboutQtAction -> setText( tr("About Qt...") ); 
+}
 void MainWindow::initSettings()
 {
     m_settings->beginGroup ( "MainWindow" );
@@ -155,12 +192,24 @@ void MainWindow::initSettings()
     m_settings->value ( "windowState" , Qt::WindowMaximized ).toInt();
     int w = m_settings->value ( "sizeW" , size().width() ).toInt();
     int h = m_settings->value ( "sizeH" , size().height() ).toInt();
+
+    Qt::ToolBarArea layoutBarArea = (Qt::ToolBarArea)m_settings->value ( "layoutBarArea" , Qt::TopToolBarArea ).toInt();
+    m_layoutBar->setVisible(m_settings->value ( "layoutBarVisible" , true ).toBool());
+    Qt::ToolBarArea controlBarArea = (Qt::ToolBarArea)m_settings->value ( "controlBarArea" , Qt::TopToolBarArea ).toInt();
+    m_controlBar->setVisible(m_settings->value ( "controlBarVisible" , true ).toBool());
+
+    if ( layoutBarArea == Qt::NoToolBarArea ) layoutBarArea = Qt::TopToolBarArea;
+    if ( controlBarArea == Qt::NoToolBarArea ) controlBarArea = Qt::TopToolBarArea;
+    addToolBar( layoutBarArea, m_layoutBar );
+    addToolBar( controlBarArea, m_controlBar );
+
     resize ( w , h );
     m_settings->endGroup();
     m_settings->beginGroup ( "Databases" );
     QStringList con = m_settings->value ( "names" ).toStringList();
     QString name;
     m_settings->endGroup();
+
     foreach ( name , con )
     {
         qDebug ( "%s init...", qPrintable ( name ) );
@@ -170,15 +219,30 @@ void MainWindow::initSettings()
             QMessageBox::critical( this , tr("Database Error") , tr("Can not connect with Database %1 at host %2").arg(m_settings->value ( "database" ).toString()).arg(m_settings->value ( "host" ).toString()) );
         m_settings->endGroup();
     }
+
     QWidget *cam;
     m_monitors = new Monitors ( this );
+
     foreach ( cam , m_monitors->cameras() )
     {
-        m_centralWidget->addSubWindow ( cam )->setWindowIcon(cam->windowIcon() );
-        m_cameraToggleAction->append ( ((CameraWidget *)cam)->toggleViewAction() );
+        m_centralWidget->appendCamera ( cam );
+        CameraWidget * cameraWidget = qobject_cast <CameraWidget *> ( cam );
+        m_cameraToggleAction->append ( cameraWidget->toggleViewAction() );
+        initCameraSetting( cameraWidget );
     }
 
     StyleDialog::loadFromSettings();
+
+    m_centralWidget->endCameraList(  );
+    foreach ( QAction * action , m_centralWidget->cameraFocusActions()->actions() ){
+        m_commandListener->setMapAction( action->text(), action );
+    }
+}
+
+void MainWindow::initCameraSetting( CameraWidget * camera ){
+    m_settings->beginGroup ( camera->uniqueId() );
+    camera->toolBar()->setVisible( m_settings->value( "toolBarVisible", false ).toBool() );
+    m_settings->endGroup();
 }
 
 void MainWindow::saveSettings()
@@ -187,14 +251,28 @@ void MainWindow::saveSettings()
     m_settings->setValue ( "windowState" , ( int ) windowState() );
     m_settings->setValue ( "sizeW" , size().width() );
     m_settings->setValue ( "sizeH" , size().height() );
+    m_settings->setValue ( "layoutBarArea" , QMainWindow::toolBarArea(m_layoutBar) );
+    m_settings->setValue ( "layoutBarVisible" , m_layoutBar->isVisible() );
+    m_settings->setValue ( "controlBarArea" , QMainWindow::toolBarArea(m_controlBar) );
+    m_settings->setValue ( "controlBarVisible" , m_controlBar->isVisible() );
     m_settings->endGroup ();
+    foreach ( QWidget * cam , m_monitors->cameras() )
+    {
+        CameraWidget * cameraWidget = qobject_cast <CameraWidget *> ( cam );
+        saveCameraSetting( cameraWidget );
+    }
 
+}
+
+void MainWindow::saveCameraSetting( CameraWidget * camera ){
+    m_settings->beginGroup ( camera->uniqueId() );
+    m_settings->setValue( "toolBarVisible", camera->toolBar()->isVisible() );
+    m_settings->endGroup();
 }
 
 
 bool MainWindow::event ( QEvent * ev )
 {
-    //Cuando se cierre la ventana q guarde las configuraciones
     if ( ev->type() == QEvent::Close )
     {
         saveSettings();
@@ -216,111 +294,12 @@ bool MainWindow::event ( QEvent * ev )
     return QMainWindow::event ( ev );
 }
 
-void MainWindow::addCamera ( const QString & name , const QString &host , int port , int monitor , const QString &zms )
-{
-    /**
-        TODO: make this with database!
-    */
-    CameraWidget * camera = new CameraWidget ( NULL, this );
-    camera->setWindowTitle ( name );
-    camera->stream()->setHost ( host , port );
-    camera->stream()->setMonitor ( monitor );
-    camera->stream()->setZMStreamServer ( zms );
-    //m_cameraToggleAction->append ( camera->toggleViewAction() );
-    //m_cameraMenu->addAction( camera->toggleViewAction() );
-    //QAction * a = m_camRemoveMenu->addAction ( name );
-    //m_cameraRemoveAction->append ( a );
-    //connect ( a, SIGNAL ( triggered() ), camera , SLOT ( remove () ) );
-    camera->startCamera();
-    QWidget *w = m_centralWidget->addSubWindow ( camera );
-    w->show();
-    w->setWindowIcon(camera->windowIcon() );
-}
-void MainWindow::cameraAddSlot()
-{
-    CameraAddDialog dlg ( this );
-    dlg.completeDefaults();
-    dlg.setWindowTitle ( tr( "Add Video Camera" ) );
-    int r = dlg.exec();
-    if ( r == QDialog::Accepted )
-    {
-        if ( cameraListContainsName ( dlg.m_name->text() ) )
-        {
-            QMessageBox::critical ( this, tr( "Add Video Camera" ), tr( "Name is already in use.\n Please select other" ) );
-        }
-        else addCamera ( dlg.m_name->text() , dlg.m_host->text() , dlg.m_port->text().toInt() , dlg.m_monitor->text().toInt() , dlg.m_zms->text() );
-    }
-}
 
 void MainWindow::fullScreen()
 {
     setWindowState ( Qt::WindowFullScreen );
 }
 
-#if 0
-void MainWindow::removeCamera ( CameraWidget * w )
-{
-    /** TODO: */
-    //    m_centralWidget->removeSubWindow( w );
-
-    w->stopCamera();
-    delete w;
-    //m_cameraToggleAction->removeAt( pos );
-    //m_camRemoveMenu->removeAction( m_cameraRemoveAction->at( pos ) );
-    //m_cameraRemoveAction->removeAt( pos );
-    //delete w;
-}
-#endif
-
-void MainWindow::selectedCamerasSlot ()
-{
-    CameraSelectDialog csd ( this );
-    QStringList names;
-    QList <QMdiSubWindow *> all_cameras = m_centralWidget->subWindowList();
-    for ( int i = 0 ; i < all_cameras.size() ; i ++ )
-    {
-        names << all_cameras.at ( i )->windowTitle();
-    }
-    csd.setNames ( names );
-    if ( csd.exec() == QDialog::Accepted )
-    {
-        QList <Stream * > stream ;
-        names = csd.names();
-        int pos = 0;
-        for ( int i = 0 ; i < all_cameras.size() ; i ++ )
-            if ( names.contains ( all_cameras.at ( i )->windowTitle() ) )
-            {
-                stream.insert ( pos , ( ( CameraWidget * ) all_cameras.at ( i )->widget( ))->stream() );
-                pos++;
-            }
-        MultiCameraView * v = new MultiCameraView( );
-        v->setUseTabs ( csd.groupViewView() );
-        v->setStream ( stream );
-        v->showFullScreen();
-    }
-}
-
-bool MainWindow::cameraListContainsName ( const QString & name )
-{
-    QList <QMdiSubWindow *> all_cameras = m_centralWidget->subWindowList();
-    for ( int i = 0 ; i <  all_cameras.size() ; i ++ )
-        if ( name ==   all_cameras.at ( i )->windowTitle() )
-            return true;
-    return false;
-}
-
-QStringList MainWindow::cameraNames()
-{
-    QStringList names;
-    QList <QMdiSubWindow *> all_cameras = m_centralWidget->subWindowList();
-    for ( int i = 0 ; i < all_cameras.size() ; i ++ )
-        names << all_cameras.at ( i )->windowTitle();
-    return names;
-}
-
-//Pone una camara de forma central de manera q las otras
-// la rodean y esta demas presenta la caracteristica
-// de ajustar su tamaño a su espacio
 void MainWindow::setCentralWidgetCamera ( QWidget * w )
 {
     //TODO:
@@ -349,43 +328,66 @@ void MainWindow::aboutDialog()
 }
 void MainWindow::update ( )
 {
-    QMdiSubWindow *w;
-    foreach ( w , m_centralWidget->subWindowList () ) {
-        w->hide();
-        delete w;
-    }
+    m_centralWidget->clearCameras();
     m_monitors->updateMonitors();
-    QWidget * cam;
+    m_cameraToggleAction->clear();
+    QWidget *cam;
     foreach ( cam , m_monitors->cameras() )
     {
-        QWidget *subWindow = m_centralWidget->addSubWindow ( cam );
-        subWindow->show();
-        subWindow->setWindowIcon( cam->windowIcon() );
+        m_centralWidget->appendCamera ( cam );
+        m_cameraToggleAction->append ( ((CameraWidget *)cam)->toggleViewAction() );
     }
-    repaint();
-}
-
-void MainWindow::hideActiveSubWindow(){
-    if ( m_centralWidget->activeSubWindow() )
-            m_centralWidget->activeSubWindow()->hide();
-}
-void MainWindow::hideAllSubWindows(){
-    QWidget * sw;
-    foreach ( sw , m_centralWidget->subWindowList() )
-        sw->hide();
+    m_centralWidget->updateCameras();
+    m_controlBar->updateControls();
+    m_commandListener->clear();
+    foreach ( QAction * action , m_centralWidget->cameraFocusActions()->actions() ){
+        m_commandListener->setMapAction( action->text(), action );
+    }
+    m_adminMonitorsMenu->clear();
+    QPair <QString, QString> host;
+    foreach( host, Monitors::hosts() ){
+        QAction *action = m_adminMonitorsMenu->addAction( host.first );
+        action->setData( host.second );
+        connect( action, SIGNAL ( triggered () ) , this, SLOT ( adminServer() ) );
+    }
 }
 
 void MainWindow::selectStyle(){
     StyleDialog d( this );
     d.exec();
 }
+void MainWindow::show(){
+    QMainWindow::show();
+    //m_centralWidget->layoutWidgets();
+}
+void MainWindow::adminServer(){
+    QString settingsName = qobject_cast<QAction * > (sender() )->data().toString();
+    QString hostName = qobject_cast<QAction * > (sender() )->text();
+    m_settings->beginGroup ( settingsName );
+    QString hostPanel = m_settings->value( "adminPanel", "http://"+ hostName + "/zm" ).toString();
+    m_settings->endGroup();
+    if (!m_adminPanel)
+        m_adminPanel = new AdminPanel( hostPanel , settingsName);
+    else m_adminPanel->setHost( hostPanel, settingsName );
+    m_adminPanel->show();
+}
+
+void MainWindow::showPreferences(){
+    PreferencesDialog preferencesDialog( this );
+    preferencesDialog.exec();
+}
 
 MainWindow::~MainWindow()
 {
-    delete m_cameraToggleAction;
-    //delete m_cameraRemoveAction;
-    delete m_cameraMenu;
-    delete m_settings;
+    delete m_adminPanel;
+    ConnectionManager::closeAll();
+}
+
+void MainWindow::switchLanguage( const QString & locale )
+{
+    m_translator->writeSettings();
+    retranslateStrings();
+
 }
 
 

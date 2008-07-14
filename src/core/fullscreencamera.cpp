@@ -19,43 +19,87 @@
  ***************************************************************************/
 #include "fullscreencamera.h"
 #include "stream.h"
+#include "camerawidget.h"
+#include "camerawidgettoolbar.h"
 
-#include <QLabel>
 #include <QVBoxLayout>
 #include <QPushButton>
-
+#include <QShowEvent>
+#include <QMenu>
 
 FullScreenCamera::FullScreenCamera(QWidget * parent)
-:QWidget( parent )
+:QDialog( parent )
 {
     init();
 }
 
 void FullScreenCamera::init(){
+    setWindowState( Qt::WindowFullScreen );
     QVBoxLayout * layout = new QVBoxLayout( this );
     QPushButton * pb = new QPushButton ( tr("&Close"), this );
-    connect ( pb , SIGNAL (clicked()), this , SLOT ( close() ) );
-    m_label = new QLabel( this );
+    m_toolBar = new CameraWidgetToolBar ( true, this );
+    m_toolBar->setVisible( false );
+    m_frameWidget = new FrameWidget( this );
+    setBackgroundRole( QPalette::Dark );
     layout->addWidget ( pb ); 
-    layout->addWidget ( m_label );
-    
+    layout->addWidget ( m_toolBar );
+    layout->addWidget ( m_frameWidget );
+    m_toolBar->setFixedHeight( 32 );
+    m_toolBar->setIconSize( QSize( 32, 32 ) );
+    m_menu = m_toolBar->menu();
+    setContextMenuPolicy ( Qt::CustomContextMenu );
+    connect ( this, SIGNAL(customContextMenuRequested ( const QPoint &  )) , this , SLOT( popupMenu ( const QPoint & ) ) );
+    connect ( pb , SIGNAL (clicked()), this , SLOT ( close() ) );
+    connect ( m_toolBar->playAction() , SIGNAL ( triggered() ) , this , SLOT ( startCamera() ) );
+    connect ( m_toolBar->stopAction() , SIGNAL ( triggered() ) , this , SLOT ( stopCamera() ) );
+    connect ( m_toolBar->pauseAction() , SIGNAL ( triggered() ) , this , SLOT ( pauseCamera() ) );
+    connect ( m_toolBar->highQualityAction() , SIGNAL ( toggled( bool ) ) , this , SLOT ( setHighQuality( bool ) ) );
+
+
+}
+void FullScreenCamera::startCamera(){
+    m_stream->start();
+    connect ( m_stream , SIGNAL ( frameReady ( QPixmap *) ) , this , SLOT (setPixmap (QPixmap *)));
+    m_frameWidget->setStatus( FrameWidget::Playing );
+}
+void FullScreenCamera::pauseCamera( ){
+    m_stream->stop();
+    disconnect ( m_stream , SIGNAL ( frameReady ( QPixmap *) ) , this , SLOT (setPixmap (QPixmap *)));
+    m_frameWidget->setStatus( FrameWidget::Paused );
+    m_frameWidget->update();
+}
+void FullScreenCamera::stopCamera(){
+    m_stream->stop();
+    disconnect ( m_stream , SIGNAL ( frameReady ( QPixmap *) ) , this , SLOT (setPixmap (QPixmap *)));
+    m_frameWidget->setPixmap( QPixmap());
+    m_frameWidget->setStatus( FrameWidget::Stopped );
+    m_frameWidget->update();
 }
 
-void FullScreenCamera::setStream( Stream * s  ){
+void FullScreenCamera::setHighQuality( bool b ){
+    m_frameWidget->setTransformationMode( !b ? Qt::FastTransformation : Qt::SmoothTransformation );
+}
+
+void FullScreenCamera::setStream( Stream * s  , const FrameWidget::Status &state ){
     m_stream = s;
     connect ( s , SIGNAL ( frameReady ( QPixmap *) ) , this , SLOT (setPixmap (QPixmap *)) );
+    m_frameWidget->setStatus( state );
 }
-
+FrameWidget::Status FullScreenCamera::status() const{
+    m_frameWidget->status();
+}
 void FullScreenCamera::setPixmap ( QPixmap * p){
-    //para no desperdiciar memoria
-    if (isVisible()){
-        m_label->setPixmap ( p->scaled(m_label->size()) );
+   if (isVisible()){
+        m_frameWidget->setPixmap ( *p );
     }
 }
 
+
+void FullScreenCamera::popupMenu ( const QPoint & p ){
+    m_menu->popup( QWidget::mapToGlobal ( p ) );
+}
 FullScreenCamera::~FullScreenCamera()
 {
-
 }
 
 

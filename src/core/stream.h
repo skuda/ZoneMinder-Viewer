@@ -65,9 +65,11 @@ Q_SIGNALS:
         debe de ser atrapada por algun objeto externo.
     */
     void frameReady ( QPixmap * current_frame );
+    void done( const QString & message );
 private Q_SLOTS:
     void read (const QHttpResponseHeader &header );
     bool image ( const QByteArray &array );
+    void stopRead ( bool error );
 private:
 
     //private class

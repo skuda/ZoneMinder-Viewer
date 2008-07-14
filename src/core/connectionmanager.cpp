@@ -73,6 +73,13 @@ QStringList ConnectionManager::connectionNames()
     return QSqlDatabase::connectionNames();
 }
 
+void ConnectionManager::closeAll(){
+    QStringList cnList = ConnectionManager::connectionNames();
+    foreach ( QString cn, cnList ){
+        QSqlDatabase::removeDatabase(cn);
+    }
+}
+
 bool ConnectionManager::constains ( const QString & name )
 {
     return QSqlDatabase::contains ( name );
@@ -89,8 +96,9 @@ void ConnectionManager::saveConnection ( const QString &d , const QString & h, c
     QSettings s;
     s.beginGroup ( "Databases" );
     QStringList v = s.value ( "names" ).toStringList();
-    v.append ( cn );
-    s.setValue ( "names", cn );
+    if ( v.indexOf( cn ) == -1 )
+        v.append ( cn );
+    s.setValue ( "names", v );
     s.endGroup();
     s.beginGroup ( cn );
     s.setValue( "driver", d );

@@ -94,13 +94,14 @@ QString About::aboutText()
 QString About::authorsText(){
     return QObject::tr("<b>Developers:</b><br/><ul>\
                        <li>Leandro Emanuel López ( Maintainer and main developer ) <br>\
-                       <a href=mailto:lopezlean@gmail.com>lopezlean@gmail.com</a><br>\
-                       <a href=mailto:lopezlean@silix.com.ar>lopezlean@silix.com.ar</a><br></li>\
+                       <a href=mailto:lopezlean@gmail.com>lopezlean@gmail.com</a><br></li>\
                        <li>Dardo Sordi Bogado ( Original idea and ZoneMinder Stream connection ) <br>\
                        <a href=mailto:dardo.sordi@gmail.com>dardo.sordi@gmail.com</a> </li></ul><br>\
                        <b>Thanks to:</b><ul>\
-                       <li>SILIX ( ZMViewer is developed here ) <br>\
-                       <a href=http://www.silix.com.ar>http://www.silix.com.ar</a> </li></ul>\
+                       <li>SILIX ( ZMViewer was developed here ) <br>\
+                       <a href=http://www.silix.com.ar>http://www.silix.com.ar</a> </li>\
+                       <li>Paweł Porwolik ( Language Menu and Polish translation ) <br>\
+                       <a href=mailto:maxen1@wp.pl>maxen1@wp.pl</a> </li></ul><br></ul>\
                        ");
 }
 About::~About()

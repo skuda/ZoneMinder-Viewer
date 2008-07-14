@@ -1,21 +1,23 @@
 TODO LIST:
 
 Bugs and wishes:
-* View recorded events.[WORKING]
-* Support Auth mode [WORKING]
-* [BUG] lost packages in Stream class[ DONE?? need test ]
 * A simple way to copy selected events to a CD (perhaps add to a K3b project)or usb thumb drive.
 * To be able to view the camera live feeds.
-* A widget to select recorded events based on a "After (date)(time) and before (date)(time)" dialog and then view them.
 * The ability to view monitors located on the host running the gui using the raw stream.
 * Audio support?
 * Api Documentation
 * End User documentation
+* Move Language menu to help menu. Add a QDialog to switch languages, like kde
+* Make zmviewer Qt 4.3 compatible. ( QGridLayout::itemAtPosition(int, int) and QWebKit are Qt 4.4 stuff ) 
+
+Working:
+* A widget to select recorded events based on a "After (date)(time) and before (date)(time)" dialog and then view them.
 
 Done:
 English languaje translation (lopezlean)
 Mysql connection with zoneminder's database
 Rename config.h
-
-
+Support Auth mode [ but need testing]
+View recorded events.
+[BUG] lost packages in Stream class
 
