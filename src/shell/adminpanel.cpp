@@ -32,7 +32,7 @@ AdminPanel::AdminPanel( const QString &host, const QString &settingGroup, QWidge
 void AdminPanel::setHost( const QString &host, const QString &settingGroup ){
     #if QT_VERSION >= 0x040400
      bool okPressed = false;
-     QString url = QInputDialog::getText(0,tr("ZMViewer - Where is de ZoneMinder Web Root location?"), tr("ZoneMinder Default Administration Interface Root Location"), QLineEdit::Normal, host , &okPressed);
+     QString url = QInputDialog::getText(0,tr("ZMViewer - Where is the ZoneMinder Web Root location?"), tr("ZoneMinder Default Administration Interface Root Location"), QLineEdit::Normal, host , &okPressed);
      load( QUrl( url + "/zm.php") );
      QSettings s;
      s.beginGroup( settingGroup );
