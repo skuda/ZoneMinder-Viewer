@@ -148,7 +148,8 @@ QByteArray Auth::authKey( ) const
     {
         QHostInfo hinfo = QHostInfo::fromName ( QHostInfo::localHostName()  );
         QHostInfo checkLocalHost = QHostInfo::fromName ( db.hostName()  );
-        if ( checkLocalHost.addresses().first().toString() == "127.0.0.1" ) hinfo = checkLocalHost;
+        if ( ! checkLocalHost.addresses().isEmpty() )
+            if ( checkLocalHost.addresses().first().toString() == "127.0.0.1" ) hinfo = checkLocalHost;
 
         if ( !hinfo.addresses().isEmpty() )
         {
