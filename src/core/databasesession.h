@@ -46,6 +46,7 @@ private:
     QLineEdit * m_hostLE;
     QLineEdit * m_portLE;
     QComboBox * m_driversCB;
+    QLineEdit * m_wwwPortLE;
 
 
 };

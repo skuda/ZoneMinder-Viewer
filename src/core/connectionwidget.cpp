@@ -89,8 +89,8 @@ void ConnectionWidget::removeConnection( )
     s.setValue( "names" , v );
     s.endGroup();
     s.remove( cn );
+    ConnectionManager::removeConnectionWebPort( cn );
     emit( needUpdate());
-    
 
 }
 

@@ -34,15 +34,17 @@ class ConnectionManager
         ConnectionManager();
         ~ConnectionManager();
         /**
-            driver, hostname , database name , user, password, port
+            driver, hostname , database name , user, password, port, wwwPort
         */
-        static bool addConnection ( const QString &d , const QString & h, const QString & dn , const QString & u,const QString & p , int port = 0 , bool removeiferror = true );
+        static bool addConnection ( const QString &d , const QString & h, const QString & dn , const QString & u,const QString & p , int port = 0, int wwwPort = 80 , bool removeiferror = true );
         bool constains ( const QString & name );
         static QStringList connectionNames();
         static void closeAll();
         static QString lastErrorString();
+        static void removeConnectionWebPort( const QString & cn );
+        static int connectionWebPort( const QString & cn );
     private:
-        static void saveConnection(const QString &d , const QString & h, const QString & dn , const QString & u,const QString & p , int port );
+        static void saveConnection(const QString &d , const QString & h, const QString & dn , const QString & u,const QString & p , int port = 0, int wwwPort = 80  );
 };
 
 #endif

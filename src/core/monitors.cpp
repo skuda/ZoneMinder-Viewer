@@ -70,8 +70,8 @@ void Monitors::init()
             CameraWidget * camera = new CameraWidget ( connection );
             camera->setWindowTitle ( query.value ( query.record().indexOf ( "Name" ) ).toString() + tr( " at " ) + db.hostName() );
             camera->setName ( query.value ( query.record().indexOf ( "Name" ) ).toString() );
-
-            camera->stream()->setHost ( db.hostName() ,query.value ( query.record().indexOf ( "Port" ) ).toInt() );
+            qWarning ( "%d", ConnectionManager::connectionWebPort( connection ) );
+            camera->stream()->setHost ( db.hostName() , ConnectionManager::connectionWebPort( connection ) );
             camera->stream()->setMonitor ( query.value ( query.record().indexOf ( "Id" ) ).toUInt() );
             camera->stream()->setZMStreamServer ( zms );
             m_cameras.append ( camera );

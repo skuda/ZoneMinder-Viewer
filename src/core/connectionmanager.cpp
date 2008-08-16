@@ -29,12 +29,13 @@
 
 
 static QSqlError lastError;
+static QMap<QString, int > cnPorts;
 
 ConnectionManager::ConnectionManager()
 {}
 
 
-bool ConnectionManager::addConnection ( const QString &d , const QString & h, const QString & dn , const QString & u,const QString & p , int port ,bool removeiferror )
+bool ConnectionManager::addConnection ( const QString &d , const QString & h, const QString & dn , const QString & u,const QString & p , int port, int wwwPort ,bool removeiferror )
 {
     //driver,host,database,user,port
     QString cn = d+h+dn+u+QString::number ( port );
@@ -43,29 +44,31 @@ bool ConnectionManager::addConnection ( const QString &d , const QString & h, co
         lastError.setDatabaseText ( QObject::tr ( "Connection to <b>%1</b> already exist at host %2" ).arg ( dn ).arg ( h ) );
         return false;
     }
-    QSqlDatabase db = QSqlDatabase::addDatabase ( d , cn );
-    db.setHostName ( h );
-    db.setDatabaseName ( dn );
-    db.setUserName ( u );
-    db.setPassword ( p );
-    if ( port != 0 )
-        db.setPort ( port );
-    bool b = db.open();
-    db.close();
-    if ( ! b )
+    bool dbOpen = false;
     {
-        lastError = db.lastError();
-        lastError.setDatabaseText(QObject::tr("Access denied for user %1@%2").arg(db.userName()).arg(db.hostName()) );
-        db.close();
+        QSqlDatabase db = QSqlDatabase::addDatabase ( d , cn );
+        db.setHostName ( h );
+        db.setDatabaseName ( dn );
+        db.setUserName ( u );
+        db.setPassword ( p );
+        if ( port != 0 )
+            db.setPort ( port );
+        dbOpen = db.open();
+        if ( ! dbOpen ) 
+            lastError = db.lastError();
+        else 
+            lastError = QSqlError(); //no error
+    }
+    if ( ! dbOpen )
+    {
         if( removeiferror )
-            db.removeDatabase ( cn );
+            QSqlDatabase::removeDatabase ( cn );
     }
     else
     {
-        lastError = QSqlError();
-        saveConnection ( d , h , dn , u , p , port );
+        saveConnection ( d , h , dn , u , p , port, wwwPort );
     }
-    return b;
+    return dbOpen;
 }
 
 QStringList ConnectionManager::connectionNames()
@@ -90,7 +93,7 @@ QString ConnectionManager::lastErrorString()
     return lastError.databaseText();
 }
 
-void ConnectionManager::saveConnection ( const QString &d , const QString & h, const QString & dn , const QString & u,const QString & p , int port = 0 )
+void ConnectionManager::saveConnection ( const QString &d , const QString & h, const QString & dn , const QString & u,const QString & p , int port, int wwwPort )
 {
     QString cn = d+h+dn+u+QString::number ( port );
     QSettings s;
@@ -107,8 +110,19 @@ void ConnectionManager::saveConnection ( const QString &d , const QString & h, c
     s.setValue( "user", u );
     s.setValue( "password", p );
     s.setValue( "port", port);
+    s.setValue( "wwwPort", wwwPort );
     s.endGroup();
 
+    cnPorts.insert( cn , wwwPort );
+
+}
+
+void ConnectionManager::removeConnectionWebPort( const QString & cn ){
+    cnPorts.remove( cn );
+}
+
+int ConnectionManager::connectionWebPort( const QString & cn ){
+    cnPorts.value( cn );
 }
 
 ConnectionManager::~ConnectionManager()

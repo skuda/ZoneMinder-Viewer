@@ -214,7 +214,7 @@ void MainWindow::initSettings()
     {
         qDebug ( "%s init...", qPrintable ( name ) );
         m_settings->beginGroup ( name );
-        bool b = ConnectionManager::addConnection ( m_settings->value ( "driver" ).toString() , m_settings->value ( "host" ).toString() , m_settings->value ( "database" ).toString(),m_settings->value ( "user" ).toString(),m_settings->value ( "password" ).toString(),m_settings->value ( "port" , 0 ).toInt() , false );
+        bool b = ConnectionManager::addConnection ( m_settings->value ( "driver" ).toString() , m_settings->value ( "host" ).toString() , m_settings->value ( "database" ).toString(),m_settings->value ( "user" ).toString(),m_settings->value ( "password" ).toString(),m_settings->value ( "port" , 0 ).toInt() , m_settings->value ( "wwwPort" , 80 ).toInt() ,false );
         if (!b)
             QMessageBox::critical( this , tr("Database Error") , tr("Can not connect with Database %1 at host %2").arg(m_settings->value ( "database" ).toString()).arg(m_settings->value ( "host" ).toString()) );
         m_settings->endGroup();

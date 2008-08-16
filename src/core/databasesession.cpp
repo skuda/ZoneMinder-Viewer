@@ -135,6 +135,14 @@ void DatabaseSession::init(){
     m_portLE->setValidator ( new QIntValidator( 0 , 65535 , this ));
     gridLayout1->addWidget( m_portLE , 2, 1, 1, 1);
 
+    QLabel * wwwPortLabel = new QLabel(advancedBox);
+    wwwPortLabel->setText  ( tr ("&Web Server Port") );
+    gridLayout1->addWidget( wwwPortLabel , 3, 0, 1, 1);
+
+    m_wwwPortLE = new QLineEdit( advancedBox );
+    m_wwwPortLE->setValidator ( new QIntValidator( 0 , 65535 , this ) );
+    gridLayout1->addWidget( m_wwwPortLE , 3, 1, 1, 1);
+
     vboxLayout1->addLayout(gridLayout1);
 
     vboxLayout->addWidget(advancedBox);
@@ -160,6 +168,7 @@ void DatabaseSession::init(){
     databaseLabel->setBuddy(m_databaseNameLE);
     driversLabel->setBuddy(m_driversCB);
     portLabel->setBuddy(m_portLE);
+    wwwPortLabel->setBuddy( m_wwwPortLE );
     userNameLabel->setBuddy(m_userNameLE);
     passwordLabel->setBuddy(m_passwordLE);
     advancedBox->setVisible( pushButton->isChecked() );
@@ -175,12 +184,13 @@ void DatabaseSession::init(){
     m_hostLE->setText( "localhost" );
     m_driversCB->setCurrentIndex( m_driversCB->findText("QMYSQL") );
     m_portLE->setText("3306");
+    m_wwwPortLE->setText("80");
     m_databaseNameLE->setText("zm");
 }
 
 void DatabaseSession::tryConnect(){
     ConnectionManager c;
-    bool  b = c.addConnection( m_driversCB->currentText() , m_hostLE->text() , m_databaseNameLE->text(), m_userNameLE->text() , m_passwordLE->text(), m_portLE->text().toInt() );
+    bool  b = c.addConnection( m_driversCB->currentText() , m_hostLE->text() , m_databaseNameLE->text(), m_userNameLE->text() , m_passwordLE->text(), m_portLE->text().toInt(), m_wwwPortLE->text().toInt() );
     if (!b)
         QMessageBox::critical( this , tr("Error"), tr("Database connection error: %1").arg( ConnectionManager::lastErrorString() ) );
     else {
