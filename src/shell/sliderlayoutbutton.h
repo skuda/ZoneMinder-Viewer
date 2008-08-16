@@ -32,7 +32,7 @@ class SliderLayoutButton: public QToolButton{
     Q_OBJECT
 public:
     SliderLayoutButton( QWidget * parent );
-
+    QSlider * slider();
     ~SliderLayoutButton();
 Q_SIGNALS:
     void valueChanged( int );

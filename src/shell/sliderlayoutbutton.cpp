@@ -53,6 +53,10 @@ void SliderLayoutButton::init(){
 
 }
 
+QSlider * SliderLayoutButton::slider(){
+    return m_slider;
+}
+
 void SliderLayoutButton::clickSlot(){
     showMenu();
 }

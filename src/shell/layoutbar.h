@@ -35,6 +35,8 @@ private Q_SLOTS:
     void uncheckToolButtons();
 private:
     void init();
+    void saveSettings( const QString & currentButton );
+    void initSettings ();
     class Private;
     Private *d;
 
