@@ -64,7 +64,10 @@ void Monitors::init()
             }
             else append = true;
         }
-
+        QSqlQuery streamMethod = db.exec ( "SELECT Value from Config where Name='ZM_STREAM_METHOD'" );
+        streamMethod.next();
+        QString method = streamMethod.value ( 0 ).toString();
+        Stream::StreamMode streamMode = method == "jpeg" ? Stream::JPEG : Stream::VIDEO;
         while ( query.next() )
         {
             CameraWidget * camera = new CameraWidget ( connection );
@@ -72,6 +75,7 @@ void Monitors::init()
             camera->setName ( query.value ( query.record().indexOf ( "Name" ) ).toString() );
             camera->stream()->setHost ( db.hostName() , ConnectionManager::connectionWebPort( connection ) );
             camera->stream()->setMonitor ( query.value ( query.record().indexOf ( "Id" ) ).toUInt() );
+            camera->stream()->setMode ( streamMode );
             camera->stream()->setZMStreamServer ( zms );
             m_cameras.append ( camera );
             camera->setAutoAdjustImage ( true );
