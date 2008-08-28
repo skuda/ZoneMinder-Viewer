@@ -1,6 +1,6 @@
 REQUIREMENTS: 
- * Qt 4.3 (http://trolltech.com/developer/downloads/qt/index) 
- * CMake (http://cmake.org)
+ * Qt 4.4 (http://trolltech.com/developer/downloads/qt/index) 
+ * CMake 2.6 (http://cmake.org)
 
 BUILD:
 Run: 

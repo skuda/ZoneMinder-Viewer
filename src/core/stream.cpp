@@ -174,9 +174,9 @@ void Stream::start()
             connection = QString ( "%1?mode=%2&frame=1&event=%3&scale=%4&bitrate=%5" ).arg ( d->zms ).arg ( d->mode ).arg ( d->event ).arg ( d->scale ).arg ( d->bitrate);
     if ( !d->appendString.isNull() && d->appendString.size() > 0 )
             connection.append("&"+d->appendString);
-    #ifdef DEBUG_PARSING
+    //#ifdef DEBUG_PARSING
     qDebug ( qPrintable ( connection ) );
-    #endif
+    //#endif
     d->http->get ( connection );
     connect ( d->http, SIGNAL ( readyRead ( const QHttpResponseHeader& ) ), this, SLOT ( read ( const QHttpResponseHeader & ) ) );
     connect ( d->http, SIGNAL ( done ( bool ) ), this, SLOT ( stopRead ( bool ) ) );
