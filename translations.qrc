@@ -2,5 +2,6 @@
      <qresource>
        <file>translations/zmviewer_es.qm</file>
        <file>translations/zmviewer_pl_PL.qm</file>
+       <file>translations/zmviewer_it.qm</file>
     </qresource>
 </RCC>
