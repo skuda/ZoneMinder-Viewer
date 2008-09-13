@@ -171,7 +171,7 @@ void Stream::start()
     if (d->type == Monitor )
         connection = QString ( "%1?mode=%2&monitor=%3&scale=%4&bitrate=%5" ).arg ( d->zms ).arg ( d->mode ).arg ( d->monitor ).arg ( d->scale ).arg ( d->bitrate );
     else if ( d->type == Event )
-            connection = QString ( "%1?mode=%2&frame=1&event=%3&scale=%4&bitrate=%5" ).arg ( d->zms ).arg ( d->mode ).arg ( d->event ).arg ( d->scale ).arg ( d->bitrate);
+            connection = QString ( "%1?source=event&mode=%2&frame=1&event=%3&scale=%4&bitrate=%5" ).arg ( d->zms ).arg ( d->mode ).arg ( d->event ).arg ( d->scale ).arg ( d->bitrate);
     if ( !d->appendString.isNull() && d->appendString.size() > 0 )
             connection.append("&"+d->appendString);
     //#ifdef DEBUG_PARSING
