@@ -101,7 +101,10 @@ QString About::authorsText(){
                        <li>SILIX ( ZMViewer was developed here ) <br>\
                        <a href=http://www.silix.com.ar>http://www.silix.com.ar</a> </li>\
                        <li>Paweł Porwolik ( Language Menu and Polish translation ) <br>\
-                       <a href=mailto:maxen1@wp.pl>maxen1@wp.pl</a> </li></ul><br></ul>\
+                       <a href=mailto:maxen1@wp.pl>maxen1@wp.pl</a> </li>\
+                        <li>Michele Perrucci ( Italian translation ) <br>\
+                       <a href=mailto:michele.perrucci@startechsnc.it>michele.perrucci@startechsnc.it</a> </li>\
+                        </ul><br></ul>\
                        ");
 }
 About::~About()

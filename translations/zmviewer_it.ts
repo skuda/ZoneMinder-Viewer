@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS><TS version="1.1" language="it">
+<!DOCTYPE TS><TS version="1.1" language="it_IT">
 <defaultcodec></defaultcodec>
 <context>
     <name>AdminPanel</name>
     <message>
         <location filename="../src/shell/adminpanel.cpp" line="35"/>
         <source>ZMViewer - Where is the ZoneMinder Web Root location?</source>
-        <translation type="unfinished"></translation>
+        <translation>ZMViewer - Dove si trova la Web Root di ZoneMinder?</translation>
     </message>
     <message>
         <location filename="../src/shell/adminpanel.cpp" line="35"/>
         <source>ZoneMinder Default Administration Interface Root Location</source>
-        <translation type="unfinished"></translation>
+        <translation>Locazione Prestabilita dell&apos;interfaccia di amministrazione di ZoneMinder </translation>
     </message>
     <message>
         <location filename="../src/shell/adminpanel.cpp" line="42"/>
         <source>ZMViewer - %1 Admin Panel</source>
-        <translation type="unfinished"></translation>
+        <translation>ZMViewer - %1 Pannello di Amministrazione</translation>
     </message>
 </context>
 <context>
@@ -34,12 +34,12 @@
     <message>
         <location filename="../src/core/authdialog.cpp" line="30"/>
         <source>Auth</source>
-        <translation type="unfinished"></translation>
+        <translation>Autenticazione</translation>
     </message>
     <message>
         <location filename="../src/core/authdialog.cpp" line="34"/>
         <source>Monitors at &lt;b&gt;%1&lt;/b&gt; need auth.</source>
-        <translation type="unfinished"></translation>
+        <translation>I monitor di &lt;b&gt;%1&lt;/b&gt;  necessitano di autenticazione.</translation>
     </message>
 </context>
 <context>
@@ -113,72 +113,72 @@
     <message>
         <location filename="../src/shell/ui/cameraconfigwidget.ui" line="13"/>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation>Forma</translation>
     </message>
     <message>
         <location filename="../src/shell/ui/cameraconfigwidget.ui" line="19"/>
         <source>Aspect Ratio:</source>
-        <translation type="unfinished"></translation>
+        <translation>Aspect Ratio:</translation>
     </message>
     <message>
         <location filename="../src/shell/ui/cameraconfigwidget.ui" line="29"/>
         <source>Show Camera Numbers</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostra il numero della camera</translation>
     </message>
     <message>
         <location filename="../src/shell/ui/cameraconfigwidget.ui" line="36"/>
         <source>Camera Numbers Position:</source>
-        <translation type="unfinished"></translation>
+        <translation>Posizione del numero della videocamera:</translation>
     </message>
     <message>
         <location filename="../src/shell/config/cameraconfigwidget.cpp" line="30"/>
         <source>Cameras</source>
-        <translation type="unfinished"></translation>
+        <translation>Camera</translation>
     </message>
     <message>
         <location filename="../src/shell/config/cameraconfigwidget.cpp" line="31"/>
         <source>Configure your cameras</source>
-        <translation type="unfinished"></translation>
+        <translation>Configura la tua videocamera</translation>
     </message>
     <message>
         <location filename="../src/shell/config/cameraconfigwidget.cpp" line="33"/>
         <source>Ignore</source>
-        <translation type="unfinished"></translation>
+        <translation>Ignora</translation>
     </message>
     <message>
         <location filename="../src/shell/config/cameraconfigwidget.cpp" line="34"/>
         <source>Keep</source>
-        <translation type="unfinished"></translation>
+        <translation>Mantieni</translation>
     </message>
     <message>
         <location filename="../src/shell/config/cameraconfigwidget.cpp" line="35"/>
         <source>Keep by Expanding</source>
-        <translation type="unfinished"></translation>
+        <translation>Keep By Expanding</translation>
     </message>
     <message>
         <location filename="../src/shell/config/cameraconfigwidget.cpp" line="37"/>
         <source>Top Right</source>
-        <translation type="unfinished"></translation>
+        <translation>In alto a destra</translation>
     </message>
     <message>
         <location filename="../src/shell/config/cameraconfigwidget.cpp" line="38"/>
         <source>Top Left</source>
-        <translation type="unfinished"></translation>
+        <translation>In alto a sinistra</translation>
     </message>
     <message>
         <location filename="../src/shell/config/cameraconfigwidget.cpp" line="39"/>
         <source>Center</source>
-        <translation type="unfinished"></translation>
+        <translation>Centro</translation>
     </message>
     <message>
         <location filename="../src/shell/config/cameraconfigwidget.cpp" line="40"/>
         <source>Bottom Right</source>
-        <translation type="unfinished"></translation>
+        <translation>In basso a destra</translation>
     </message>
     <message>
         <location filename="../src/shell/config/cameraconfigwidget.cpp" line="41"/>
         <source>Bottom Left</source>
-        <translation type="unfinished"></translation>
+        <translation>In basso a sinistra</translation>
     </message>
 </context>
 <context>
@@ -186,7 +186,7 @@
     <message>
         <location filename="../src/core/cameraevents.cpp" line="47"/>
         <source>Click here to view events of this day</source>
-        <translation type="unfinished"></translation>
+        <translation>Clicca qui per vedere gli eventi di oggi</translation>
     </message>
 </context>
 <context>
@@ -199,57 +199,57 @@
     <message>
         <location filename="../src/core/cameraevents.cpp" line="82"/>
         <source>Please select an event</source>
-        <translation type="unfinished"></translation>
+        <translation>Seleziona un evento</translation>
     </message>
     <message>
         <location filename="../src/core/cameraevents.cpp" line="86"/>
         <source>Clear Calendar Filters</source>
-        <translation type="unfinished"></translation>
+        <translation>Annulla i filtri del calendario </translation>
     </message>
     <message>
         <location filename="../src/core/cameraevents.cpp" line="101"/>
         <source>Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Nome</translation>
     </message>
     <message>
         <location filename="../src/core/cameraevents.cpp" line="102"/>
         <source>Cause</source>
-        <translation type="unfinished"></translation>
+        <translation>Motivo</translation>
     </message>
     <message>
         <location filename="../src/core/cameraevents.cpp" line="103"/>
         <source>Start</source>
-        <translation type="unfinished"></translation>
+        <translation>Avvia</translation>
     </message>
     <message>
         <location filename="../src/core/cameraevents.cpp" line="104"/>
         <source>End</source>
-        <translation type="unfinished"></translation>
+        <translation>Ferma</translation>
     </message>
     <message>
         <location filename="../src/core/cameraevents.cpp" line="105"/>
         <source>Length</source>
-        <translation type="unfinished"></translation>
+        <translation>Lunghezza</translation>
     </message>
     <message>
         <location filename="../src/core/cameraevents.cpp" line="106"/>
         <source>Frames</source>
-        <translation type="unfinished"></translation>
+        <translation>Frames</translation>
     </message>
     <message>
         <location filename="../src/core/cameraevents.cpp" line="107"/>
         <source>Alarm Frames</source>
-        <translation type="unfinished"></translation>
+        <translation>Frames di allarme</translation>
     </message>
     <message>
         <location filename="../src/core/cameraevents.cpp" line="108"/>
         <source>Notes</source>
-        <translation type="unfinished"></translation>
+        <translation>Note</translation>
     </message>
     <message>
         <location filename="../src/core/cameraevents.cpp" line="119"/>
         <source>&lt;center&gt;&lt;h2&gt;Events Calendar&lt;/h2&gt;&lt;/center&gt;&lt;p&gt;The days that have events are marked yellow&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;center&gt;&lt;h2&gt;Calendario Eventi&lt;/h2&gt;&lt;/center&gt;&lt;p&gt;Nei giorni marcati in giallo sono avvenuti degli eventi&lt;/p&gt;</translation>
     </message>
 </context>
 <context>
@@ -305,17 +305,17 @@
     <message>
         <location filename="../src/core/camerawidget.cpp" line="267"/>
         <source>Events for Monitor %1</source>
-        <translation>Eventi per Monitor %1</translation>
+        <translation>Eventi per il Monitor %1</translation>
     </message>
     <message>
         <location filename="../src/core/camerawidget.cpp" line="234"/>
         <source>Set as &amp;Main Camera</source>
-        <translation type="unfinished"></translation>
+        <translation>Imposta come &amp;Fotocamera Principale</translation>
     </message>
     <message>
         <location filename="../src/core/camerawidget.cpp" line="242"/>
         <source>Set as &amp;Secondary Main Camera</source>
-        <translation type="unfinished"></translation>
+        <translation>Imposta come &amp;Fotocamera Secondaria</translation>
     </message>
 </context>
 <context>
@@ -378,7 +378,7 @@
     <message>
         <location filename="../src/core/camerawidgettoolbar.cpp" line="119"/>
         <source>Show ToolBar</source>
-        <translation>Mostra Impostazioni</translation>
+        <translation>Mostra la barra degli strumenti</translation>
     </message>
     <message>
         <location filename="../src/core/camerawidgettoolbar.cpp" line="121"/>
@@ -388,12 +388,12 @@
     <message>
         <location filename="../src/core/camerawidgettoolbar.cpp" line="104"/>
         <source>Bilinear Filtering</source>
-        <translation type="unfinished"></translation>
+        <translation><byte value="x9"/>Filtraggio bilineare</translation>
     </message>
     <message>
         <location filename="../src/core/camerawidgettoolbar.cpp" line="108"/>
         <source>Transform image using bilinear filtering</source>
-        <translation type="unfinished"></translation>
+        <translation>Trasforma l&apos;immagine utilizzando il filtro bilineare</translation>
     </message>
 </context>
 <context>
@@ -401,7 +401,7 @@
     <message>
         <location filename="../src/shell/config/configdialog.cpp" line="38"/>
         <source>Preferences</source>
-        <translation type="unfinished"></translation>
+        <translation>Preferenze</translation>
     </message>
 </context>
 <context>
@@ -462,7 +462,7 @@
     <message>
         <location filename="../src/shell/controlbar.cpp" line="39"/>
         <source>Control ToolBar</source>
-        <translation type="unfinished"></translation>
+        <translation>Barra di controllo</translation>
     </message>
 </context>
 <context>
@@ -520,12 +520,12 @@
     <message>
         <location filename="../src/core/databasesession.cpp" line="195"/>
         <source>Database connection error: %1</source>
-        <translation>errore di connessione al database: %1</translation>
+        <translation>Errore di connessione al database: %1</translation>
     </message>
     <message>
         <location filename="../src/core/databasesession.cpp" line="139"/>
         <source>&amp;Web Server Port</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Porta del server web</translation>
     </message>
 </context>
 <context>
@@ -533,22 +533,22 @@
     <message>
         <location filename="../src/core/framewidget.cpp" line="141"/>
         <source>Stopped</source>
-        <translation type="unfinished"></translation>
+        <translation>Fermato</translation>
     </message>
     <message>
         <location filename="../src/core/framewidget.cpp" line="144"/>
         <source>Paused</source>
-        <translation type="unfinished"></translation>
+        <translation>In pausa</translation>
     </message>
     <message>
         <location filename="../src/core/framewidget.cpp" line="147"/>
         <source>No Signal</source>
-        <translation type="unfinished"></translation>
+        <translation>Nessun Segnale</translation>
     </message>
     <message>
         <location filename="../src/core/framewidget.cpp" line="151"/>
         <source>Connection Error</source>
-        <translation type="unfinished"></translation>
+        <translation>Errore di connessione</translation>
     </message>
 </context>
 <context>
@@ -564,22 +564,22 @@
     <message>
         <location filename="../src/shell/ui/languageconfigwidget.ui" line="13"/>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation>Forma</translation>
     </message>
     <message>
         <location filename="../src/shell/ui/languageconfigwidget.ui" line="19"/>
         <source>Language:</source>
-        <translation type="unfinished"></translation>
+        <translation>Lingua</translation>
     </message>
     <message>
         <location filename="../src/shell/config/languageconfigwidget.cpp" line="31"/>
         <source>Language</source>
-        <translation type="unfinished"></translation>
+        <translation>Lingua</translation>
     </message>
     <message>
         <location filename="../src/shell/config/languageconfigwidget.cpp" line="32"/>
         <source>Select your Language</source>
-        <translation type="unfinished"></translation>
+        <translation>Seleziona la tua lingua</translation>
     </message>
 </context>
 <context>
@@ -587,7 +587,7 @@
     <message>
         <location filename="../src/shell/layoutbar.cpp" line="52"/>
         <source>Layout ToolBar</source>
-        <translation type="unfinished"></translation>
+        <translation>Barra della disposizione</translation>
     </message>
 </context>
 <context>
@@ -595,7 +595,7 @@
     <message>
         <location filename="../src/shell/layoutbutton.cpp" line="30"/>
         <source>%1 Columns Layout</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 Disposizione delle colonne</translation>
     </message>
 </context>
 <context>
@@ -760,37 +760,37 @@
     <message>
         <location filename="../src/shell/mainwindow.cpp" line="166"/>
         <source>&amp;Session</source>
-        <translation type="unfinished"></translation>
+        <translation>Sessione</translation>
     </message>
     <message>
         <location filename="../src/shell/mainwindow.cpp" line="167"/>
         <source>&amp;Cameras</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Videocamere</translation>
     </message>
     <message>
         <location filename="../src/shell/mainwindow.cpp" line="168"/>
         <source>&amp;View</source>
-        <translation type="unfinished"></translation>
+        <translation>Vedi</translation>
     </message>
     <message>
         <location filename="../src/shell/mainwindow.cpp" line="169"/>
         <source>&amp;Help</source>
-        <translation type="unfinished"></translation>
+        <translation>Aiuto</translation>
     </message>
     <message>
         <location filename="../src/shell/mainwindow.cpp" line="179"/>
         <source>Update All Cameras</source>
-        <translation type="unfinished"></translation>
+        <translation>Aggiorna tutti i Monitors</translation>
     </message>
     <message>
         <location filename="../src/shell/mainwindow.cpp" line="180"/>
         <source>Update all session&apos;s cameras</source>
-        <translation type="unfinished"></translation>
+        <translation>Aggiorna tutte le sessioni e tutti i  monitors</translation>
     </message>
     <message>
         <location filename="../src/shell/mainwindow.cpp" line="183"/>
         <source>&amp;Preferences...</source>
-        <translation type="unfinished"></translation>
+        <translation>Preferenze</translation>
     </message>
 </context>
 <context>
@@ -798,7 +798,7 @@
     <message>
         <location filename="../src/core/monitors.cpp" line="74"/>
         <source> at </source>
-        <translation> at </translation>
+        <translation> a</translation>
     </message>
 </context>
 <context>
@@ -819,7 +819,7 @@
     <message>
         <location filename="../src/core/connectionmanager.cpp" line="44"/>
         <source>Connection to &lt;b&gt;%1&lt;/b&gt; already exist at host %2</source>
-        <translation>La conessione al &lt;b&gt;%1&lt;/b&gt; è già attiva all&apos; host %2</translation>
+        <translation>La connessione al &lt;b&gt;%1&lt;/b&gt; è già attiva all&apos; host %2</translation>
     </message>
     <message>
         <location filename="../src/core/connectionmanager.cpp" line="58"/>
@@ -829,17 +829,17 @@
     <message>
         <location filename="../src/shell/about.cpp" line="40"/>
         <source>About...</source>
-        <translation>About...</translation>
+        <translation>Informazioni...</translation>
     </message>
     <message>
         <location filename="../src/shell/about.cpp" line="53"/>
         <source>About</source>
-        <translation>About</translation>
+        <translation>Informazioni</translation>
     </message>
     <message>
         <location filename="../src/shell/about.cpp" line="60"/>
         <source>Authors and Thanks</source>
-        <translation>Authors and Thanks</translation>
+        <translation>Autori e Ringraziamenti</translation>
     </message>
     <message>
         <location filename="../src/shell/about.cpp" line="64"/>
@@ -863,12 +863,12 @@ Copyright(c)2007 Leandro Emanuel LÃ³pez
     <message>
         <location filename="../src/shell/about.cpp" line="105"/>
         <source>&lt;b&gt;Developers:&lt;/b&gt;&lt;br/&gt;&lt;ul&gt;                       &lt;li&gt;Leandro Emanuel L&#xc3;&#xb3;pez ( Maintainer and main developer ) &lt;br&gt;                       &lt;a href=mailto:lopezlean@gmail.com&gt;lopezlean@gmail.com&lt;/a&gt;&lt;br&gt;&lt;/li&gt;                       &lt;li&gt;Dardo Sordi Bogado ( Original idea and ZoneMinder Stream connection ) &lt;br&gt;                       &lt;a href=mailto:dardo.sordi@gmail.com&gt;dardo.sordi@gmail.com&lt;/a&gt; &lt;/li&gt;&lt;/ul&gt;&lt;br&gt;                       &lt;b&gt;Thanks to:&lt;/b&gt;&lt;ul&gt;                       &lt;li&gt;SILIX ( ZMViewer was developed here ) &lt;br&gt;                       &lt;a href=http://www.silix.com.ar&gt;http://www.silix.com.ar&lt;/a&gt; &lt;/li&gt;                       &lt;li&gt;Pawe&#xc5;&#x82; Porwolik ( Language Menu and Polish translation ) &lt;br&gt;                       &lt;a href=mailto:maxen1@wp.pl&gt;maxen1@wp.pl&lt;/a&gt; &lt;/li&gt;&lt;/ul&gt;&lt;br&gt;&lt;/ul&gt;                       </source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;b&gt;Sviluppatori:&lt;/b&gt;&lt;br/&gt;&lt;ul&gt;                       &lt;li&gt;Leandro Emanuel LÃ³pez ( Maintainer e sviluppatore principale ) &lt;br&gt;                       &lt;a href=mailto:lopezlean@gmail.com&gt;lopezlean@gmail.com&lt;/a&gt;&lt;br&gt;&lt;/li&gt;                       &lt;li&gt;Dardo Sordi Bogado ( Idea originale e connessione allo stream di ZoneMinder ) &lt;br&gt;                       &lt;a href=mailto:dardo.sordi@gmail.com&gt;dardo.sordi@gmail.com&lt;/a&gt; &lt;/li&gt;&lt;/ul&gt;&lt;br&gt;                       &lt;b&gt;Thanks to:&lt;/b&gt;&lt;ul&gt;                       &lt;li&gt;SILIX ( ZMViewer è stato sviluppato quì ) &lt;br&gt;                       &lt;a href=http://www.silix.com.ar&gt;http://www.silix.com.ar&lt;/a&gt; &lt;/li&gt;                       &lt;li&gt;PaweÅ Porwolik ( Menu della linfua e traduzione polacca ) &lt;br&gt;                       &lt;a href=mailto:maxen1@wp.pl&gt;maxen1@wp.pl&lt;/a&gt; &lt;/li&gt;&lt;/ul&gt;&lt;br&gt;&lt;/ul&gt;     </translation>
     </message>
     <message>
         <location filename="../src/shell/main.cpp" line="38"/>
         <source>Loading...</source>
-        <translation type="unfinished"></translation>
+        <translation>In attesa di caricare...</translation>
     </message>
 </context>
 <context>
@@ -876,12 +876,12 @@ Copyright(c)2007 Leandro Emanuel LÃ³pez
     <message>
         <location filename="../src/shell/adminpanel.h" line="34"/>
         <source>Not available</source>
-        <translation type="unfinished"></translation>
+        <translation>Non disponibile</translation>
     </message>
     <message>
         <location filename="../src/shell/adminpanel.h" line="34"/>
         <source>You must compile with Qt 4.4 or later to use this feature</source>
-        <translation type="unfinished"></translation>
+        <translation>Devi compilare con Qt 4.4 o successive per usare questa caratteristica</translation>
     </message>
 </context>
 <context>
@@ -942,52 +942,52 @@ Copyright(c)2007 Leandro Emanuel LÃ³pez
     <message>
         <location filename="../src/shell/sidebar.cpp" line="111"/>
         <source>Layout</source>
-        <translation type="unfinished"></translation>
+        <translation>Layout</translation>
     </message>
     <message>
         <location filename="../src/shell/sidebar.cpp" line="112"/>
         <source>Controls</source>
-        <translation type="unfinished"></translation>
+        <translation>Controlli</translation>
     </message>
     <message>
         <location filename="../src/shell/sidebar.cpp" line="125"/>
         <source>%1 Columns Layout</source>
-        <translation type="unfinished"></translation>
+        <translation>Disposizione delle colonne</translation>
     </message>
     <message>
         <location filename="../src/shell/sidebar.cpp" line="131"/>
         <source>Main Camera Layout</source>
-        <translation type="unfinished"></translation>
+        <translation>Disposizione della videocamera principale</translation>
     </message>
     <message>
         <location filename="../src/shell/sidebar.cpp" line="139"/>
         <source>Double Camera Layout</source>
-        <translation type="unfinished"></translation>
+        <translation>Disposizione a doppia videocamera</translation>
     </message>
     <message>
         <location filename="../src/shell/sidebar.cpp" line="156"/>
         <source>None Selected</source>
-        <translation type="unfinished"></translation>
+        <translation>Nessuna selezionata</translation>
     </message>
     <message>
         <location filename="../src/shell/sidebar.cpp" line="164"/>
         <source>Play</source>
-        <translation type="unfinished">Avvia</translation>
+        <translation>Avvia</translation>
     </message>
     <message>
         <location filename="../src/shell/sidebar.cpp" line="165"/>
         <source>Pause</source>
-        <translation type="unfinished">Pausa</translation>
+        <translation>Pausa</translation>
     </message>
     <message>
         <location filename="../src/shell/sidebar.cpp" line="166"/>
         <source>Stop</source>
-        <translation type="unfinished">Ferma</translation>
+        <translation>Ferma</translation>
     </message>
     <message>
         <location filename="../src/shell/sidebar.cpp" line="167"/>
         <source>FullScreen</source>
-        <translation type="unfinished"></translation>
+        <translation>Schermo Intero</translation>
     </message>
 </context>
 <context>
@@ -995,12 +995,12 @@ Copyright(c)2007 Leandro Emanuel LÃ³pez
     <message>
         <location filename="../src/core/stream.cpp" line="241"/>
         <source>Event finished.</source>
-        <translation type="unfinished"></translation>
+        <translation>Evento terminato</translation>
     </message>
     <message>
         <location filename="../src/core/stream.cpp" line="242"/>
         <source>Stopped by server. Press play to try again</source>
-        <translation type="unfinished"></translation>
+        <translation>Fermato dal server. Premi Avvia per ritentare </translation>
     </message>
 </context>
 <context>
@@ -1018,7 +1018,7 @@ Copyright(c)2007 Leandro Emanuel LÃ³pez
     <message>
         <location filename="../src/shell/styles/style.cpp" line="138"/>
         <source></source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -1054,7 +1054,7 @@ Copyright(c)2007 Leandro Emanuel LÃ³pez
     <message>
         <location filename="../src/shell/config/languageconfigwidget.cpp" line="52"/>
         <source>English</source>
-        <translation>Italiano</translation>
+        <translation type="unfinished">Italiano</translation>
     </message>
 </context>
 </TS>
