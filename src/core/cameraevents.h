@@ -33,6 +33,7 @@ class QDate;
 class QPushButton;
 
 class CameraEventCalendar;
+class QTableWidgetItem;
 
 class CameraEvents: public QDialog{
 Q_OBJECT
@@ -71,6 +72,9 @@ public Q_SLOTS:
     void restoreFilter( );
 protected:
     void resizeEvent ( QResizeEvent * event );
+protected Q_SLOTS:
+    void updateDeleteButton( const QModelIndex & index );
+    void deleteEvent();
 private:
     void init();
     int m_cameraId;
@@ -81,6 +85,7 @@ private:
     QString m_appendString;
     CameraEventCalendar * m_calendarWidget;
     QPushButton *m_clearFilterButton;
+    QPushButton *m_deleteButton;
 };
 
 #endif

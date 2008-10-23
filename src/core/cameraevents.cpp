@@ -58,8 +58,6 @@ private:
 
 };
 
-
-
 CameraEvents::CameraEvents ( int camId, const QString & connectionName , QWidget * parent )
         :QDialog ( parent )
 {
@@ -78,13 +76,14 @@ void CameraEvents::init()
     m_camera = new CameraWidget( NULL , this );
     m_camera->setCameraType( CameraWidget::EventViewer );
     m_camera->toolBar()->setVisible( false );
-    m_camera->setFixedSize( 640, 480 );
+
     m_camera->frameWidget()->setErrorMessage( tr("Please select an event") );
 
     m_calendarWidget = new CameraEventCalendar( this );
     m_calendarWidget->setGridVisible( true );
     m_clearFilterButton = new QPushButton( tr("Clear Calendar Filters"), this  );
     m_clearFilterButton->setEnabled( false );
+    m_clearFilterButton->setSizePolicy ( QSizePolicy::Fixed, QSizePolicy::Fixed );
     connect ( m_calendarWidget , SIGNAL( clicked ( QDate ) ), this , SLOT ( filterEventDate( QDate ) ) );
     connect ( m_clearFilterButton , SIGNAL( clicked (  ) ), this , SLOT ( restoreFilter(  ) ) );
 
@@ -115,20 +114,35 @@ void CameraEvents::init()
     m_view->setModel ( m_model );
 
     QLabel * calendarLabel = new QLabel( tr("<center><h2>Events Calendar</h2></center>"
-    "<p>The days that have events are marked yellow</p>"
+    "<p><center>The days that have events are marked yellow</center></p>"
     ), this );
-    calendarLayout->addSpacerItem( new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding ) );
+    calendarLabel->setSizePolicy ( QSizePolicy::Fixed, QSizePolicy::Fixed );
+    m_calendarWidget->setSizePolicy ( QSizePolicy::Fixed, QSizePolicy::Fixed );
+
     calendarLayout->addWidget( calendarLabel );
     calendarLayout->addWidget( m_calendarWidget );
     calendarLayout->addWidget( m_clearFilterButton );
+    calendarLayout->setAlignment( Qt::AlignBottom );
 
-    hLayout->addWidget( m_camera );
-    hLayout->addLayout( calendarLayout );
-    layout->addLayout( hLayout );
+    layout->addWidget( m_camera->toolBar() );
+    hLayout->addWidget( m_camera, Qt::AlignCenter );
+    hLayout->addLayout( calendarLayout, Qt::AlignCenter );
+    layout->addLayout( hLayout , Qt::AlignCenter );
+
+    m_deleteButton = new QPushButton( this );
+    m_deleteButton->setText( tr( "Delete Event" ) );
+    m_deleteButton->setEnabled( false );
+
     layout->setAlignment( m_camera, Qt::AlignCenter );
-    layout->addWidget ( m_view );
+    QVBoxLayout * tableLayout = new QVBoxLayout;
+    tableLayout->addWidget( m_view );
+    tableLayout->addWidget ( m_deleteButton );
+
+    layout->addLayout ( tableLayout );
 
     connect ( m_view , SIGNAL ( clicked ( QModelIndex ) ), this , SLOT ( showEvent ( QModelIndex ) ) );
+    connect ( m_view , SIGNAL ( clicked ( QModelIndex ) ), this , SLOT ( updateDeleteButton( QModelIndex ) ) );
+    connect ( m_deleteButton , SIGNAL ( clicked ( ) ), this , SLOT ( deleteEvent( ) ) );
 
     m_view->setColumnHidden ( Id, true );
     m_view->setColumnHidden ( MonitorId, true );
@@ -145,6 +159,10 @@ void CameraEvents::init()
     m_view->setColumnHidden ( Executed, true );
     m_view->setColumnHidden ( LearnState, true );
     m_view->resizeColumnsToContents();
+
+    m_camera->toolBar()->setIconSize(  QSize ( 32, 32 ) );
+    m_camera->toolBar()->setVisible( true );
+    m_camera->resize( 320, 240 );
 }
 
 void CameraEvents::appendZMSString( const QString & s ){
@@ -195,6 +213,17 @@ void CameraEvents::restoreFilter( ){
 
 void CameraEvents::resizeEvent ( QResizeEvent * event ){
     QWidget::resizeEvent( event );
+}
+
+void CameraEvents::updateDeleteButton( const QModelIndex & index ){
+    m_deleteButton->setEnabled( index.isValid() );
+}
+
+void CameraEvents::deleteEvent(){
+    int row = m_view->currentIndex().row();
+    qDebug ( qPrintable (m_model->record( row ).value( Id ).toString() ) );
+    qDebug ( "CameraEvents::deleteEvent: implement me!" );
+    
 }
 
 CameraEvents::~CameraEvents()
