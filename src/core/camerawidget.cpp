@@ -20,6 +20,7 @@
 #include "camerawidget.h"
 #include "cameraevents.h"
 #include "framewidget.h"
+#include "models/eventmodel.h"
 
 #include <QLabel>
 #include <QVBoxLayout>
@@ -50,6 +51,7 @@ class CameraWidget::Private{
         FrameWidget::Status savedState;
         mutable QString uniqueId;
         bool restoreStateOnShow;
+        EventModel  * eventModel;
 };
 
 CameraWidget::CameraWidget( const QString &conectionName, QWidget *parent)
@@ -57,6 +59,7 @@ CameraWidget::CameraWidget( const QString &conectionName, QWidget *parent)
 d( new Private )
 {
     m_conectionName = conectionName;
+    d->eventModel = new EventModel( conectionName, this );
     init();
 }
 
@@ -109,6 +112,8 @@ void CameraWidget::init(){
     d->aspectRatioMode = Qt::KeepAspectRatio;
     d->restoreStateOnShow = false;
 
+    connect ( d->eventModel, SIGNAL( eventsDetected( int ) ), this, SLOT( newEvents( int ) ) );
+
 }
 
 Stream * CameraWidget::stream(){
@@ -131,6 +136,7 @@ void CameraWidget::startCamera(){
     connect ( m_stream , SIGNAL ( frameReady ( QPixmap *) ) , this , SLOT (setPixmap (QPixmap *)));
     connect ( m_stream , SIGNAL ( done ( QString ) ) , m_frameWidget , SLOT ( setErrorMessage ( QString ) ) );
     m_frameWidget->setStatus( FrameWidget::Playing );
+    d->eventModel->startEventTracker();
 }
 
 void CameraWidget::pauseCamera( ){
@@ -148,6 +154,8 @@ void CameraWidget::stopCamera(){
     disconnect ( m_stream , SIGNAL ( done ( QString ) ) , m_frameWidget , SLOT ( setErrorMessage ( QString ) ) );
     m_frameWidget->setStatus( FrameWidget::Stopped );
     m_frameWidget->setPixmap( QPixmap());
+    d->eventModel->stopEventTracker();
+    m_frameWidget->setHasNewEvents( false );
 }
 void CameraWidget::restartCamera(){
     stopCamera();
@@ -261,11 +269,14 @@ bool CameraWidget::event ( QEvent * event ){
 }
 
 void CameraWidget::cameraEvents(){
+    d->eventModel->stopEventTracker();
+    m_frameWidget->setHasNewEvents( false );
     if (!d->cameraEvent) d->cameraEvent = new CameraEvents ( stream()->monitor() , m_conectionName , this );
     d->cameraEvent->cameraWidget()->frameWidget()->setAspectRatioMode( m_frameWidget->aspectRatioMode() );
     d->cameraEvent->appendZMSString( stream()->ZMSStringAppended() );
     d->cameraEvent->setWindowTitle(tr( "Events for Monitor %1").arg( windowTitle() ) );
     d->cameraEvent->show();
+    d->eventModel->startEventTracker();
 }
 
 void CameraWidget::popupMenu ( const QPoint & p){
@@ -403,6 +414,14 @@ QString CameraWidget::uniqueId() const{
         d->uniqueId = m_conectionName + "_" + QString::number( m_stream->port() ) + "_" + QString::number( m_stream->monitor() );
     }
     return d->uniqueId;
+}
+
+void CameraWidget::newEvents( int count ){
+    qDebug( qPrintable(QString("CameraWidget::newEvents: implement! Detected %1 events").arg( QString::number( count ) ) ) );
+
+    bool ignore = d->cameraEvent && d->cameraEvent->isVisible();
+    if ( !ignore )
+        m_frameWidget->setHasNewEvents( true );
 }
 
 CameraWidget::~CameraWidget()

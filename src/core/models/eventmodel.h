@@ -18,51 +18,50 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef FRAMEWIDGET_H
-#define FRAMEWIDGET_H
+#ifndef EVENTMODEL_H
+#define EVENTMODEL_H
 
+#include "basemodel.h"
 /**
 	@author Leandro Emanuel López <lopezlean@gmail.com>
 */
-#include <QWidget>
-
-class FrameWidget : public QWidget{
+class EventModel: public BaseModel{
     Q_OBJECT
 public:
-    enum Status{ None, Playing, NoSignal, Paused, Stopped, HTTPError };
-    FrameWidget( QWidget * parent = 0 );
-    void setStatus( const Status & status );
-    void setFrameId( const QString &id );
-    void setAspectRatioMode( const Qt::AspectRatioMode & mode );
-    void setShowNumbers( bool b );
-    void setNumbersPosition( const Qt::Alignment & alignment ) ;
-    void setTransformationMode( const Qt::TransformationMode &mode );
-    void setHasNewEvents( bool b);
-
-    Status status() const;
-    QPixmap currentPixmap() const;
-    QString frameId()const;
-    bool showNumbers()const;
-    Qt::Alignment numbersPosition()const;
-    Qt::TransformationMode transformationMode() const;
-    Qt::AspectRatioMode aspectRatioMode()const;
-
-    void updateSize();
-    ~FrameWidget();
-public Q_SLOTS:
-    void setPixmap( const QPixmap &pixmap );
-    void setErrorMessage( const QString & error );
-protected:
-    void paintEvent ( QPaintEvent * event );
+        enum Fields{
+        Id,
+        MonitorId,
+        Name,
+        Cause,
+        StartTime,
+        EndTime,
+        Width,
+        Height,
+        Length,
+        Frames,
+        AlarmFrames,
+        TotScore,
+        AvgScore,
+        MaxScore,
+        Archivied,
+        Videoed,
+        Uploaded,   
+        Emailed,
+        Messaged,
+        Executed,
+        LearnState,
+        Notes
+    };
+    EventModel( const QString &cn, QObject * parent = 0 );
+    void setFilter ( const QString & filter );
+    void startEventTracker();
+    void stopEventTracker();
+    ~EventModel();
+protected Q_SLOTS:
+    void searchForNewEvents();
+Q_SIGNALS:
+    void eventsDetected( int newsEventCount );
 private:
-    void init();
-    qreal ratioX();
-    qreal ratioY();
-    void drawText( QPainter * painter );
-    void drawEventsText ( QPainter * painter  );
-
-    void drawId( QPainter * painter );
-
     class Private;
     Private *d;
 

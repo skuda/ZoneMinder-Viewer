@@ -33,6 +33,7 @@ public:
     Qt::Alignment numbersPosition;
     bool showNumbers;
     Qt::TransformationMode transformationMode;
+    bool showEventsText;
 };
 
 FrameWidget::FrameWidget( QWidget * parent )
@@ -48,6 +49,7 @@ void FrameWidget::init(){
     d->showNumbers = true;
     d->numbersPosition = Qt::AlignRight | Qt::AlignTop;
     d->transformationMode = Qt::FastTransformation;
+    d->showEventsText = false;
 }
 
 void FrameWidget::setPixmap( const QPixmap &pixmap ){
@@ -73,7 +75,9 @@ void FrameWidget::setNumbersPosition( const Qt::Alignment & alignment ) {
 void FrameWidget::setTransformationMode( const Qt::TransformationMode &mode ){
     d->transformationMode = mode;
 }
-
+void FrameWidget::setHasNewEvents( bool b){
+    d->showEventsText = b;
+}
 void FrameWidget::setStatus( const Status & status ){
     d->status = status;
     update();
@@ -132,6 +136,7 @@ void FrameWidget::paintEvent ( QPaintEvent * event ){
     if ( d->showNumbers )
         drawId( &painter );
     drawText( &painter );
+    if ( d->showEventsText ) drawEventsText( &painter );
 }
 
 void FrameWidget::drawText( QPainter * painter ){
@@ -153,6 +158,11 @@ void FrameWidget::drawText( QPainter * painter ){
             break;
     }
 
+}
+
+void FrameWidget::drawEventsText ( QPainter * painter  ){
+    painter->setPen( Qt::white );
+    painter->drawText(rect(),Qt::AlignBottom | Qt::AlignRight  , tr("New Events Detected") );
 }
 
 void FrameWidget::drawId( QPainter * painter ){

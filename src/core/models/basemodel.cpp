@@ -18,54 +18,15 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef FRAMEWIDGET_H
-#define FRAMEWIDGET_H
+#include "basemodel.h"
 
-/**
-	@author Leandro Emanuel López <lopezlean@gmail.com>
-*/
-#include <QWidget>
+BaseModel::BaseModel( const QString &cn, QObject * parent )
+:QSqlTableModel( parent, QSqlDatabase::database( cn ) ){
+}
 
-class FrameWidget : public QWidget{
-    Q_OBJECT
-public:
-    enum Status{ None, Playing, NoSignal, Paused, Stopped, HTTPError };
-    FrameWidget( QWidget * parent = 0 );
-    void setStatus( const Status & status );
-    void setFrameId( const QString &id );
-    void setAspectRatioMode( const Qt::AspectRatioMode & mode );
-    void setShowNumbers( bool b );
-    void setNumbersPosition( const Qt::Alignment & alignment ) ;
-    void setTransformationMode( const Qt::TransformationMode &mode );
-    void setHasNewEvents( bool b);
 
-    Status status() const;
-    QPixmap currentPixmap() const;
-    QString frameId()const;
-    bool showNumbers()const;
-    Qt::Alignment numbersPosition()const;
-    Qt::TransformationMode transformationMode() const;
-    Qt::AspectRatioMode aspectRatioMode()const;
+BaseModel::~BaseModel()
+{
+}
 
-    void updateSize();
-    ~FrameWidget();
-public Q_SLOTS:
-    void setPixmap( const QPixmap &pixmap );
-    void setErrorMessage( const QString & error );
-protected:
-    void paintEvent ( QPaintEvent * event );
-private:
-    void init();
-    qreal ratioX();
-    qreal ratioY();
-    void drawText( QPainter * painter );
-    void drawEventsText ( QPainter * painter  );
-
-    void drawId( QPainter * painter );
-
-    class Private;
-    Private *d;
-
-};
-
-#endif
+#include "basemodel.moc"

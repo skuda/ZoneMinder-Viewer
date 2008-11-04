@@ -17,55 +17,58 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
+#include "eventmodel.h"
 
-#ifndef FRAMEWIDGET_H
-#define FRAMEWIDGET_H
+#include <QTimer>
 
-/**
-	@author Leandro Emanuel López <lopezlean@gmail.com>
-*/
-#include <QWidget>
-
-class FrameWidget : public QWidget{
-    Q_OBJECT
-public:
-    enum Status{ None, Playing, NoSignal, Paused, Stopped, HTTPError };
-    FrameWidget( QWidget * parent = 0 );
-    void setStatus( const Status & status );
-    void setFrameId( const QString &id );
-    void setAspectRatioMode( const Qt::AspectRatioMode & mode );
-    void setShowNumbers( bool b );
-    void setNumbersPosition( const Qt::Alignment & alignment ) ;
-    void setTransformationMode( const Qt::TransformationMode &mode );
-    void setHasNewEvents( bool b);
-
-    Status status() const;
-    QPixmap currentPixmap() const;
-    QString frameId()const;
-    bool showNumbers()const;
-    Qt::Alignment numbersPosition()const;
-    Qt::TransformationMode transformationMode() const;
-    Qt::AspectRatioMode aspectRatioMode()const;
-
-    void updateSize();
-    ~FrameWidget();
-public Q_SLOTS:
-    void setPixmap( const QPixmap &pixmap );
-    void setErrorMessage( const QString & error );
-protected:
-    void paintEvent ( QPaintEvent * event );
-private:
-    void init();
-    qreal ratioX();
-    qreal ratioY();
-    void drawText( QPainter * painter );
-    void drawEventsText ( QPainter * painter  );
-
-    void drawId( QPainter * painter );
-
-    class Private;
-    Private *d;
-
+class EventModel::Private{
+    public:
+        int lastEventCount;
+        bool eventTracker;
+        QTimer timer;
 };
+EventModel::EventModel( const QString &cn, QObject * parent )
+:BaseModel( cn, parent ),d( new Private ){
+    setTable( "Events" );
+    d->lastEventCount = 0;
+    d->eventTracker = false;
+    connect( &d->timer, SIGNAL(timeout()), this, SLOT(searchForNewEvents()));
+}
+void EventModel::setFilter ( const QString & filter ){
+    if ( !d->eventTracker )
+        QSqlTableModel::setFilter ( filter );
+    else{
+        qDebug( "EventModel::setFilter: Ignored, Event Tracker is activated!");
+    }
+}
 
-#endif
+void EventModel::startEventTracker(){
+    setFilter("");
+    select();
+    d->lastEventCount = rowCount();
+    d->eventTracker = true;
+    d->timer.start( 1000 );
+
+}
+void EventModel::stopEventTracker(){
+    d->lastEventCount = 0;
+    d->eventTracker = false;
+    d->timer.stop();
+}
+
+void EventModel::searchForNewEvents(){
+    select();
+    int lastRowCount = d->lastEventCount;
+    int newRowCount = d->lastEventCount = rowCount();
+    if ( newRowCount > lastRowCount ){
+        emit ( eventsDetected( newRowCount - lastRowCount ) );
+    }
+}
+
+
+EventModel::~EventModel()
+{
+}
+
+#include "eventmodel.moc"
+

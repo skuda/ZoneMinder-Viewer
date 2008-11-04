@@ -151,6 +151,7 @@ private Q_SLOTS:
     void popupMenu ( const QPoint & );
     void setFocus ( bool b );
     void changeCameraNumber();
+    void newEvents( int count );
 private:
     void init();
     void loadFromState();

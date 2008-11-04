@@ -19,6 +19,8 @@ set ( core_SRCS
       doublecamerawidget.cpp
       blackwidget.cpp
       commandlistener.cpp
+      models/basemodel.cpp
+      models/eventmodel.cpp
     )
 
 set ( core_UIS
