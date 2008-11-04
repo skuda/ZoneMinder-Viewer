@@ -13,6 +13,7 @@ Working:
 * A widget to select recorded events based on a "After (date)(time) and before (date)(time)" dialog and then view them.
 * Api Documentation
 * Events notification 
+* Deleting Events
 
 Done:
 English languaje translation (lopezlean)
