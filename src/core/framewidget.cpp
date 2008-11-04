@@ -31,6 +31,7 @@ public:
     QString errorMessage;
     Qt::AspectRatioMode aspectRatioMode;
     Qt::Alignment numbersPosition;
+    Qt::Alignment eventTextAlignment;
     bool showNumbers;
     Qt::TransformationMode transformationMode;
     bool showEventsText;
@@ -48,6 +49,7 @@ void FrameWidget::init(){
     d->aspectRatioMode = Qt::KeepAspectRatio;
     d->showNumbers = true;
     d->numbersPosition = Qt::AlignRight | Qt::AlignTop;
+    d->eventTextAlignment = Qt::AlignBottom | Qt::AlignRight;
     d->transformationMode = Qt::FastTransformation;
     d->showEventsText = false;
 }
@@ -69,6 +71,9 @@ void FrameWidget::setShowNumbers( bool b ){
 }
 void FrameWidget::setNumbersPosition( const Qt::Alignment & alignment ) {
     d->numbersPosition = alignment;
+    if ( alignment == ( Qt::AlignBottom | Qt::AlignRight ) )
+        d->eventTextAlignment = Qt::AlignTop | Qt::AlignRight;
+    else d->eventTextAlignment = Qt::AlignBottom | Qt::AlignRight;
     update();
 }
 
@@ -162,7 +167,8 @@ void FrameWidget::drawText( QPainter * painter ){
 
 void FrameWidget::drawEventsText ( QPainter * painter  ){
     painter->setPen( Qt::white );
-    painter->drawText(rect(),Qt::AlignBottom | Qt::AlignRight  , tr("New Events Detected") );
+
+    painter->drawText(rect(), d->eventTextAlignment , tr("New Events Detected") );
 }
 
 void FrameWidget::drawId( QPainter * painter ){
