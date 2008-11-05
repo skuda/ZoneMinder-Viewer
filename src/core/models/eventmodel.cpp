@@ -26,6 +26,7 @@ class EventModel::Private{
         int lastEventCount;
         bool eventTracker;
         QTimer timer;
+        int cameraId;
 };
 EventModel::EventModel( const QString &cn, QObject * parent )
 :BaseModel( cn, parent ),d( new Private ){
@@ -34,16 +35,13 @@ EventModel::EventModel( const QString &cn, QObject * parent )
     d->eventTracker = false;
     connect( &d->timer, SIGNAL(timeout()), this, SLOT(searchForNewEvents()));
 }
-void EventModel::setFilter ( const QString & filter ){
-    if ( !d->eventTracker )
-        QSqlTableModel::setFilter ( filter );
-    else{
-        qDebug( "EventModel::setFilter: Ignored, Event Tracker is activated!");
-    }
-}
 
-void EventModel::startEventTracker(){
-    setFilter("");
+void EventModel::setCamera( int id ){
+    d->cameraId = id;
+    setFilter( "MonitorId = " + QString::number ( d->cameraId ) );
+}
+void EventModel::startEventTracker( ){
+    setFilter( "MonitorId = " + QString::number ( d->cameraId ) );
     select();
     d->lastEventCount = rowCount();
     d->eventTracker = true;

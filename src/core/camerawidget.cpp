@@ -135,8 +135,11 @@ void CameraWidget::startCamera(){
     m_stream->start();
     connect ( m_stream , SIGNAL ( frameReady ( QPixmap *) ) , this , SLOT (setPixmap (QPixmap *)));
     connect ( m_stream , SIGNAL ( done ( QString ) ) , m_frameWidget , SLOT ( setErrorMessage ( QString ) ) );
-    m_frameWidget->setStatus( FrameWidget::Playing );
-    d->eventModel->startEventTracker();
+    if ( d->cameraType == Monitor ){
+        m_frameWidget->setStatus( FrameWidget::Playing );
+        d->eventModel->setCamera( stream()->monitor() );
+        d->eventModel->startEventTracker();
+    }
 }
 
 void CameraWidget::pauseCamera( ){
@@ -154,7 +157,9 @@ void CameraWidget::stopCamera(){
     disconnect ( m_stream , SIGNAL ( done ( QString ) ) , m_frameWidget , SLOT ( setErrorMessage ( QString ) ) );
     m_frameWidget->setStatus( FrameWidget::Stopped );
     m_frameWidget->setPixmap( QPixmap());
-    d->eventModel->stopEventTracker();
+
+    if ( d->cameraType == Monitor )
+        d->eventModel->stopEventTracker();
     m_frameWidget->setHasNewEvents( false );
 }
 void CameraWidget::restartCamera(){

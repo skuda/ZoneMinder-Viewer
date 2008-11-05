@@ -53,9 +53,9 @@ public:
         Notes
     };
     EventModel( const QString &cn, QObject * parent = 0 );
-    void setFilter ( const QString & filter );
     void startEventTracker();
     void stopEventTracker();
+    void setCamera( int id );
     ~EventModel();
 protected Q_SLOTS:
     void searchForNewEvents();
