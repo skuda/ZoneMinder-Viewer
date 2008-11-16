@@ -20,6 +20,8 @@
 
 #include "auth.h"
 
+#include "connectionmanager.h"
+
 #include <QSqlDatabase>
 #include <QSqlQuery>
 #include <QSqlRecord>
@@ -28,7 +30,7 @@
 #include <QCryptographicHash>
 #include <QDateTime>
 #include <QHostInfo>
-
+#include <QTcpSocket>
 
 #include <QSettings>
 
@@ -146,16 +148,24 @@ QByteArray Auth::authKey( ) const
     auth_key += m_hashPassword;
     if ( use_remote_addr )
     {
-        QHostInfo hinfo = QHostInfo::fromName ( QHostInfo::localHostName()  );
-        QHostInfo checkLocalHost = QHostInfo::fromName ( db.hostName()  );
-        if ( ! checkLocalHost.addresses().isEmpty() )
-            if ( checkLocalHost.addresses().first().toString() == "127.0.0.1" ) hinfo = checkLocalHost;
+        QTcpSocket socket;
+        socket.connectToHost( db.hostName(), ConnectionManager::connectionWebPort( m_db ), QIODevice::ReadOnly );
+        //if we can get ip address from the socket in 3000 ms
+        if ( socket.waitForConnected( 3000 ) ){
+            auth_key += socket.localAddress().toString();
+        } else {
+            //else try with HostInfo
+            QHostInfo hinfo = QHostInfo::fromName ( QHostInfo::localHostName()  );
+            QHostInfo checkLocalHost = QHostInfo::fromName ( db.hostName()  );
+            if ( ! checkLocalHost.addresses().isEmpty() )
+                if ( checkLocalHost.addresses().first().toString() == "127.0.0.1" ) hinfo = checkLocalHost;
 
-        if ( !hinfo.addresses().isEmpty() )
-        {
-            //TODO: fix this. Use the correct interface address and not the first
-            QHostAddress address = hinfo.addresses().first();
-            auth_key+=address.toString();
+            if ( !hinfo.addresses().isEmpty() )
+            {
+                //TODO: fix this. Use the correct interface address and not the first
+                QHostAddress address = hinfo.addresses().first();
+                auth_key+=address.toString();
+            }
         }
     }
     dateTime = dateTime.toTimeSpec( Qt::LocalTime );

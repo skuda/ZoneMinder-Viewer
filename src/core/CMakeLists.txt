@@ -21,6 +21,9 @@ set ( core_SRCS
       commandlistener.cpp
       models/basemodel.cpp
       models/eventmodel.cpp
+      rest/rest.cpp
+      rest/requestinterface.cpp
+      rest/zoneminderhtmlrequest.cpp
     )
 
 set ( core_UIS
