@@ -45,7 +45,7 @@ void EventModel::startEventTracker( ){
     select();
     d->lastEventCount = rowCount();
     d->eventTracker = true;
-    d->timer.start( 1000 );
+    d->timer.start( 5000 );
 
 }
 void EventModel::stopEventTracker(){
