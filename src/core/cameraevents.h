@@ -31,6 +31,7 @@ class CameraWidget;
 class QCheckBox;
 class QDate;
 class QPushButton;
+class QTimer;
 
 class CameraEventCalendar;
 class QTableWidgetItem;
@@ -75,6 +76,7 @@ protected:
 protected Q_SLOTS:
     void updateDeleteButton( const QModelIndex & index );
     void deleteEvent();
+    void updateEvents();
 private:
     void init();
     int m_cameraId;
@@ -86,6 +88,7 @@ private:
     CameraEventCalendar * m_calendarWidget;
     QPushButton *m_clearFilterButton;
     QPushButton *m_deleteButton;
+    QTimer * m_timer;
 };
 
 #endif

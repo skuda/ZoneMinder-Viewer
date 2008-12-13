@@ -37,6 +37,8 @@
 #include <QTextCharFormat>
 #include <QDate>
 #include <QPushButton>
+#include <QScrollBar>
+#include <QTimer>
 
 class CameraEventCalendar : public QCalendarWidget{
 public:
@@ -91,6 +93,7 @@ void CameraEvents::init()
     m_model->setTable ( "Events" );
     m_model->setFilter ( "MonitorId = " + QString::number ( m_cameraId ) );
     m_model->setEditStrategy ( QSqlTableModel::OnManualSubmit );
+    m_model->setSort( StartTime, Qt::DescendingOrder );
     m_model->select();
 
     for ( int i = 0 ; i < m_model->rowCount(); i++ ){
@@ -163,6 +166,10 @@ void CameraEvents::init()
     m_camera->toolBar()->setIconSize(  QSize ( 32, 32 ) );
     m_camera->toolBar()->setVisible( true );
     m_camera->resize( 320, 240 );
+
+    m_timer = new QTimer ( this );
+    m_timer->start( 5000 );
+    connect( m_timer, SIGNAL(timeout()), this, SLOT( updateEvents() ) );
 }
 
 void CameraEvents::appendZMSString( const QString & s ){
@@ -224,6 +231,18 @@ void CameraEvents::deleteEvent(){
     qDebug ( qPrintable (m_model->record( row ).value( Id ).toString() ) );
     qDebug ( "CameraEvents::deleteEvent: implement me!" );
     
+}
+
+void CameraEvents::updateEvents(){
+    if ( isVisible() ){
+        QModelIndex index = m_view->currentIndex();
+        int vPos = m_view->verticalScrollBar()->sliderPosition();
+        int hPos = m_view->horizontalScrollBar()->sliderPosition();
+        m_model->select();
+        m_view->setCurrentIndex( index );
+        m_view->verticalScrollBar()->setSliderPosition( vPos );
+        m_view->horizontalScrollBar()->setSliderPosition( hPos );
+    }
 }
 
 CameraEvents::~CameraEvents()
