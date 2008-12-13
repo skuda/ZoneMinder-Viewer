@@ -88,25 +88,31 @@ void MainWindow::init()
 void MainWindow::initActions()
 {
     m_sessionNew = new QAction(this);
+    m_sessionNew->setShortcut( tr( "Ctrl+N" ) );
     connect ( m_sessionNew , SIGNAL ( triggered() ), this , SLOT ( newSession() ) );
 
     m_sessionList = new QAction(this);
+    m_sessionList->setShortcut( tr( "Ctrl+L" ) );
     connect ( m_sessionList , SIGNAL ( triggered() ), this , SLOT ( sessionList() ) );
 
     m_closeFullScreenAction = new QAction(this);
     m_closeFullScreenAction -> setIcon( QIcon( ":/shellicons/Restore") );
     connect ( m_closeFullScreenAction , SIGNAL ( triggered() ), this , SLOT ( showNormal() ) );
 
+    //TODO: Fix fullscreen action behaviour
     m_fullScreenAction = new QAction(this);
     m_fullScreenAction -> setIcon( QIcon( ":/icons/FullScreen") );
+    m_fullScreenAction->setShortcut( tr( "F11" ) );
     connect ( m_fullScreenAction, SIGNAL ( triggered() ), this , SLOT ( fullScreen() ) );
   
     m_quitAction = new QAction(this);
+    m_quitAction->setShortcut(tr("Ctrl+Q"));
     m_quitAction -> setIcon( QIcon( ":/icons/Quit") );
 
     connect ( m_quitAction, SIGNAL ( triggered() ), this , SLOT ( close() ) );
 
     m_updateAllMonitorsActions = new QAction(this);
+    m_updateAllMonitorsActions->setShortcut( tr("F5") );
     connect ( m_updateAllMonitorsActions, SIGNAL ( triggered() ),this, SLOT ( update() ) );
 
     m_selectStyleAction = new QAction(this);
