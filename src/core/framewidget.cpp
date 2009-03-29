@@ -26,9 +26,9 @@
 class FrameWidget::Private{
 public:
     QPixmap pixmap;
-    Status status;
+    Stream::Status status;
     QString id;
-    QString errorMessage;
+    QString message;
     Qt::AspectRatioMode aspectRatioMode;
     Qt::Alignment numbersPosition;
     Qt::Alignment eventTextAlignment;
@@ -45,7 +45,7 @@ FrameWidget::FrameWidget( QWidget * parent )
 
 void FrameWidget::init(){
     setAttribute(Qt::WA_NoSystemBackground);
-    d->status = None;
+    d->status = Stream::None;
     d->aspectRatioMode = Qt::KeepAspectRatio;
     d->showNumbers = true;
     d->numbersPosition = Qt::AlignRight | Qt::AlignTop;
@@ -83,8 +83,9 @@ void FrameWidget::setTransformationMode( const Qt::TransformationMode &mode ){
 void FrameWidget::setHasNewEvents( bool b){
     d->showEventsText = b;
 }
-void FrameWidget::setStatus( const Status & status ){
+void FrameWidget::setStatus( const Stream::Status & status , const QString & message ){
     d->status = status;
+    setMessage( message );
     update();
 }
 
@@ -105,7 +106,7 @@ Qt::AspectRatioMode FrameWidget::aspectRatioMode()const{
     return d->aspectRatioMode;
 }
 
-FrameWidget::Status FrameWidget::status() const{
+Stream::Status FrameWidget::status() const{
     return d->status;
 }
 QPixmap FrameWidget::currentPixmap() const{
@@ -117,9 +118,8 @@ void FrameWidget::updateSize(){
     }
     update( contentsRect() );
 }
-void FrameWidget::setErrorMessage( const QString & error ){
-    d->errorMessage = error;
-    setStatus( HTTPError );
+void FrameWidget::setMessage( const QString & msg ){
+    d->message = msg;
 }
 void FrameWidget::paintEvent ( QPaintEvent * event ){
     QPainter painter( this );
@@ -147,19 +147,25 @@ void FrameWidget::paintEvent ( QPaintEvent * event ){
 void FrameWidget::drawText( QPainter * painter ){
     painter->setPen( Qt::white );
     switch( d->status ){
-        case Stopped:
-            painter->drawText(rect(),Qt::AlignCenter, tr("Stopped") );
+        case Stream::Stopped:
+            if ( d->message.isEmpty() ){
+                painter->drawText(rect(),Qt::AlignCenter, tr("Stopped") );
+            } else {
+                painter->drawText(rect(),Qt::AlignCenter | Qt::TextWordWrap, d->message );
+            }
             break;
-        case Paused:
+        case Stream::Paused:
             painter->drawText(rect(),Qt::AlignCenter, tr("Paused") );
             break;
-        case NoSignal:
+        case Stream::NoSignal:
             painter->drawText(rect(),Qt::AlignCenter, tr("No Signal") );
             break;
-        case HTTPError:
-            if ( d->errorMessage.isEmpty() )
+        case Stream::HTTPError:
+            if ( d->message.isEmpty() ){
                 painter->drawText(rect(),Qt::AlignCenter, tr("Connection Error") );
-            else painter->drawText(rect(),Qt::AlignCenter | Qt::TextWordWrap, d->errorMessage );
+            } else {
+                painter->drawText(rect(),Qt::AlignCenter | Qt::TextWordWrap, d->message );
+            }
             break;
     }
 

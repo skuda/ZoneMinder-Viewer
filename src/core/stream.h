@@ -31,6 +31,7 @@ Q_OBJECT
 public:
     enum StreamMode{ JPEG, VIDEO/** TODO: VIDEO */ };
     enum StreamType{ Monitor, Event };
+    enum Status{ None, Playing, NoSignal, Paused, Stopped, HTTPError };
     Stream( QObject * parent = 0 );
     ~Stream();
     
@@ -41,6 +42,7 @@ public:
     quint16 bitrate()const;
     quint16 scale()const;
     QString zmStreamServer()const;
+    Status status() const;
 
     /** start Stream*/
     void start();
@@ -49,6 +51,8 @@ public:
 
     void appendZMSString( const QString & s );
     QString ZMSStringAppended( ) const;
+
+    void setStatus( const Status & status );
 public Q_SLOTS:
     void setHost( const QString & host , quint16 port = 80 );
     void setMode ( const StreamMode &mode );
@@ -66,12 +70,14 @@ Q_SIGNALS:
     */
     void frameReady ( QPixmap * current_frame );
     void done( const QString & message );
+    void statusChanged ( const Stream::Status & newStatus );
 private Q_SLOTS:
     void read (const QHttpResponseHeader &header );
     bool image ( const QByteArray &array );
     void stopRead ( bool error );
+    void checkConnection();
 private:
-
+    void init();
     //private class
     class Private;
     Private *d;

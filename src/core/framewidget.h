@@ -26,12 +26,13 @@
 */
 #include <QWidget>
 
+#include "stream.h"
+
 class FrameWidget : public QWidget{
     Q_OBJECT
 public:
-    enum Status{ None, Playing, NoSignal, Paused, Stopped, HTTPError };
     FrameWidget( QWidget * parent = 0 );
-    void setStatus( const Status & status );
+    void setStatus( const Stream::Status & status , const QString & message = QString() );
     void setFrameId( const QString &id );
     void setAspectRatioMode( const Qt::AspectRatioMode & mode );
     void setShowNumbers( bool b );
@@ -39,7 +40,7 @@ public:
     void setTransformationMode( const Qt::TransformationMode &mode );
     void setHasNewEvents( bool b);
 
-    Status status() const;
+    Stream::Status status() const;
     QPixmap currentPixmap() const;
     QString frameId()const;
     bool showNumbers()const;
@@ -51,7 +52,7 @@ public:
     ~FrameWidget();
 public Q_SLOTS:
     void setPixmap( const QPixmap &pixmap );
-    void setErrorMessage( const QString & error );
+    void setMessage( const QString & msg );
 protected:
     void paintEvent ( QPaintEvent * event );
 private:

@@ -79,7 +79,8 @@ void CameraEvents::init()
     m_camera->setCameraType( CameraWidget::EventViewer );
     m_camera->toolBar()->setVisible( false );
 
-    m_camera->frameWidget()->setErrorMessage( tr("Please select an event") );
+    m_camera->frameWidget()->setStatus( Stream::Stopped );
+    m_camera->frameWidget()->setMessage( tr("Please select an event") );
 
     m_calendarWidget = new CameraEventCalendar( this );
     m_calendarWidget->setGridVisible( true );

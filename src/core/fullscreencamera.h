@@ -30,8 +30,7 @@ class FullScreenCamera: public QDialog{
 Q_OBJECT
 public:
     FullScreenCamera( QWidget * parent = 0 );
-    void setStream ( Stream * s  , const FrameWidget::Status &state );
-    FrameWidget::Status status() const;
+    void setStream ( Stream * s );
     ~FullScreenCamera();
 
 public Q_SLOTS:

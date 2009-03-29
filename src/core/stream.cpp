@@ -24,6 +24,7 @@
 #include <QHttp>
 #include <QString>
 #include <QPixmap>
+#include <QTimer>
 
 class Stream::Private
 {
@@ -32,6 +33,7 @@ class Stream::Private
         {
             http = new QHttp( parent );
             //http->setUser("admin","admin");
+            timer = new QTimer( parent );
             mode = "jpeg";
             host = "localhost";
             port = 80;
@@ -39,6 +41,7 @@ class Stream::Private
             type = Monitor;
             scale = 100;
             bitrate = 2;
+            reconnectCount = 0;
             zms ="/cgi-bin/nph-zms";
             current_frame = new QPixmap;
             multiPartReader = new QMultiPartReader("--ZoneMinderFrame", parent );
@@ -58,7 +61,12 @@ class Stream::Private
         QString zms;
         StreamType type;
         QPixmap * current_frame;
+        QTimer * timer;
         QString appendString;
+        Status status;
+        // used to check connection errors
+        Status userStatus;
+        int reconnectCount;
 
         QMultiPartReader * multiPartReader;
 };
@@ -66,8 +74,14 @@ class Stream::Private
 Stream::Stream ( QObject * parent )
         :QObject ( parent ),d ( new Private( this ) )
 {
+    init();
 }
 
+void Stream::init(){
+    d->status = Stream::None;
+    d->timer->start( 0 );
+    connect ( d->timer , SIGNAL( timeout() ), this, SLOT( checkConnection() ) );
+}
 void Stream::setHost ( const QString & host, quint16 port )
 {
     d->host = host;
@@ -167,6 +181,8 @@ bool Stream::image ( const QByteArray &array )
 
 void Stream::start()
 {
+    d->userStatus = Playing;
+    setStatus( Stream::Playing );
     QString connection;
     if (d->type == Monitor )
         connection = QString ( "%1?mode=%2&monitor=%3&scale=%4&bitrate=%5" ).arg ( d->zms ).arg ( d->mode ).arg ( d->monitor ).arg ( d->scale ).arg ( d->bitrate );
@@ -184,6 +200,8 @@ void Stream::start()
 }
 
 void Stream::stop(){
+    d->userStatus = Stopped;
+    setStatus( Stream::Stopped );
     d->http->abort ();
     disconnect ( d->http, SIGNAL ( readyRead ( const QHttpResponseHeader& ) ), this, SLOT ( read ( const   QHttpResponseHeader & ) ) );
     disconnect ( d->multiPartReader, SIGNAL ( frameReady ( QByteArray ) ), this, SLOT ( image ( QByteArray ) ) );
@@ -225,6 +243,10 @@ QString Stream::zmStreamServer() const
     return d->zms;
 };
 
+Stream::Status Stream::status() const{
+    return d->status;
+}
+
 void Stream::appendZMSString( const QString & s ){
    d->appendString = s;
 }
@@ -233,15 +255,40 @@ QString Stream::ZMSStringAppended( ) const{
     return d->appendString;
 }
 
-void Stream::stopRead ( bool error ){
-        if ( error )
-            emit (done( d->http->errorString() ) );
-        else{
-            if ( d->type == Event )
-                emit ( done( tr( "Event finished.") ) );
-            else emit ( done( tr( "Stopped by server. Press play to try again") ) );
-        }
+void Stream::setStatus( const Status & status ){
+    d->status = status;
+    emit( statusChanged( d->status ) );
+}
 
+void Stream::stopRead ( bool error ){
+        if ( error && d->userStatus != Stream::Stopped ){
+            setStatus ( Stream::HTTPError );
+            emit ( done( d->http->errorString() ) );
+        }
+        else{
+            if ( d->type == Event ){
+                setStatus( Stream::Stopped );
+                emit ( done( tr( "Event finished.") ) );
+            } else {
+                if ( d->userStatus != Stream::Stopped ){
+                    setStatus( Stream::NoSignal );
+                    emit ( done( tr( "Stopped by server. Press play to try again") ) );
+                    } else {
+                        setStatus( d->userStatus );
+                    }
+                }
+        }
+}
+
+void Stream::checkConnection(){
+    if ( d->userStatus == Stream::Playing && d->type != Event && d->http->state() == QHttp::Unconnected ){
+        //try to connect
+        restart();
+    } else {
+        if ( d->reconnectCount != 0 && d->http->state() == QHttp::Connected ){
+                d->reconnectCount = 0;
+        }
+    }
 }
 
 Stream::~Stream()

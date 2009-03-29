@@ -60,34 +60,26 @@ void FullScreenCamera::init(){
 void FullScreenCamera::startCamera(){
     m_stream->start();
     connect ( m_stream , SIGNAL ( frameReady ( QPixmap *) ) , this , SLOT (setPixmap (QPixmap *)));
-    m_frameWidget->setStatus( FrameWidget::Playing );
 }
 void FullScreenCamera::pauseCamera( ){
     m_stream->stop();
     disconnect ( m_stream , SIGNAL ( frameReady ( QPixmap *) ) , this , SLOT (setPixmap (QPixmap *)));
-    m_frameWidget->setStatus( FrameWidget::Paused );
-    m_frameWidget->update();
 }
 void FullScreenCamera::stopCamera(){
     m_stream->stop();
     disconnect ( m_stream , SIGNAL ( frameReady ( QPixmap *) ) , this , SLOT (setPixmap (QPixmap *)));
     m_frameWidget->setPixmap( QPixmap());
-    m_frameWidget->setStatus( FrameWidget::Stopped );
-    m_frameWidget->update();
 }
 
 void FullScreenCamera::setHighQuality( bool b ){
     m_frameWidget->setTransformationMode( !b ? Qt::FastTransformation : Qt::SmoothTransformation );
 }
 
-void FullScreenCamera::setStream( Stream * s  , const FrameWidget::Status &state ){
+void FullScreenCamera::setStream( Stream * s ){
     m_stream = s;
     connect ( s , SIGNAL ( frameReady ( QPixmap *) ) , this , SLOT (setPixmap (QPixmap *)) );
-    m_frameWidget->setStatus( state );
 }
-FrameWidget::Status FullScreenCamera::status() const{
-    m_frameWidget->status();
-}
+
 void FullScreenCamera::setPixmap ( QPixmap * p){
    if (isVisible()){
         m_frameWidget->setPixmap ( *p );

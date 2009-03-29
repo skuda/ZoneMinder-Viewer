@@ -21,8 +21,10 @@
 #define CAMERAWIDGET_H
 
 #include <QFrame>
+
+#include "stream.h"
+
 class FrameWidget;
-class Stream;
 class QToolButton;
 class CameraWidgetToolBar;
 class QSpacerItem;
@@ -152,6 +154,8 @@ private Q_SLOTS:
     void setFocus ( bool b );
     void changeCameraNumber();
     void newEvents( int count );
+    void statusChangedSlot( const Stream::Status & status );
+
 private:
     void init();
     void loadFromState();
