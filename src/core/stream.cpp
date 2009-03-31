@@ -79,7 +79,7 @@ Stream::Stream ( QObject * parent )
 
 void Stream::init(){
     d->status = Stream::None;
-    d->timer->start( 0 );
+    d->timer->start( 3000 );
     connect ( d->timer , SIGNAL( timeout() ), this, SLOT( checkConnection() ) );
 }
 void Stream::setHost ( const QString & host, quint16 port )
