@@ -26,10 +26,12 @@ ZoneMinderHtmlRequest::ZoneMinderHtmlRequest( QObject * parent )
 
 QList <Stream *> ZoneMinderHtmlRequest::streams(){
     qDebug("ZoneMinderHtmlRequest::streams: Not Implemented Yet!");
+    return QList <Stream *> ();
 }
 
-bool ZoneMinderHtmlRequest::deleteEvent( int eventId ){
+bool ZoneMinderHtmlRequest::deleteEvent( int /*eventId*/ ){
     qDebug( "implement me!" );
+    return false;
 }
 
 ZoneMinderHtmlRequest::~ZoneMinderHtmlRequest()

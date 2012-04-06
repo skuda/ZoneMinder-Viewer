@@ -31,7 +31,7 @@
 class Style::Private
 {
     public:
-        Private( ):setButton( 0 ),isValid(true){}
+        Private( ): setButton(0), isValid(true) {}
         bool canManageStyleVersion ( const QString & version )
         {
             if ( version.isNull() )
@@ -49,8 +49,8 @@ class Style::Private
         QString style;
         QString version;
         QString xmlFile;
-        bool isValid;
         QPushButton * setButton;
+        bool isValid;
 };
 
 Style::Style ( const QString & xmlFile, QObject * parent )
@@ -189,7 +189,7 @@ Style::Style( const Style & other)
 Style Style::operator=( const Style & other){
   this->d = new Private(*other.d);
   return *this;
-};
+}
 
 
 Style::~Style()

@@ -122,7 +122,7 @@ void ConnectionManager::removeConnectionWebPort( const QString & cn ){
 }
 
 int ConnectionManager::connectionWebPort( const QString & cn ){
-    cnPorts.value( cn );
+    return cnPorts.value( cn );
 }
 
 ConnectionManager::~ConnectionManager()

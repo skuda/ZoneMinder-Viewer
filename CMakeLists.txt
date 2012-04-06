@@ -9,7 +9,13 @@ find_package ( Qt4 REQUIRED )
 include ( ${QT_USE_FILE} )
  
 include_directories ( QT_INCLUDE_DIR ) 
- 
+
+#compiler flags.
+SET(CMAKE_CXX_FLAGS "-Wall")
+SET(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O2 -g")
+SET(CMAKE_CXX_FLAGS_RELEASE "-O2")
+SET(CMAKE_CXX_FLAGS_DEBUG  "-O0 -g -Wno-variadic-macros -Wuninitialized -Wcast-align -Wredundant-decls -Wno-unknown-pragmas -fdata-sections -ffunction-sections -pedantic -Wextra -Wno-long-long -Wstrict-overflow -Woverloaded-virtual -Wsign-promo -Wabi -Wall -Werror -isystem /opt/qt-4.8.0-debug/include") 
+
 #uncomment if you don't need debug outputs
 #set (ZMVIEWERDEF -DQT_NO_DEBUG_OUTPUT )
 

@@ -45,7 +45,7 @@ void AdminPanel::setHost( const QString &host, const QString &settingGroup ){
 
 }
 
-QWebView * AdminPanel::createWindow ( QWebPage::WebWindowType type ){
+QWebView * AdminPanel::createWindow ( QWebPage::WebWindowType /*type*/ ){
     if ( !m_popupView ){
         m_popupView = new QWebView;
     }

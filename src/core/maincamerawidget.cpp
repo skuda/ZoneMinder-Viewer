@@ -91,7 +91,7 @@ void MainCameraWidget::setVisible ( bool b ){
     QWidget::setVisible( b );
 }
 void MainCameraWidget::setMainCameraWidget( QWidget * widget ){
-    QSize newSize = widget->size();
+    //QSize newSize = widget->size();
 
     QLayoutItem * currentItem = m_mainCameraLayout->takeAt( 0 );
     if ( currentItem ){

@@ -61,7 +61,7 @@ d( new Private )
     init();
 }
 
-CameraWidget::CameraWidget( const CameraWidget & other ){
+CameraWidget::CameraWidget( const CameraWidget & other ): QFrame(static_cast<QWidget *>(other.parent())) {
     this->m_toolbar = other.m_toolbar;
     this->m_stream = other.m_stream;
     this->m_autoAdjustImage = other.m_autoAdjustImage;
@@ -186,7 +186,8 @@ void CameraWidget::configCamera(){
     CameraAddDialog d( this );
     d.setEditable( false );
     d.setWindowTitle(tr("View Setup"));
-    d.setValues( windowTitle(), stream()->host() , QString::number(stream()->port() ) , QString::number(stream()->monitor()), stream()->zmStreamServer() );
+    d.setValues( windowTitle(), stream()->host(), QString::number( int(stream()->port()) ),
+                 QString::number( int(stream()->monitor()) ), stream()->zmStreamServer() );
     d.exec();
     /*
     if ( d.exec() == QDialog::Accepted ){
@@ -280,13 +281,13 @@ void CameraWidget::popupMenu ( const QPoint & p){
     m_menu->popup( QWidget::mapToGlobal ( p ) );
 }
 
-void CameraWidget::focusInEvent ( QFocusEvent * event ){
+void CameraWidget::focusInEvent ( QFocusEvent * /*event*/ ){
     focusAction()->setChecked( true );
     setBackgroundRole( QPalette::Highlight );
     emit( focused( this ) );
 }
 
-void CameraWidget::focusOutEvent ( QFocusEvent * event ){
+void CameraWidget::focusOutEvent ( QFocusEvent * /*event*/ ){
     focusAction()->setChecked( false );
     setBackgroundRole( QPalette::Shadow );
 }
@@ -407,7 +408,8 @@ void CameraWidget::changeCameraNumber(){
 QString CameraWidget::uniqueId() const{
     if ( d->uniqueId.isEmpty() ){
         Q_ASSERT( m_stream );
-        d->uniqueId = m_conectionName + "_" + QString::number( m_stream->port() ) + "_" + QString::number( m_stream->monitor() );
+        d->uniqueId = m_conectionName + "_" + QString::number( int(m_stream->port()) )
+                      + "_" + QString::number( int(m_stream->monitor()) );
     }
     return d->uniqueId;
 }

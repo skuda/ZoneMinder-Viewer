@@ -57,7 +57,7 @@ QString Translator::currentLocale( ) const{
 }
 
 bool Translator::loadLanguage( const QString & localeString ){
-    bool isDefault = localeString == "en";
+    bool isDefault = localeString.left(2) == "en";
 
     if ( !isDefault ){
         if (!d->qtTranslator.load("qt_" + localeString , QLibraryInfo::location( QLibraryInfo::TranslationsPath ) ) )

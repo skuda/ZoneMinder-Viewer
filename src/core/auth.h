@@ -40,8 +40,8 @@ public:
     QByteArray authKey( ) const;
 private:
     QString m_db;
-    AuthType m_AuthType;
     bool m_isAuth;
+    AuthType m_AuthType;
     bool m_needAuth;
     void init();
     void saveSettings();

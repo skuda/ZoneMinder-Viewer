@@ -5,8 +5,8 @@
 #define ZMVIEWER_VERSION_MINOR 0
 #define ZMVIEWER_RELEASE 0
 #define ZMVIEWER_VERSION_STRING "0.2"
-static char ApplicationName[] = "ZoneMinder Viewer";
-static char ApplicationShortName[] = "ZMViewer";
+const static char ApplicationName[] = "ZoneMinder Viewer";
+const static char ApplicationShortName[] = "ZMViewer";
 
 /* install dir */
 #define ZMVIEWER_PREFIX "${ZMVIEWER_INSTALL_DIR}"
