@@ -1,3 +1,7 @@
+The original one it is in http://zmviewer.sourceforge.net/
+i have cloned to make any changes and later try to push the
+patch to main developers.
+
 REQUIREMENTS: 
  * Qt 4.4 (http://trolltech.com/developer/downloads/qt/index) 
  * CMake 2.6 (http://cmake.org)

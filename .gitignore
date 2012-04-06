@@ -3,4 +3,4 @@ build
 *.kdevelop
 *.kdevelop.*
 *.kdevses
-
+CMakeLists.txt.user
