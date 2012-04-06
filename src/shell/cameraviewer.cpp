@@ -87,8 +87,9 @@ ServerLabel::ServerLabel( const QString &text, QWidget * parent )
 
 class CameraViewer::Private{
     public:
-        Private():showLabel( false ),showLabels( false ),cameraCount(0),
-        mainCameraLayout(false),mainCameraPointer(0){}
+        Private():showLabel( false ), showLabels( false ), cameraCount(0),
+                  mainCameraLayout(false), mainCameraPointer(0) {}
+
         QString current_server;
         bool showLabel;
         bool showLabels;
@@ -97,8 +98,8 @@ class CameraViewer::Private{
         QMap< QString, QQueue <QWidget *> >widgets;
         QActionGroup * cameraActions;
         QWidgetList cameraViewerPages;
-        QWidget * mainCameraPointer;
         bool mainCameraLayout;
+        QWidget * mainCameraPointer;
 
         //camera options
         Qt::AspectRatioMode camerasAspectRatio;
@@ -183,7 +184,7 @@ void CameraViewer::appendCamera( QWidget * camera ){
 
 }
 
-void CameraViewer::mainCameraWidgetLayout( bool force ){
+void CameraViewer::mainCameraWidgetLayout( bool /*force*/ ){
     m_layoutType = MainCameraLayoutType;
     d->currentColumnLayout = -1;
     MainCameraWidget * w = new MainCameraWidget( this );
@@ -202,7 +203,7 @@ void CameraViewer::mainCameraWidgetLayout( bool force ){
          }
 }
 
-void CameraViewer::doubleCameraWidgetLayout( bool force ){
+void CameraViewer::doubleCameraWidgetLayout( bool /*force*/ ){
     m_layoutType = DoubleCameraLayoutType;
     d->currentColumnLayout = -2;
     DoubleCameraWidget * w = new DoubleCameraWidget( this );
@@ -338,8 +339,7 @@ void CameraViewer::clearCameras(){
 }
 
 
-void CameraViewer::setMainCameraWidget( QWidget * widget ){
-}
+void CameraViewer::setMainCameraWidget( QWidget * /*widget*/ ) {}
 
 void CameraViewer::cameraFocus( QWidget *widget){
     emit ( cameraFocused( widget ) );

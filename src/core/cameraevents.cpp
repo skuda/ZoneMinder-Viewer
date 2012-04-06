@@ -42,7 +42,7 @@
 
 class CameraEventCalendar : public QCalendarWidget{
 public:
-    CameraEventCalendar( QWidget * parent ): QCalendarWidget ( parent ){};
+    CameraEventCalendar( QWidget * parent ): QCalendarWidget ( parent ){}
     void appendDate( const QDate & date ){
         QTextCharFormat fmt;
         fmt.setBackground( QBrush( Qt::yellow ) );
@@ -144,7 +144,7 @@ void CameraEvents::init()
 
     layout->addLayout ( tableLayout );
 
-    connect ( m_view , SIGNAL ( clicked ( QModelIndex ) ), this , SLOT ( showEvent ( QModelIndex ) ) );
+    connect ( m_view , SIGNAL ( clicked ( QModelIndex ) ), this , SLOT ( showOurEvent ( QModelIndex ) ) );
     connect ( m_view , SIGNAL ( clicked ( QModelIndex ) ), this , SLOT ( updateDeleteButton( QModelIndex ) ) );
     connect ( m_deleteButton , SIGNAL ( clicked ( ) ), this , SLOT ( deleteEvent( ) ) );
 
@@ -181,7 +181,7 @@ CameraWidget * CameraEvents::cameraWidget( ) const{
     return m_camera;
 }
 
-void CameraEvents::showEvent ( const QModelIndex & index )
+void CameraEvents::showOurEvent ( const QModelIndex & index )
 {
     m_camera->stopCamera();
     int eventId = m_model->data ( m_model->index ( index.row(), Id ) ).toInt();

@@ -68,7 +68,7 @@ public:
     void appendZMSString( const QString & s );
     CameraWidget * cameraWidget( ) const;
 public Q_SLOTS:
-    void showEvent (const QModelIndex & index);
+    void showOurEvent (const QModelIndex & index);
     void filterEventDate( const QDate & date );
     void restoreFilter( );
 protected:

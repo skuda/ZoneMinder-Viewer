@@ -46,7 +46,7 @@ public:
      void setHost( const QString &host, const QString &settingGroup );
     ~AdminPanel();
 protected:
-    QWebView * createWindow ( QWebPage::WebWindowType type );
+    QWebView * createWindow ( QWebPage::WebWindowType  );
 private:
     QWebView * m_popupView;
 };

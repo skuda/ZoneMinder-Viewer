@@ -389,11 +389,10 @@ MainWindow::~MainWindow()
     ConnectionManager::closeAll();
 }
 
-void MainWindow::switchLanguage( const QString & locale )
+void MainWindow::switchLanguage( const QString & /*locale*/)
 {
     m_translator->writeSettings();
     retranslateStrings();
-
 }
 
 

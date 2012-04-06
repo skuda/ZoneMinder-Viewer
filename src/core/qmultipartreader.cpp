@@ -167,25 +167,25 @@ QByteArray QMultiPartReader::read( const QByteArray  &data ){
                        }*/
                 // First header (when we know it from kio_http)
                 else if ( line == d->m_boundary )
-                    ; // nothing to do
-    #ifdef DEBUG_PARSING
+                    {}; // nothing to do
+#ifdef DEBUG_PARSING
                 else if ( !line.isEmpty() ) // this happens with e.g. Set-Cookie:
                     qDebug() << "Ignoring header " << line;
-        #endif
+#endif
             } else {
                 if ( !qstrncmp( line, d->m_boundary, d->m_boundaryLength ) )
                 {
-        #ifdef DEBUG_PARSING
+#ifdef DEBUG_PARSING
                     qDebug() << "boundary found!";
                     qDebug() << "after it is " << line.data() + d->m_boundaryLength;
-        #endif
+#endif
 
                     // Was it the very last boundary ?
                     if ( !qstrncmp( line.data() + d->m_boundaryLength, "--", 2 ) )
                     {
-        #ifdef DEBUG_PARSING
+#ifdef DEBUG_PARSING
                         qDebug() << "Completed!";
-        #endif
+#endif
                         QByteArray ret = endOfData();
                         emit completed();
                         m_lineParser->clearLine();
@@ -193,9 +193,9 @@ QByteArray QMultiPartReader::read( const QByteArray  &data ){
                     } else
                     {
                         char nextChar = *(line.data() + d->m_boundaryLength);
-        #ifdef DEBUG_PARSING
+#ifdef DEBUG_PARSING
                         qDebug() << "QMultiPartReader::slotData nextChar='" << nextChar << "'";
-        #endif
+#endif
                         if ( nextChar == '\n' || nextChar == '\r' ) {
                             QByteArray ret = endOfData();
                             m_lineParser->clearLine();

@@ -167,6 +167,7 @@ void FrameWidget::drawText( QPainter * painter ){
                 painter->drawText(rect(),Qt::AlignCenter | Qt::TextWordWrap, d->message );
             }
             break;
+        default: return;
     }
 
 }

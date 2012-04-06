@@ -47,8 +47,8 @@ public:
 protected:
     QStackedWidget * mOptionWidget;
     QListWidget * mListWidget;
-    QLabel * mCurrentOption;
     QLabel * mCurrentIcon;
+    QLabel * mCurrentOption;
     QLabel * mCurrentOptionText;
 
 protected Q_SLOTS:

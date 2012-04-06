@@ -72,7 +72,7 @@ Q_SIGNALS:
     void done( const QString & message );
     void statusChanged ( const Stream::Status & newStatus );
 private Q_SLOTS:
-    void read (const QHttpResponseHeader &header );
+    void read (const QHttpResponseHeader header );
     bool image ( const QByteArray &array );
     void stopRead ( bool error );
     void checkConnection();

@@ -78,7 +78,7 @@ public Q_SLOTS:
       void mainCameraWidgetLayout( bool force = false );
       void doubleCameraWidgetLayout( bool force = false );
 
-      void setMainCameraWidget( QWidget * widget );
+      void setMainCameraWidget( QWidget *  );
 protected:
     void resizeEvent ( QResizeEvent * event );
     virtual void initActions();

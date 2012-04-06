@@ -79,7 +79,7 @@ void About::showAboutDialog()
 QString About::applicationName()
 {
     return QObject::tr( ApplicationName );
-};
+}
 
 QString About::versionString()
 {

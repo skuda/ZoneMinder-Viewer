@@ -125,7 +125,7 @@ void Stream::setZMStreamServer ( const QString &zms )
 void Stream::setEvent ( quint16 event ){
     d->event = event;
 }
-void Stream::read ( const QHttpResponseHeader &header )
+void Stream::read ( const QHttpResponseHeader /*&header*/ )
 {
     QByteArray r = d->multiPartReader->read( d->http->readAll() );
     if ( !r.isNull() )
@@ -217,31 +217,37 @@ void Stream::restart(){
 QString Stream::host() const
 {
     return d->host;
-};
+}
+
 quint16 Stream::port() const
 {
     return d->port;
-};
+}
+
 QString Stream::mode() const
 {
     return d->mode;
-};
+}
+
 quint16 Stream::monitor() const
 {
     return d->monitor;
-};
+}
+
 quint16 Stream::bitrate() const
 {
     return d->bitrate;
-};
+}
+
 quint16 Stream::scale() const
 {
     return d->scale;
-};
+}
+
 QString Stream::zmStreamServer() const
 {
     return d->zms;
-};
+}
 
 Stream::Status Stream::status() const{
     return d->status;
