@@ -186,4 +186,4 @@ CameraLayout::~CameraLayout()
     delete d;
 }
 
-#include "cameralayout.moc"
+

@@ -48,19 +48,18 @@
 #include <QStyleFactory>
 #include <QApplication>
 #include <QDir>
+#include <QtCore>
 
 static QStringList hosts;
 
 MainWindow::MainWindow ( QWidget * parent, Qt::WindowFlags flags )
-        :QMainWindow ( parent , flags ),m_fullScreenAction ( 0 ),
-        m_closeFullScreenAction ( 0 ),
-        m_adminPanel(0)
+        :QMainWindow ( parent , flags ), m_fullScreenAction ( 0 ),
+        m_closeFullScreenAction ( 0 ), m_adminPanel(0)
 {
     init();
     initActions();
     initMenuBar();
     retranslateStrings();
-
 }
 
 void MainWindow::init()
@@ -83,6 +82,8 @@ void MainWindow::init()
     connect ( m_translator , SIGNAL ( languageChanged( QString ) ), this, SLOT( switchLanguage( QString ) ) );
 
     installEventFilter( m_commandListener );
+    //this is needed in Linux for a correct initial layout display.
+    QTimer::singleShot(0, m_centralWidget, SLOT(layoutCurrentColLayout()));
 }
 
 void MainWindow::initActions()
@@ -152,6 +153,7 @@ void MainWindow::initMenuBar()
         action->setData( host.second );
         connect( action, SIGNAL ( triggered () ) , this, SLOT ( adminServer() ) );
     }
+
     m_viewMenu->addAction ( m_fullScreenAction );
     m_viewMenu->addAction ( m_closeFullScreenAction );
     m_viewMenu->addSeparator();
@@ -163,9 +165,8 @@ void MainWindow::initMenuBar()
 
     m_helpMenu -> addAction(aboutAction);
     m_helpMenu -> addAction(aboutQtAction);
-
-
 }
+
 void MainWindow::retranslateStrings()
 {
 //menus
@@ -190,6 +191,7 @@ void MainWindow::retranslateStrings()
     aboutAction -> setText( tr("About...") );
     aboutQtAction -> setText( tr("About Qt...") ); 
 }
+
 void MainWindow::initSettings()
 {
     m_settings->beginGroup ( "MainWindow" );
@@ -213,16 +215,25 @@ void MainWindow::initSettings()
     m_settings->endGroup();
     m_settings->beginGroup ( "Databases" );
     QStringList con = m_settings->value ( "names" ).toStringList();
-    QString name;
     m_settings->endGroup();
 
-    foreach ( name , con )
+    foreach ( const QString name , con )
     {
         qDebug ( "%s init...", qPrintable ( name ) );
         m_settings->beginGroup ( name );
-        bool b = ConnectionManager::addConnection ( m_settings->value ( "driver" ).toString() , m_settings->value ( "host" ).toString() , m_settings->value ( "database" ).toString(),m_settings->value ( "user" ).toString(),m_settings->value ( "password" ).toString(),m_settings->value ( "port" , 0 ).toInt() , m_settings->value ( "wwwPort" , 80 ).toInt() ,false );
+        bool b = ConnectionManager::addConnection ( m_settings->value ( "driver" ).toString(),
+                                                    m_settings->value ( "host" ).toString(),
+                                                    m_settings->value ( "database" ).toString(),
+                                                    m_settings->value ( "user" ).toString(),
+                                                    m_settings->value ( "password" ).toString(),
+                                                    m_settings->value ( "port" , 0 ).toInt(),
+                                                    m_settings->value ( "wwwPort" , 80 ).toInt(),
+                                                    false );
         if (!b)
-            QMessageBox::critical( this , tr("Database Error") , tr("Can not connect with Database %1 at host %2").arg(m_settings->value ( "database" ).toString()).arg(m_settings->value ( "host" ).toString()) );
+            QMessageBox::critical( this , tr("Database Error") ,
+                                   tr("Can not connect with Database %1 at host %2")
+                                   .arg(m_settings->value ( "database" ).toString())
+                                   .arg(m_settings->value ( "host" ).toString()) );
         m_settings->endGroup();
     }
 
@@ -394,6 +405,3 @@ void MainWindow::switchLanguage( const QString & /*locale*/)
     m_translator->writeSettings();
     retranslateStrings();
 }
-
-
-#include "mainwindow.moc"

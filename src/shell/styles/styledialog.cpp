@@ -245,7 +245,3 @@ void StyleDialog::loadFromSettings(){
 StyleDialog::~StyleDialog()
 {
 }
-
-
-
-#include "styledialog.moc"

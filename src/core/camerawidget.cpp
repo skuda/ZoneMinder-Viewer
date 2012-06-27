@@ -436,4 +436,4 @@ CameraWidget::~CameraWidget()
 
 
 
-#include "camerawidget.moc"
+

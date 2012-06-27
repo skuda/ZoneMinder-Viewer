@@ -45,6 +45,6 @@ AuthDialog::~AuthDialog()
 {
 }
 
-#include "authdialog.moc"
+
 
 

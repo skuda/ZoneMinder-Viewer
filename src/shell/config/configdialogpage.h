@@ -34,7 +34,7 @@ public:
     void setIcon( const QIcon & icon );
     QIcon icon()const;
 
-    virtual bool dialogAccepted() {return true;};
+    virtual bool dialogAccepted() {return true;}
     ~ConfigDialogPage();
 
 private:

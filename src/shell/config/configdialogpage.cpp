@@ -53,5 +53,3 @@ QIcon ConfigDialogPage::icon()const{
 ConfigDialogPage::~ConfigDialogPage()
 {
 }
-
-#include "configdialogpage.moc"

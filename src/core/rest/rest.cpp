@@ -50,4 +50,4 @@ Rest::~Rest()
 {
 }
 
-#include "rest.moc"
+

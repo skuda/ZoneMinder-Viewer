@@ -50,18 +50,17 @@ public:
 
     static CameraViewer * instance();
 
-    virtual void saveSettings(){};
+    virtual void saveSettings() {}
     virtual void appendCamera( QWidget * camera );
     virtual void endCameraList( );
     virtual QActionGroup * cameraFocusActions();
     virtual void updateCameras();
     void clearCameras();
 
-    void setCameraOptions( const Qt::AspectRatioMode & aspectRatio, bool showCameraNumbers, const Qt::Alignment & cameraNumbersAlignment  );
+    void setCameraOptions( const Qt::AspectRatioMode & aspectRatio, bool showCameraNumbers,
+                           const Qt::Alignment & cameraNumbersAlignment  );
 
     virtual ~CameraViewer();
-
-
 
 Q_SIGNALS:
     void layoutChanged( int currentColumnNumber );
@@ -77,16 +76,19 @@ public Q_SLOTS:
       */
       void mainCameraWidgetLayout( bool force = false );
       void doubleCameraWidgetLayout( bool force = false );
-
       void setMainCameraWidget( QWidget *  );
+      void layoutCurrentColLayout();
+
 protected:
     void resizeEvent ( QResizeEvent * event );
     virtual void initActions();
     virtual void initSettings();
+
 private Q_SLOTS:
     void cameraFocus( QWidget *);
     void fullScreenSlot( QWidget *);
     void fullScreenClosedSlot( QWidget *);
+
 private:
     void init();
     void updateActions();

@@ -26,6 +26,32 @@ set ( core_SRCS
       rest/zoneminderhtmlrequest.cpp
     )
 
+set ( core_MOC_HDRS
+      stream.h
+      camerawidgettoolbar.h
+      camerawidget.h
+      framewidget.h
+      fullscreencamera.h
+      databasesession.h
+      monitors.h
+      connectionwidget.h
+      cameraevents.h
+      auth.h
+      authdialog.h
+      qmultipartreader.h
+      cameralayout.h
+      cameraviewerpage.h
+      maincamerawidget.h
+      doublecamerawidget.h
+      blackwidget.h
+      commandlistener.h
+      models/basemodel.h
+      models/eventmodel.h
+      rest/rest.h
+      rest/requestinterface.h
+      rest/zoneminderhtmlrequest.h
+    )
+
 set ( core_UIS
       ui/cameraadddialog.ui
       ui/authdialogwidget.ui
@@ -41,8 +67,8 @@ include_directories ( ${CMAKE_CURRENT_BINARY_DIR}
 
 QT4_ADD_RESOURCES ( core_SRCS resources.qrc )
 QT4_WRAP_UI( core_SRCS ${core_UIS} )
-QT4_AUTOMOC (${core_SRCS})
+QT4_WRAP_CPP( core_MOC_SRCS ${core_MOC_HDRS} )
 
-add_library (zmviewercore SHARED ${core_SRCS} )
+add_library (zmviewercore SHARED ${core_SRCS} ${core_MOC_SRCS})
 target_link_libraries( zmviewercore ${QT_QTCORE_LIBRARY} ${QT_QTNETWORK_LIBRARY} ${QT_QTSQL_LIBRARY} ${QT_QTGUI_LIBRARY} )
 install(TARGETS zmviewercore DESTINATION ${ZMVIEWER_LIB_DIR})

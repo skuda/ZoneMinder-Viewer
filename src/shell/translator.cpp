@@ -91,8 +91,8 @@ void Translator::writeSettings(){
     settings.setValue( "locale", d->userLocale );
     settings.endGroup();
 }
+
 Translator::~Translator()
 {
+    delete d;
 }
-
-#include "translator.moc"

@@ -32,4 +32,4 @@ BlackWidget::~BlackWidget()
 {
 }
 
-#include "blackwidget.moc"
+

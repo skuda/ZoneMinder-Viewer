@@ -49,5 +49,3 @@ void LayoutButton::setChecked( int column ){
 void LayoutButton::changeLayout(){
     emit( clicked( m_columns ) );
 }
-
-#include "layoutbutton.moc"

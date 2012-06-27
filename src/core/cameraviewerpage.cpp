@@ -54,4 +54,4 @@ CameraViewerPage::~CameraViewerPage()
 {
 }
 
-#include "cameraviewerpage.moc"
+

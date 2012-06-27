@@ -38,4 +38,4 @@ ZoneMinderHtmlRequest::~ZoneMinderHtmlRequest()
 {
 }
 
-#include "zoneminderhtmlrequest.moc"
+

@@ -21,8 +21,8 @@
 #define STREAM_H
 
 #include <QObject>
+#include <QtNetwork/QHttpResponseHeader>
 class QString;
-class QHttpResponseHeader;
 class QPixmap;
 class QByteArray;
 

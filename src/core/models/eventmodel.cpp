@@ -68,5 +68,5 @@ EventModel::~EventModel()
 {
 }
 
-#include "eventmodel.moc"
+
 

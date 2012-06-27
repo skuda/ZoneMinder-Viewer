@@ -57,5 +57,3 @@ AdminPanel::~AdminPanel()
 {
     delete m_popupView;
 }
-
-#include "adminpanel.moc"

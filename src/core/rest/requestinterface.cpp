@@ -28,4 +28,4 @@ RequestInterface::~RequestInterface()
 {
 }
 
-#include "requestinterface.moc"
+

@@ -161,7 +161,6 @@ void PagesWidget::addWidget( QWidget * widget , const QString & text , const QSt
     mListWidget->addItem( item  );
     if ( mListWidget->count() == 1 ) changePage( item, item);
 
-
 }
 
 QList <QWidget * > PagesWidget::allWidgets(){
@@ -190,5 +189,4 @@ PagesWidget::~PagesWidget()
     delete mCurrentIcon;
     delete mCurrentOption;
 }
-#include "pageswidget.moc"
 

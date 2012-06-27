@@ -132,7 +132,6 @@ void CameraViewer::init(){
     
     layout->addWidget( m_scrollArea  );
 
-
     m_gridContainer = new QVBoxLayout( );
     m_gridContainer->setAlignment( Qt::AlignTop );
 
@@ -160,10 +159,10 @@ void CameraViewer::initSettings(){
     settings.beginGroup( "Preferences" );
     d->camerasAspectRatio =  (Qt::AspectRatioMode)settings.value( "aspectRatio",  Qt::KeepAspectRatio ).toInt();
     d->showCamerasNumbers = settings.value( "showCameraNumber", true ).toBool();
-    d->camerasNumbersAlign =  ( Qt::Alignment ) settings.value( "cameraNumberPosition", (int)(Qt::AlignRight | Qt::AlignTop)  ).toInt();
+    d->camerasNumbersAlign = (Qt::Alignment)settings.value( "cameraNumberPosition",
+                                                            (int)(Qt::AlignRight | Qt::AlignTop) ).toInt();
     settings.endGroup();
 }
-
 
 void CameraViewer::appendCamera( QWidget * camera ){
     d->cameraCount++;
@@ -177,11 +176,8 @@ void CameraViewer::appendCamera( QWidget * camera ){
     connect( cameraWidget , SIGNAL( fullScreen ( QWidget * ) ), this , SLOT( fullScreenSlot( QWidget *) ) );
     connect( cameraWidget, SIGNAL( fullScreenClosed ( QWidget * ) ), this , SLOT( fullScreenClosedSlot( QWidget *) ) );
 
-
-    QString s = (qobject_cast<CameraWidget *> (camera))->stream()->host();
-
+    QString s = cameraWidget->stream()->host();
     d->widgets[s].enqueue( camera );
-
 }
 
 void CameraViewer::mainCameraWidgetLayout( bool /*force*/ ){
@@ -213,11 +209,12 @@ void CameraViewer::doubleCameraWidgetLayout( bool /*force*/ ){
     while (iterator.hasNext()) {
              iterator.next();
              QQueue<QWidget *> queue = iterator.value();
-             foreach( QWidget * current_widget , queue ){
+             foreach( QWidget * tmp_widget , queue ){
+                CameraWidget * current_widget = static_cast<CameraWidget *>(tmp_widget);
                 current_widget->setVisible( true );
-                qobject_cast<CameraWidget *>( current_widget )->setFocusBehavior( CameraWidget::PromoteToMainWidget );
-                qobject_cast<CameraWidget *>( current_widget )->activateMainCameraAction();
-                qobject_cast<CameraWidget *>( current_widget )->activateSecondCameraAction();
+                current_widget->setFocusBehavior( CameraWidget::PromoteToMainWidget );
+                current_widget->activateMainCameraAction();
+                current_widget->activateSecondCameraAction();
                 w->appendCamera( current_widget );
             }
          }
@@ -228,26 +225,32 @@ void CameraViewer::layoutWidgets( int columns, bool force ){
     if ( !force && ( d->currentColumnLayout == columns ) ) return;
      d->currentColumnLayout = columns;
      container->clear();
+
      int currentPage = 0;
      container->addTab( new CameraViewerPage ( columns , columns , this ) );
      QMapIterator< QString, QQueue <QWidget *> > iterator( d->widgets );
+
      while (iterator.hasNext()) {
-             iterator.next();
-             QQueue<QWidget *> queue = iterator.value();
-             foreach( QWidget * current_widget , queue ){
-                qobject_cast<CameraWidget *>( current_widget )->removeMainCameraAction();
-                qobject_cast<CameraWidget *>( current_widget )->removeSecondCameraAction();
-                qobject_cast<CameraWidget *>( current_widget )->setFocusBehavior( CameraWidget::None );
-                if ( ((CameraViewerPage *)container->currentWidget() )->hasSpace() ){
-                    current_widget->setVisible( true );
-                    ((CameraViewerPage *)container->currentWidget())->appendCamera( current_widget );
-                } else {
-                    currentPage = container->addTab( new CameraViewerPage ( columns , columns , this ) );
-                    container->setCurrentIndex( currentPage );
-                    ((CameraViewerPage *)container->currentWidget())->appendCamera( current_widget );
-                }
-            }
+         iterator.next();
+         QQueue<QWidget *> queue = iterator.value();
+
+         foreach( QWidget * tmp_widget , queue ){
+             CameraWidget * current_widget = static_cast<CameraWidget *>(tmp_widget);
+             current_widget->removeMainCameraAction();
+             current_widget->removeSecondCameraAction();
+             current_widget->setFocusBehavior( CameraWidget::None );
+
+             if ( ((CameraViewerPage *)container->currentWidget() )->hasSpace() ){
+                 current_widget->setVisible( true );
+                 ((CameraViewerPage *)container->currentWidget())->appendCamera( current_widget );
+             } else {
+                 currentPage = container->addTab( new CameraViewerPage ( columns , columns , this ) );
+                 container->setCurrentIndex( currentPage );
+                 ((CameraViewerPage *)container->currentWidget())->appendCamera( current_widget );
+             }
          }
+     }
+
     container->setCurrentIndex( 0 );
 }
 
@@ -264,7 +267,7 @@ void CameraViewer::resizeEvent ( QResizeEvent * event ){
     if (d->currentColumnLayout == 0 ) return;
     //TODO: use enums for currentColumnLayout?
     if ( d->currentColumnLayout > 0 )
-        layoutWidgets( d->currentColumnLayout , true );
+        layoutCurrentColLayout();
     else{
         switch( d->currentColumnLayout ){
             case -1: mainCameraWidgetLayout( true );break;
@@ -301,13 +304,14 @@ void CameraViewer::fullScreenClosedSlot( QWidget * camera ){
 
 void CameraViewer::updateCameras(){
     switch ( m_layoutType ){
-        case ColumnsLayoutType: layoutWidgets ( d->currentColumnLayout, true ); break;
+        case ColumnsLayoutType: layoutCurrentColLayout(); break;
         case MainCameraLayoutType: mainCameraWidgetLayout( true ); break;
         case DoubleCameraLayoutType: doubleCameraWidgetLayout( true );break;
         default: layoutWidgets ();
     }
     updateActions();
 }
+
 void CameraViewer::updateActions(){
      QMapIterator< QString, QQueue <QWidget *> > iterator( d->widgets );
      int cameraCount = 1;
@@ -322,6 +326,11 @@ void CameraViewer::updateActions(){
               }
     }
 }
+
+void CameraViewer::layoutCurrentColLayout() {
+    layoutWidgets(d->currentColumnLayout, true);
+}
+
 void CameraViewer::clearCameras(){
     foreach( QAction * action, d->cameraActions->actions() ){
         d->cameraActions->removeAction( action );
@@ -345,7 +354,8 @@ void CameraViewer::cameraFocus( QWidget *widget){
     emit ( cameraFocused( widget ) );
 }
 
-void CameraViewer::setCameraOptions ( const Qt::AspectRatioMode & aspectRatio, bool showCameraNumbers, const Qt::Alignment & cameraNumbersAlignment ){
+void CameraViewer::setCameraOptions ( const Qt::AspectRatioMode & aspectRatio, bool showCameraNumbers,
+                                      const Qt::Alignment & cameraNumbersAlignment ){
      QMapIterator< QString, QQueue <QWidget *> > iterator( d->widgets );
      while (iterator.hasNext()) {
              iterator.next();
@@ -364,6 +374,3 @@ CameraViewer::~CameraViewer()
 {
     delete d;
 }
-
-
-#include "cameraviewer.moc"

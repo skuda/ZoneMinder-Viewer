@@ -301,8 +301,3 @@ Stream::~Stream()
 {
     delete d;
 }
-
-
-
-
-#include "stream.moc"

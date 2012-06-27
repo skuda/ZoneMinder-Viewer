@@ -249,6 +249,3 @@ void CameraEvents::updateEvents(){
 CameraEvents::~CameraEvents()
 {
 }
-
-#include "cameraevents.moc"
-

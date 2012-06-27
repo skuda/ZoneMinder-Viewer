@@ -203,5 +203,5 @@ DatabaseSession::~DatabaseSession()
 {
 }
 
-#include "databasesession.moc"
+
 

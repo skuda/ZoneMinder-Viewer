@@ -22,7 +22,6 @@
 #include <QApplication>
 #include <QSplashScreen>
 #include <QLocale>
-#include <QLibraryInfo>
 #include <QTextCodec>
 #include "mainwindow.h"
 

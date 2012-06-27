@@ -72,4 +72,3 @@ ControlBar::~ControlBar()
     delete d;
 }
 
-#include "controlbar.moc"

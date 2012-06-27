@@ -95,4 +95,4 @@ FullScreenCamera::~FullScreenCamera()
 }
 
 
-#include "fullscreencamera.moc"
+

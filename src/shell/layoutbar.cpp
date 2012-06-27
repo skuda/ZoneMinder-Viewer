@@ -87,7 +87,8 @@ void LayoutBar::init(){
     connect ( d->fiveGridLayout , SIGNAL (clicked ( int ) ) , d->cameraViewer , SLOT( layoutWidgets( int ) ) ) ;
     connect ( d->mainCameraLayout , SIGNAL ( clicked () ) , d->cameraViewer , SLOT( mainCameraWidgetLayout(  ) ) ) ;
     connect ( d->doubleCameraLayout , SIGNAL ( clicked () ) , d->cameraViewer , SLOT( doubleCameraWidgetLayout(  ) ) ) ;
-    connect ( d->configurableCameraLayout , SIGNAL ( valueChanged ( int ) ) , d->cameraViewer , SLOT( layoutWidgets( int ) ) );
+    connect ( d->configurableCameraLayout , SIGNAL ( valueChanged ( int ) ) , d->cameraViewer ,
+              SLOT( layoutWidgets( int ) ) );
 
     connect ( d->oneGridLayout , SIGNAL (clicked ( ) ) , this , SLOT( uncheckToolButtons() ) ) ;
     connect ( d->twoGridLayout , SIGNAL (clicked () ) , this , SLOT( uncheckToolButtons()) ) ;
@@ -147,5 +148,3 @@ LayoutBar::~LayoutBar()
 {
     delete d;
 }
-
-#include "layoutbar.moc"

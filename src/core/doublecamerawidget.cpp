@@ -125,4 +125,4 @@ DoubleCameraWidget::~DoubleCameraWidget()
 {
 }
 
-#include "doublecamerawidget.moc"
+

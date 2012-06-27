@@ -69,6 +69,3 @@ void SliderLayoutButton::sliderChangeSlot( int value ){
 SliderLayoutButton::~SliderLayoutButton()
 {
 }
-
-#include "sliderlayoutbutton.moc"
-

@@ -113,4 +113,4 @@ CommandListener::~CommandListener()
     delete d;
 }
 
-#include "commandlistener.moc"
+

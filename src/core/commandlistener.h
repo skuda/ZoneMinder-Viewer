@@ -46,7 +46,9 @@ public:
         Set keypress delay to @param delay
         This is util for example when you has two actions that start whith the same key
         in the map.
-        Example: 1 and 12 . When you press the key 1, CommandListener delay the keypress and wait @param delay msec for the 2 key, if you not press 2 key CommandListener will trigger the action mapped in 1.
+        Example: 1 and 12 . When you press the key 1, CommandListener delay the keypress
+        and wait @param delay msec for the 2 key, if you not press 2 key CommandListener
+        will trigger the action mapped in 1.
     */
     void setKeyDelay( int delay );
     /**

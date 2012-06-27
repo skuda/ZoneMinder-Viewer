@@ -202,4 +202,4 @@ FrameWidget::~FrameWidget()
     delete d;
 }
 
-#include "framewidget.moc"
+

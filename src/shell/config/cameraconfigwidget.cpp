@@ -84,5 +84,3 @@ void CameraConfigWidget::writeSettings(){
 CameraConfigWidget::~CameraConfigWidget()
 {
 }
-
-#include "cameraconfigwidget.moc"

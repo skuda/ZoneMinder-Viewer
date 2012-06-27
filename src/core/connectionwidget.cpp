@@ -97,6 +97,6 @@ void ConnectionWidget::removeConnection( )
 ConnectionWidget::~ConnectionWidget()
 {}
 
-#include "connectionwidget.moc"
+
 
 

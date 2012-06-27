@@ -109,4 +109,4 @@ MainCameraWidget::~MainCameraWidget()
 {
 }
 
-#include "maincamerawidget.moc"
+

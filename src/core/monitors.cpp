@@ -41,17 +41,24 @@ Monitors::Monitors ( QObject * parent )
 
 void Monitors::init()
 {
-    foreach ( QString  connection , ConnectionManager::connectionNames() )
+    foreach ( const QString connection , ConnectionManager::connectionNames() )
     {
         QSqlDatabase db = QSqlDatabase::database ( connection ) ;
         hostList.append( QPair<QString,QString>(db.hostName(), connection ));
-        QSqlQuery query = db.exec ( "SELECT Value from Config where Name='ZM_PATH_ZMS'" );
-        query.next();
+        QSqlQuery query(db);
+
+        query.exec ( "SELECT Value FROM Config WHERE Name='ZM_PATH_ZMS';" );
+        //if we don't found this...game over
+        if ( !query.next() ) {
+            qDebug("Can't find the zm_path_zms config in database so we can't continue");
+            return;
+        }
+
         QString zms = query.value ( 0 ).toString();
-        query.clear();
-        query = db.exec ( "SELECT * from Monitors where 1" );
+
         Auth auth ( connection );
         bool append = false;
+
         if ( auth.isAuthNeeded() )
         {
             if ( ! auth.isAuth() )
@@ -64,28 +71,37 @@ void Monitors::init()
             }
             else append = true;
         }
-        QSqlQuery streamMethod = db.exec ( "SELECT Value from Config where Name='ZM_STREAM_METHOD'" );
-        streamMethod.next();
-        QString method = streamMethod.value ( 0 ).toString();
-        Stream::StreamMode streamMode = method == "jpeg" ? Stream::JPEG : Stream::VIDEO;
+
+        Stream::StreamMode streamMode = Stream::VIDEO; //just in case we don't found the name
+
+        //this check for old and new name of stream types config in database
+        query.exec ( "SELECT Value FROM Config WHERE Name IN ('ZM_STREAM_METHOD', 'ZM_WEB_H_STREAM_METHOD');" );
+        if ( query.next() ) {
+            QString method = query.value ( 0 ).toString();
+            streamMode = method == "jpeg" ? Stream::JPEG : Stream::VIDEO;
+        }
+
+        query.exec("SELECT Id, Name FROM Monitors;" );
         while ( query.next() )
         {
             CameraWidget * camera = new CameraWidget ( connection );
-            camera->setWindowTitle ( query.value ( query.record().indexOf ( "Name" ) ).toString() + tr( " at " ) + db.hostName() );
-            camera->setName ( query.value ( query.record().indexOf ( "Name" ) ).toString() );
+            uint id = query.value(0).toUInt();
+            QString name = query.value(1).toString();
+
+            camera->setWindowTitle ( name + tr( " at " ) + db.hostName() );
+            camera->setName ( name );
             camera->stream()->setHost ( db.hostName() , ConnectionManager::connectionWebPort( connection ) );
-            camera->stream()->setMonitor ( query.value ( query.record().indexOf ( "Id" ) ).toUInt() );
+            camera->stream()->setMonitor ( id );
             camera->stream()->setMode ( streamMode );
             camera->stream()->setZMStreamServer ( zms );
+
             m_cameras.append ( camera );
             camera->setAutoAdjustImage ( true );
             if ( append )
                 camera->stream()->appendZMSString ( auth.zmsString() );
             camera->startCamera();
         }
-        query.clear();
     }
-
 }
 
 
@@ -109,6 +125,6 @@ void Monitors::updateMonitors()
 Monitors::~Monitors()
 {}
 
-#include "monitors.moc"
+
 
 

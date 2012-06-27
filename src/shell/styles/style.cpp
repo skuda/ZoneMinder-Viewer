@@ -196,6 +196,3 @@ Style::~Style()
 {
   delete d;
 }
-
-
-#include "style.moc"

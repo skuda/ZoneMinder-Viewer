@@ -75,7 +75,3 @@ void ConfigDialog::dialogAccepted(){
 ConfigDialog::~ConfigDialog()
 {
 }
-
-
-#include "configdialog.moc"
-

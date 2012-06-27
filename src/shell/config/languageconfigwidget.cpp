@@ -83,5 +83,3 @@ bool LanguageConfigWidget::dialogAccepted(){
 LanguageConfigWidget::~LanguageConfigWidget()
 {
 }
-
-#include "languageconfigwidget.moc"

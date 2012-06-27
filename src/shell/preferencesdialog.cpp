@@ -64,5 +64,3 @@ void PreferencesDialog::saveSettings(){
 PreferencesDialog::~PreferencesDialog()
 {
 }
-
-#include "preferencesdialog.moc"

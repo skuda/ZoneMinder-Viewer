@@ -269,6 +269,6 @@ QMultiPartReader::~QMultiPartReader()
     delete m_lineParser;
 }
 
-#include "qmultipartreader.moc"
+
 
 
