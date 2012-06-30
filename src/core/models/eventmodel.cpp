@@ -28,6 +28,7 @@ class EventModel::Private{
         QTimer timer;
         int cameraId;
 };
+
 EventModel::EventModel( const QString &cn, QObject * parent )
 :BaseModel( cn, parent ),d( new Private ){
     setTable( "Events" );
@@ -40,6 +41,7 @@ void EventModel::setCamera( int id ){
     d->cameraId = id;
     setFilter( "MonitorId = " + QString::number ( d->cameraId ) );
 }
+
 void EventModel::startEventTracker( ){
     setFilter( "MonitorId = " + QString::number ( d->cameraId ) );
     select();
@@ -48,6 +50,7 @@ void EventModel::startEventTracker( ){
     d->timer.start( 5000 );
 
 }
+
 void EventModel::stopEventTracker(){
     d->lastEventCount = 0;
     d->eventTracker = false;
@@ -62,7 +65,6 @@ void EventModel::searchForNewEvents(){
         emit ( eventsDetected( newRowCount - lastRowCount ) );
     }
 }
-
 
 EventModel::~EventModel()
 {

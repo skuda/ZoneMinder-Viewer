@@ -51,6 +51,7 @@ bool ConnectionManager::addConnection ( const QString &d , const QString & h, co
         db.setDatabaseName ( dn );
         db.setUserName ( u );
         db.setPassword ( p );
+
         if ( port != 0 )
             db.setPort ( port );
         dbOpen = db.open();

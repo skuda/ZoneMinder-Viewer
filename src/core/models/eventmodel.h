@@ -43,13 +43,12 @@ public:
         TotScore,
         AvgScore,
         MaxScore,
-        Archivied,
+        Archived,
         Videoed,
         Uploaded,   
         Emailed,
         Messaged,
         Executed,
-        LearnState,
         Notes
     };
     EventModel( const QString &cn, QObject * parent = 0 );

@@ -56,7 +56,10 @@ QString Translator::currentLocale( ) const{
     return d->userLocale;
 }
 
-bool Translator::loadLanguage( const QString & localeString ){
+bool Translator::loadLanguage(QString &localeString ){
+    if (localeString == "C")
+        localeString = "en";
+
     bool isDefault = localeString.left(2) == "en";
 
     if ( !isDefault ){

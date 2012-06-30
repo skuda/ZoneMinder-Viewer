@@ -51,7 +51,7 @@ void ConnectionWidget::init()
     int r=0;
     labels << tr( "Host" ) << tr( "Database" ) << tr( "User" ) << tr( "Driver" ) << tr( "Port" ) << tr( "State" );
     m_table->setHorizontalHeaderLabels ( labels );
-    foreach ( QString  connection , ConnectionManager::connectionNames() )
+    foreach ( const QString connection, ConnectionManager::connectionNames() )
     {
         QSqlDatabase db = QSqlDatabase::database ( connection ) ;
         m_table->insertRow ( r );

@@ -31,7 +31,7 @@
 #include <QScrollArea>
 
 /**
-    TODO: arreglar los nombres de las variables
+    TODO: fix variable names
 */
 
 PagesWidget::PagesWidget( QWidget * parent )
@@ -42,16 +42,9 @@ PagesWidget::PagesWidget( QWidget * parent )
 
 void PagesWidget::init()
 {
-
     setObjectName(QString::fromUtf8("PagesWidget"));
-    vboxLayout = new QVBoxLayout(this);
-    vboxLayout->setSpacing(6);
-    vboxLayout->setMargin(9);
-    vboxLayout->setObjectName(QString::fromUtf8("vboxLayout"));
-    hboxLayout = new QHBoxLayout();
-    hboxLayout->setSpacing(6);
-    hboxLayout->setMargin(0);
-    hboxLayout->setObjectName(QString::fromUtf8("hboxLayout"));
+
+    //listWiget is on the left
     mListWidget = new QListWidget(this);
     mListWidget->setObjectName(QString::fromUtf8("scd_Options"));
     mListWidget->setMaximumSize(QSize(200, 16777215));
@@ -59,16 +52,10 @@ void PagesWidget::init()
     mListWidget->setAutoScroll(true);
     mListWidget->setIconSize(QSize(48, 48));
     mListWidget->setMovement(QListView::Static);
-    //mListWidget->setSpacing(25);
-    //mListWidget->setViewMode(QListView::IconMode);
     mListWidget->setWordWrap(true);
 
-    hboxLayout->addWidget(mListWidget);
-
-    vboxLayout1 = new QVBoxLayout();
-    vboxLayout1->setSpacing(6);
-    vboxLayout1->setMargin(0);
-    vboxLayout1->setObjectName(QString::fromUtf8("vboxLayout1"));
+    //right side
+    //upper frame white background
     frame = new QFrame(this);
     frame->setObjectName(QString::fromUtf8("frame"));
     QPalette palette;
@@ -95,53 +82,54 @@ void PagesWidget::init()
     frame->setFrameShape(QFrame::StyledPanel);
     frame->setFrameShadow(QFrame::Raised);
     
-    QVBoxLayout * vLayoutFrame = new QVBoxLayout( frame );
-    hboxLayout2 = new QHBoxLayout();
-    hboxLayout2->setSpacing(6);
-    hboxLayout2->setMargin(0);
-    hboxLayout2->setObjectName(QString::fromUtf8("hboxLayout2"));
+    //internal widget and layouts of the white frame
     mCurrentOption = new QLabel(frame);
     mCurrentOption->setObjectName(QString::fromUtf8("scd_CurrentOption"));
-
-    hboxLayout2->addWidget(mCurrentOption);
 
     mCurrentIcon = new QLabel(frame);
     mCurrentIcon->setObjectName(QString::fromUtf8("scd_CurrentIcon"));
     mCurrentIcon->setLayoutDirection(Qt::LeftToRight);
     mCurrentIcon->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
 
+    hboxLayout2 = new QHBoxLayout();
+    hboxLayout2->setSpacing(6);
+    hboxLayout2->setMargin(0);
+    hboxLayout2->setObjectName(QString::fromUtf8("hboxLayout2"));
+    hboxLayout2->addWidget(mCurrentOption);
     hboxLayout2->addWidget(mCurrentIcon);
     
     mCurrentOptionText = new QLabel(frame);
     mCurrentOptionText->setObjectName(QString::fromUtf8("scd_CurrentOptionText"));
 
+    QVBoxLayout * vLayoutFrame = new QVBoxLayout( frame );
     vLayoutFrame->addLayout ( hboxLayout2 );
     vLayoutFrame->addWidget ( mCurrentOptionText );
 
-    vboxLayout1->addWidget(frame);
     mOptionWidget = new QStackedWidget(this);
     mOptionWidget->setObjectName(QString::fromUtf8("scd_OptionWidget"));
-    /*firtsPage = new QWidget();
-    firtsPage->setObjectName(QString::fromUtf8("firtsPage"));
-    vboxLayout2 = new QVBoxLayout(firtsPage);
-    vboxLayout2->setSpacing(6);
-    vboxLayout2->setMargin(9);
-    vboxLayout2->setObjectName(QString::fromUtf8("vboxLayout2"));
-    mOptionWidget->addWidget(firtsPage);*/
 
-    vboxLayout1->addWidget( mOptionWidget );
+    //right side layout
+    vboxLayout1 = new QVBoxLayout();
+    vboxLayout1->setSpacing(6);
+    vboxLayout1->setMargin(0);
+    vboxLayout1->setObjectName(QString::fromUtf8("vboxLayout1"));
+    vboxLayout1->addWidget(frame);
+    vboxLayout1->addWidget(mOptionWidget);
 
-
+    hboxLayout = new QHBoxLayout(this);
+    hboxLayout->setSpacing(6);
+    hboxLayout->setMargin(9);
+    hboxLayout->setObjectName(QString::fromUtf8("hboxLayout"));
+    hboxLayout->addWidget(mListWidget);
     hboxLayout->addLayout(vboxLayout1);
 
-
-    vboxLayout->addLayout(hboxLayout);
-
-    QSize size(891, 597);
+    //TODO: check this on windows
+    /*QSize size(891, 597);
     size = size.expandedTo( minimumSizeHint() );
-    resize(size);
+    resize(size);*/
 
-    QObject::connect(mListWidget, SIGNAL(currentItemChanged(QListWidgetItem *, QListWidgetItem *)),this, SLOT(changePage(QListWidgetItem *, QListWidgetItem*)));
+    QObject::connect(mListWidget, SIGNAL(currentItemChanged(QListWidgetItem *, QListWidgetItem *)),
+                     this, SLOT(changePage(QListWidgetItem *, QListWidgetItem*)));
     mOptionWidget->setCurrentIndex(0);
 
 }
@@ -149,7 +137,7 @@ void PagesWidget::init()
 void PagesWidget::addWidget( QWidget * widget , const QString & text , const QString & opttext, QIcon icon )
 {
     QScrollArea * area = new QScrollArea ( this );
-    area->setWidget(  widget );
+    area->setWidget( widget );
     area->setWidgetResizable( true );
     //area->setBackgroundRole( QPalette::Base );
     //area->setFrameStyle( QFrame::Box );
@@ -180,7 +168,6 @@ void PagesWidget::changePage(QListWidgetItem *current, QListWidgetItem *previous
     mCurrentIcon->setPixmap ( current->icon().pixmap(size));
 
 }
-
 
 PagesWidget::~PagesWidget()
 {

@@ -44,6 +44,7 @@ public:
     void addWidget ( QWidget * widget , const QString & text, const QString & opttext = QString() , QIcon icon = QIcon(":/icons/PagesWidgetDefault") );
     ~PagesWidget();
     QList <QWidget * > allWidgets();
+
 protected:
     QStackedWidget * mOptionWidget;
     QListWidget * mListWidget;

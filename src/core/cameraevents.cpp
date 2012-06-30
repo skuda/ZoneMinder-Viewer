@@ -155,13 +155,12 @@ void CameraEvents::init()
     m_view->setColumnHidden ( TotScore, true );
     m_view->setColumnHidden ( MaxScore, true );
     m_view->setColumnHidden ( AvgScore, true );
-    m_view->setColumnHidden ( Archivied, true );
+    m_view->setColumnHidden ( Archived, true );
     m_view->setColumnHidden ( Videoed, true );
     m_view->setColumnHidden ( Uploaded, true );
     m_view->setColumnHidden ( Emailed, true );
     m_view->setColumnHidden ( Messaged, true );
     m_view->setColumnHidden ( Executed, true );
-    m_view->setColumnHidden ( LearnState, true );
     m_view->resizeColumnsToContents();
 
     m_camera->toolBar()->setIconSize(  QSize ( 32, 32 ) );

@@ -120,6 +120,7 @@ void CameraWidget::setStream( Stream * stream){
     m_stream = stream;
     connect ( m_stream , SIGNAL ( statusChanged ( Stream::Status ) ), this, SLOT ( statusChangedSlot( Stream::Status ) ) );
 }
+
 void CameraWidget::setAutoAdjustImage ( bool b ){
     if (b) m_layout->removeItem( m_spacerV );
     else if (m_autoAdjustImage){
@@ -127,6 +128,7 @@ void CameraWidget::setAutoAdjustImage ( bool b ){
     }
     m_autoAdjustImage = b;
 }
+
 void CameraWidget::startCamera(){
     m_stream->start();
     connect ( m_stream , SIGNAL ( frameReady ( QPixmap *) ) , this , SLOT (setPixmap (QPixmap *)));
@@ -144,6 +146,7 @@ void CameraWidget::pauseCamera( ){
     m_stream->setStatus( Stream::Paused );
     m_frameWidget->update();
 }
+
 void CameraWidget::stopCamera(){
     m_stream->stop();
     disconnect ( m_stream , SIGNAL ( frameReady ( QPixmap *) ) , this , SLOT (setPixmap (QPixmap *)));
@@ -154,6 +157,7 @@ void CameraWidget::stopCamera(){
         d->eventModel->stopEventTracker();
     m_frameWidget->setHasNewEvents( false );
 }
+
 void CameraWidget::restartCamera(){
     stopCamera();
     startCamera();
@@ -217,6 +221,7 @@ void CameraWidget::fullScreen(){
 void CameraWidget::setConfigActionState( bool state ){
     m_toolbar->setConfigActionState( state );
 }
+
 QAction * CameraWidget::toggleViewAction(){
     if (!m_toggleViewAction){
         m_toggleViewAction = new QAction (windowTitle() , this );
@@ -225,6 +230,7 @@ QAction * CameraWidget::toggleViewAction(){
     }
    return m_toggleViewAction;
 }
+
 QAction * CameraWidget::focusAction(){
     if (!m_focusAction){
         m_focusAction = new QAction (windowTitle() , this );
@@ -261,6 +267,7 @@ void CameraWidget::setFocus ( bool b ){
         }
     }
 }
+
 bool CameraWidget::event ( QEvent * event ){
     if (m_toggleViewAction ) m_toggleViewAction->setChecked ( this->isVisible());
     return QFrame::event( event );
@@ -296,16 +303,19 @@ void CameraWidget::resizeEvent ( QResizeEvent * event ){
     QFrame::resizeEvent( event );
     d->size = cameraPixmapSizeHint();
 }
+
 QSize CameraWidget::cameraPixmapSizeHint() const{
     QSize s = size();
    if ( m_toolbar->isVisible() )
                 s.setHeight ( s.height() - m_toolbar->size().height() );
     return s;
 }
+
 void CameraWidget::setHighQuality( bool b ){
     d->highQuality = b ;
     m_frameWidget->setTransformationMode( !b ? Qt::FastTransformation : Qt::SmoothTransformation );
 }
+
 CameraWidgetToolBar * CameraWidget::toolBar() const{
     return m_toolbar;
 }
@@ -350,6 +360,7 @@ void CameraWidget::showEvent ( QShowEvent * event ){
 QString CameraWidget::name() const{
     return d->cameraName;
 }
+
 void CameraWidget::setName( const QString &name ){
     d->cameraName = name;
 }
@@ -357,9 +368,11 @@ void CameraWidget::setName( const QString &name ){
 void CameraWidget::saveState(){
     d->savedState = m_stream->status();
 }
+
 void CameraWidget::restoreState(){
     loadFromState();
 }
+
 void CameraWidget::loadFromState(){
     switch ( d->savedState ){
         case Stream::Playing: startCamera();break;
@@ -382,6 +395,7 @@ void CameraWidget::activateMainCameraAction(){
     m_menu->addSeparator();
     m_menu->addAction( act );
 }
+
 void CameraWidget::activateSecondCameraAction(){
     QAction *act = promoteToSecondCameraAction();
     m_menu->addAction( act );
@@ -391,6 +405,7 @@ void CameraWidget::removeMainCameraAction(){
     QAction *act = promoteToMainCameraAction();
     m_menu->removeAction( act );
 }
+
 void CameraWidget::removeSecondCameraAction(){
     QAction *act = promoteToSecondCameraAction();
     m_menu->removeAction( act );
@@ -400,6 +415,7 @@ void CameraWidget::setVisible(bool b ){
     QFrame::setVisible( b );
     if ( b ) QFrame::setFocus();
 }
+
 void CameraWidget::changeCameraNumber(){
     if ( m_frameWidget )
         m_frameWidget->setFrameId(  m_focusAction->text() );
@@ -433,7 +449,3 @@ CameraWidget::~CameraWidget()
     delete d->cameraEvent;
     delete d;
 }
-
-
-
-

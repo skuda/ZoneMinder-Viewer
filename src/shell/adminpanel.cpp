@@ -21,39 +21,59 @@
 #include <QUrl>
 #include <QInputDialog>
 #include <QSettings>
+#include <QtCore/QTimer>
+#include <QtNetwork/QtNetwork>
+#include <QtCore/QtCore>
 
-AdminPanel::AdminPanel( const QString &host, const QString &settingGroup, QWidget * parent )
-:QWebView( parent ),m_popupView(0)
+AdminPanel::AdminPanel(QWidget * parent ) :QWebView( parent )
 {
-    resize(QSize(750, 462));
-    setHost( host, settingGroup );
 }
 
-void AdminPanel::setHost( const QString &host, const QString &settingGroup ){
-    #if QT_VERSION >= 0x040400
-     bool okPressed = false;
-     QString url = QInputDialog::getText(0,tr("ZMViewer - Where is the ZoneMinder Web Root location?"), tr("ZoneMinder Default Administration Interface Root Location"), QLineEdit::Normal, host , &okPressed);
-     load( QUrl( url + "/zm.php") );
+bool AdminPanel::setHost( const QString &host, const QString &settingGroup ){
+    bool okPressed = false;
+
+#if QT_VERSION >= 0x040400
+     QString urlstr = QInputDialog::getText(0, tr("ZMViewer - Where is the ZoneMinder Web Root location?"),
+                                            tr("ZoneMinder Default Administration Interface Root Location"),
+                                            QLineEdit::Normal, host , &okPressed);
+
+     QUrl url( urlstr + "/index.php?skin=classic");
+     url.addQueryItem("action", "login");
+     url.addQueryItem("view", "options");
+     //TODO: change this to get username and pass from auth class.
+     url.addQueryItem("username", "admin");
+     url.addQueryItem("password", "secret");
+
+     QNetworkRequest request(url);
+     request.setHeader(QNetworkRequest::ContentTypeHeader, "text/html");
+     load(request, QNetworkAccessManager::PostOperation, url.encodedQuery());
+
      QSettings s;
      s.beginGroup( settingGroup );
-     s.setValue("adminPanel", url );
+     s.setValue("adminPanel", urlstr );
      s.endGroup();
 
-     setWindowTitle( tr( "ZMViewer - %1 Admin Panel" ).arg( QUrl(url).host() ) );
+     setWindowTitle( tr( "ZMViewer - %1 Admin Panel" ).arg( url.host() ) );
+#endif
 
-     #endif
-
+     return okPressed;
 }
 
 QWebView * AdminPanel::createWindow ( QWebPage::WebWindowType /*type*/ ){
-    if ( !m_popupView ){
-        m_popupView = new QWebView;
-    }
+    return this; //this is how we handle pop-up windows
+}
 
-    return m_popupView;
+void AdminPanel::show()
+{
+    QWebView::show();
+    QTimer::singleShot(0, this, SLOT(resizeToConfigSize()));
+}
+
+void AdminPanel::resizeToConfigSize()
+{
+    resize(950, 700);
 }
 
 AdminPanel::~AdminPanel()
 {
-    delete m_popupView;
 }

@@ -49,6 +49,7 @@
 #include <QApplication>
 #include <QDir>
 #include <QtCore>
+#include <QtGui/QResizeEvent>
 
 static QStringList hosts;
 
@@ -237,10 +238,9 @@ void MainWindow::initSettings()
         m_settings->endGroup();
     }
 
-    QWidget *cam;
     m_monitors = new Monitors ( this );
 
-    foreach ( cam , m_monitors->cameras() )
+    foreach (QWidget *cam , m_monitors->cameras() )
     {
         m_centralWidget->appendCamera ( cam );
         CameraWidget * cameraWidget = qobject_cast <CameraWidget *> ( cam );
@@ -378,15 +378,23 @@ void MainWindow::show(){
     //m_centralWidget->layoutWidgets();
 }
 void MainWindow::adminServer(){
-    QString settingsName = qobject_cast<QAction * > (sender() )->data().toString();
-    QString hostName = qobject_cast<QAction * > (sender() )->text();
+    QAction * action = qobject_cast<QAction * > (sender() );
+    if (!action)
+        return;
+
+    QString settingsName = action->data().toString();
+    QString hostName = action->text();
     m_settings->beginGroup ( settingsName );
     QString hostPanel = m_settings->value( "adminPanel", "http://"+ hostName + "/zm" ).toString();
     m_settings->endGroup();
+
+    //if first time we create it, else we change the host
     if (!m_adminPanel)
-        m_adminPanel = new AdminPanel( hostPanel , settingsName);
-    else m_adminPanel->setHost( hostPanel, settingsName );
-    m_adminPanel->show();
+        m_adminPanel = new AdminPanel();
+
+    bool ok = m_adminPanel->setHost( hostPanel, settingsName );
+    if (ok == true)
+        m_adminPanel->show();
 }
 
 void MainWindow::showPreferences(){

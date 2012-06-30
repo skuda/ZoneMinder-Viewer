@@ -54,13 +54,12 @@ public:
         TotScore,
         AvgScore,
         MaxScore,
-        Archivied,
+        Archived,
         Videoed,
         Uploaded,   
         Emailed,
         Messaged,
         Executed,
-        LearnState,
         Notes
     };
     CameraEvents( int camId, const QString & connectionName , QWidget * parent = 0 );

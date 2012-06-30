@@ -42,13 +42,16 @@
 class AdminPanel: public QWebView {
     Q_OBJECT
 public:
-    AdminPanel( const QString &host, const QString &settingGroup ,QWidget * parent = 0 );
-     void setHost( const QString &host, const QString &settingGroup );
+    AdminPanel(QWidget * parent = 0 );
+     bool setHost( const QString &host, const QString &settingGroup );
     ~AdminPanel();
+public Q_SLOTS:
+     void show();
+protected Q_SLOTS:
+     void resizeToConfigSize();
+
 protected:
     QWebView * createWindow ( QWebPage::WebWindowType  );
-private:
-    QWebView * m_popupView;
 };
 
 #endif

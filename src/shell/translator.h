@@ -28,7 +28,7 @@
 class Translator : public QObject{
     Q_OBJECT
 public:
-    bool loadLanguage( const QString & localeString );
+    bool loadLanguage(QString &localeString);
     void loadSettings();
     void writeSettings();
     QString currentLocale() const;

@@ -66,7 +66,9 @@ class TabWidget: public QTabWidget{
         }
 };
 
-ServerLabel::ServerLabel( const QString &text, QWidget * parent )
+
+/* don't seems to be used
+  ServerLabel::ServerLabel( const QString &text, QWidget * parent )
         : QFrame( parent ){
             setObjectName("ServerLabel");
             QHBoxLayout * layout = new QHBoxLayout;
@@ -81,9 +83,7 @@ ServerLabel::ServerLabel( const QString &text, QWidget * parent )
             label->setAlignment ( Qt::AlignHCenter );
             label->setSizePolicy( QSizePolicy::Maximum , QSizePolicy::Maximum);
     }
-
-
-
+*/
 
 class CameraViewer::Private{
     public:
@@ -146,8 +146,8 @@ void CameraViewer::init(){
 }
 
 CameraViewer * CameraViewer::instance(){
-        Q_ASSERT( m_instance );
-        return m_instance;
+    Q_ASSERT( m_instance );
+    return m_instance;
 }
 
 void CameraViewer::initActions(){
@@ -264,16 +264,7 @@ QActionGroup * CameraViewer::cameraFocusActions(){
 
 void CameraViewer::resizeEvent ( QResizeEvent * event ){
     QWidget::resizeEvent( event );
-    if (d->currentColumnLayout == 0 ) return;
-    //TODO: use enums for currentColumnLayout?
-    if ( d->currentColumnLayout > 0 )
-        layoutCurrentColLayout();
-    else{
-        switch( d->currentColumnLayout ){
-            case -1: mainCameraWidgetLayout( true );break;
-            case -2: doubleCameraWidgetLayout( true );break;
-        }
-    }
+    layoutCurrentColLayout();
 }
 
 void CameraViewer::fullScreenSlot( QWidget * camera ){
@@ -303,12 +294,13 @@ void CameraViewer::fullScreenClosedSlot( QWidget * camera ){
 }
 
 void CameraViewer::updateCameras(){
-    switch ( m_layoutType ){
+    /*switch ( m_layoutType ){
         case ColumnsLayoutType: layoutCurrentColLayout(); break;
         case MainCameraLayoutType: mainCameraWidgetLayout( true ); break;
         case DoubleCameraLayoutType: doubleCameraWidgetLayout( true );break;
         default: layoutWidgets ();
-    }
+    }*/
+    layoutCurrentColLayout();
     updateActions();
 }
 
@@ -328,7 +320,13 @@ void CameraViewer::updateActions(){
 }
 
 void CameraViewer::layoutCurrentColLayout() {
-    layoutWidgets(d->currentColumnLayout, true);
+    //TODO: use enums for currentColumnLayout?
+    switch( d->currentColumnLayout ){
+       case 0: return; break;
+       case -1: mainCameraWidgetLayout( true );break;
+       case -2: doubleCameraWidgetLayout( true );break;
+       default: layoutWidgets(d->currentColumnLayout, true);
+    }
 }
 
 void CameraViewer::clearCameras(){
@@ -341,7 +339,7 @@ void CameraViewer::clearCameras(){
              QQueue<QWidget *> queue = iterator.value();
              foreach( QWidget * current_widget , queue ){   
                 delete current_widget;
-            }
+             }
     }
     d->cameraCount = 0;
     d->widgets.clear();

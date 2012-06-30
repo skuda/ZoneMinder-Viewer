@@ -121,6 +121,7 @@ void CameraLayout::calculateCellsSize( ){
     int hSize = (parentSize.height() / d->rows) - verticalSpacing();
     d->cellsSize = QSize( wSize, hSize );
 }
+
 void CameraLayout::fill(){
     for ( int r = 0 ; r < d->rows ; r++ ){
         for ( int c = 0 ; c < d->columns ; c++ ){
@@ -129,13 +130,13 @@ void CameraLayout::fill(){
         }
     }
 }
+
 QSize CameraLayout::sizeHint() const{
      if (parentWidget())
         return parentWidget()->size();
      return QGridLayout::sizeHint();
-
-
 }
+
 void CameraLayout::clear(){
     for (int r = 0; r < rowCount(); ++r ){
         for (int c = 0; c < columnCount(); ++c ){

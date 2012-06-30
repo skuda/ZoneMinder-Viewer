@@ -30,9 +30,10 @@ CameraViewerPage::CameraViewerPage( int rows, int columns, QWidget * parent )
 }
 
 void CameraViewerPage::appendCamera( QWidget * camera ){
-        m_cameraLayout->addWidget( camera );
-        camera->setFixedSize( m_cameraLayout->cellsSizeHint() );
+    m_cameraLayout->addWidget( camera );
+    camera->setFixedSize( m_cameraLayout->cellsSizeHint() );
 }
+
 void CameraViewerPage::updateLayout(){
     m_cameraLayout->updateLayout();
 }

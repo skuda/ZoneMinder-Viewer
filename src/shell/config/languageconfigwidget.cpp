@@ -48,8 +48,8 @@ void LanguageConfigWidget::initLanguageComboBox()
         locale.truncate(locale.lastIndexOf('.'));
         QTranslator translator;
         translator.load(fileName, ":/translations");
-        QString language = translator.translate("Translate",
-                                                "English");
+        QString language = translator.translate("Translate", "English");
+
         if ( language.isEmpty() ) language = locale;
         m_languageComboBox->addItem( language, locale );
     }
@@ -77,8 +77,6 @@ bool LanguageConfigWidget::dialogAccepted(){
     }
     return true;
 }
-
-
 
 LanguageConfigWidget::~LanguageConfigWidget()
 {

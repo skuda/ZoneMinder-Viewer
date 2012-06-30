@@ -26,7 +26,8 @@
 class CameraAddDialog: public QDialog, public Ui::CameraAddDialog{
 public:
     CameraAddDialog( QWidget * parent );
-    void setValues( const QString &name ,const QString &host , const QString &port,const    QString &monitor, const QString &zms );
+    void setValues( const QString &name ,const QString &host , const QString &port,
+                    const QString &monitor, const QString &zms );
     void completeDefaults();
     ~CameraAddDialog();
     void setEditable( bool b );

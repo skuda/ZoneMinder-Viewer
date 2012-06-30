@@ -35,12 +35,14 @@ class QActionGroup;
 class QMenu;
 class QAction;
 
-class ServerLabel: public QFrame{
+/*don't seems to be used
+ class ServerLabel: public QFrame{
   Q_OBJECT
     public:
         ServerLabel( const QString &text, QWidget * parent );
         QLabel * label;
 };
+*/
 
 class CameraViewer: public QWidget{
 Q_OBJECT
