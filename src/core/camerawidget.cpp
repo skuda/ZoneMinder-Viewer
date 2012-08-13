@@ -53,10 +53,10 @@ class CameraWidget::Private{
 };
 
 CameraWidget::CameraWidget( const QString &conectionName, QWidget *parent)
- : QFrame( parent),m_autoAdjustImage( false ),m_toggleViewAction(0),m_focusAction(0),m_promoteToMainCameraAction(0),m_promoteToSecondCameraAction(0),
-d( new Private )
+ : QFrame(parent), m_autoAdjustImage(false), m_toggleViewAction(0), m_focusAction(0),
+   m_promoteToMainCameraAction(0), m_promoteToSecondCameraAction(0),m_conectionName(conectionName)
+  ,d(new Private)
 {
-    m_conectionName = conectionName;
     d->eventModel = new EventModel( conectionName, this );
     init();
 }
@@ -67,6 +67,7 @@ CameraWidget::CameraWidget( const CameraWidget & other ): QFrame(static_cast<QWi
     this->m_autoAdjustImage = other.m_autoAdjustImage;
     this->m_conectionName = other.m_conectionName;
     this->d = other.d;
+    //qDebug("copy constructor CameraWidget");
 }
 
 void CameraWidget::init(){
@@ -93,7 +94,7 @@ void CameraWidget::init(){
 
     m_layout->addWidget ( m_toolbar );
     m_layout->addWidget ( m_frame );
-    m_layout->addItem(m_spacerV);
+    m_layout->addSpacerItem(m_spacerV);
 
     m_menu = m_toolbar->menu ();
     setContextMenuPolicy ( Qt::CustomContextMenu );
@@ -446,6 +447,7 @@ CameraWidget::~CameraWidget()
 {
     delete m_stream;
     delete m_toolbar;
+    delete m_spacerV;
     delete d->cameraEvent;
     delete d;
 }

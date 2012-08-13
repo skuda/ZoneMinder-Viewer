@@ -21,19 +21,21 @@
 #include "stream.h"
 #include "qmultipartreader.h"
 
-#include <QHttp>
+#include <QNetworkAccessManager>
+#include <QNetworkReply>
 #include <QString>
 #include <QPixmap>
 #include <QTimer>
+#include <QUrl>
 
 class Stream::Private
 {
     public:
         Private ( QObject * parent )
         {
-            http = new QHttp( parent );
-            //http->setUser("admin","admin");
             timer = new QTimer( parent );
+            manager = new QNetworkAccessManager(parent);
+
             mode = "jpeg";
             host = "localhost";
             port = 80;
@@ -47,10 +49,13 @@ class Stream::Private
             multiPartReader = new QMultiPartReader("--ZoneMinderFrame", parent );
         }
         ~Private(){
+            delete manager;
             delete current_frame;
             delete multiPartReader;
 	    }
-        QHttp * http;
+        QNetworkAccessManager * manager;
+        QNetworkReply * reply;
+
         QString mode;
         QString host;
         quint16 port;
@@ -67,6 +72,7 @@ class Stream::Private
         // used to check connection errors
         Status userStatus;
         int reconnectCount;
+        bool finishedConnection;
 
         QMultiPartReader * multiPartReader;
 };
@@ -82,11 +88,11 @@ void Stream::init(){
     d->timer->start( 3000 );
     connect ( d->timer , SIGNAL( timeout() ), this, SLOT( checkConnection() ) );
 }
+
 void Stream::setHost ( const QString & host, quint16 port )
 {
     d->host = host;
     d->port = port;
-    d->http->setHost ( host , port );
 }
 
 void Stream::setMode ( const StreamMode &mode )
@@ -108,14 +114,15 @@ void Stream::setStreamType ( const StreamType & t ){
     d->type = t;
 }
 void Stream::setScale ( quint16 scale )
+
 {
     d->scale = scale;
 }
+
 void Stream::setBitRate ( quint16 bitrate )
 {
     d->bitrate = bitrate;
 }
-
 
 void Stream::setZMStreamServer ( const QString &zms )
 {
@@ -125,43 +132,14 @@ void Stream::setZMStreamServer ( const QString &zms )
 void Stream::setEvent ( quint16 event ){
     d->event = event;
 }
-void Stream::read ( const QHttpResponseHeader /*&header*/ )
+
+void Stream::read()
 {
-    QByteArray r = d->multiPartReader->read( d->http->readAll() );
-    if ( !r.isNull() )
-        image( r );
-/** OLD CODE!!!
-    
-    QByteArray array = d->http->readAll();
-    QByteArray * tmp = new QByteArray;
-    int c = 0;
-    const static QByteArray h ( "--ZoneMinderFrame\r\n" );
-    const static QByteArray e ( "\r\n\r\n" );
-    const static QByteArray rn ( "\r\n" );
-
-    int index = -1;
-    int end = -1;
-
-    if ( ( index = array.lastIndexOf ( h, index ) ) != -1 )
-    {
-
-        if ( ( end = array.indexOf ( e, index ) ) != -1 )
-        {
-            int len = -1;
-            len = QString ( array.mid ( index+19+16, 6 ) ).toInt();
-
-            tmp->push_back ( array.mid ( index+69, len ) );
-            image ( tmp );
-
-        }
-
-
-
+    if (d->reply->bytesAvailable()) {
+        QByteArray r = d->multiPartReader->read( d->reply->readAll() );
+        if ( !r.isNull() )
+            image( r );
     }
-    delete tmp;
-
-
-    c++;*/
 }
 
 bool Stream::image ( const QByteArray &array )
@@ -177,42 +155,48 @@ bool Stream::image ( const QByteArray &array )
     return false;
 }
 
-
-
 void Stream::start()
 {
     d->userStatus = Playing;
+    d->finishedConnection = false;
     setStatus( Stream::Playing );
     QString connection;
+
     if (d->type == Monitor )
-        connection = QString ( "%1?mode=%2&monitor=%3&scale=%4&bitrate=%5" ).arg ( d->zms ).arg ( d->mode ).arg ( d->monitor ).arg ( d->scale ).arg ( d->bitrate );
+        connection = QString("%1?mode=%2&monitor=%3&scale=%4&bitrate=%5")
+                     .arg(d->zms).arg(d->mode).arg(d->monitor).arg(d->scale).arg(d->bitrate);
+
     else if ( d->type == Event )
-            connection = QString ( "%1?source=event&mode=%2&frame=1&event=%3&scale=%4&bitrate=%5" ).arg ( d->zms ).arg ( d->mode ).arg ( d->event ).arg ( d->scale ).arg ( d->bitrate);
-    if ( !d->appendString.isNull() && d->appendString.size() > 0 )
-            connection.append("&"+d->appendString);
-    //#ifdef DEBUG_PARSING
-    qDebug ( qPrintable ( connection ) );
-    //#endif
-    d->http->get ( connection );
-    connect ( d->http, SIGNAL ( readyRead ( const QHttpResponseHeader& ) ), this, SLOT ( read ( const QHttpResponseHeader & ) ) );
-    connect ( d->http, SIGNAL ( done ( bool ) ), this, SLOT ( stopRead ( bool ) ) );
-    //connect ( d->multiPartReader, SIGNAL ( frameReady ( QByteArray ) ), this, SLOT ( image ( QByteArray ) ) );
+        connection = QString("%1?source=event&mode=%2&frame=1&event=%3&scale=%4&bitrate=%5")
+                     .arg(d->zms).arg(d->mode).arg(d->event).arg(d->scale).arg(d->bitrate);
+
+    if (d->appendString.size() > 0)
+        connection.append("&"+d->appendString);
+
+    QString complete_url = QString("http://%1%2").arg(d->host).arg(connection);
+    qDebug(qPrintable(complete_url));
+
+    d->reply = d->manager->get(QNetworkRequest(QUrl(complete_url)));
+    connect( d->reply, SIGNAL(readyRead()), this, SLOT(read()) );
+    connect( d->reply, SIGNAL(error(QNetworkReply::NetworkError)), this, SLOT(readError(QNetworkReply::NetworkError)) );
+    connect( d->reply, SIGNAL(finished()), this, SLOT(finishedConnection()) );
 }
 
-void Stream::stop(){
+void Stream::stop()
+{
     d->userStatus = Stopped;
     setStatus( Stream::Stopped );
-    d->http->abort ();
-    disconnect ( d->http, SIGNAL ( readyRead ( const QHttpResponseHeader& ) ), this, SLOT ( read ( const   QHttpResponseHeader & ) ) );
-    disconnect ( d->multiPartReader, SIGNAL ( frameReady ( QByteArray ) ), this, SLOT ( image ( QByteArray ) ) );
-    
+    d->finishedConnection = true;
+    disconnect( d->reply, SIGNAL(readyRead()), this, SLOT(read()) );
+    disconnect( d->reply, SIGNAL(error(QNetworkReply::NetworkError)),
+                this, SLOT(readError(QNetworkReply::NetworkError)) );
+    disconnect( d->reply, SIGNAL(finished()), this, SLOT(finishedConnection()) );
 }
+
 void Stream::restart(){
     stop();
     start();
 }
-
-//
 
 QString Stream::host() const
 {
@@ -266,34 +250,37 @@ void Stream::setStatus( const Status & status ){
     emit( statusChanged( d->status ) );
 }
 
-void Stream::stopRead ( bool error ){
-        if ( error && d->userStatus != Stream::Stopped ){
-            setStatus ( Stream::HTTPError );
-            emit ( done( d->http->errorString() ) );
-        }
-        else{
-            if ( d->type == Event ){
-                setStatus( Stream::Stopped );
-                emit ( done( tr( "Event finished.") ) );
+void Stream::readError ( QNetworkReply::NetworkError error ){
+    if (error != QNetworkReply::NoError && d->userStatus != Stream::Stopped) {
+        setStatus ( Stream::HTTPError );
+        emit ( done( d->reply->errorString() ) );
+    }
+    else {
+        if ( d->type == Event ){
+            setStatus( Stream::Stopped );
+            emit ( done( tr( "Event finished.") ) );
+        } else {
+            if ( d->userStatus != Stream::Stopped ){
+                setStatus( Stream::NoSignal );
+                emit ( done( tr( "Stopped by server. Press play to try again") ) );
             } else {
-                if ( d->userStatus != Stream::Stopped ){
-                    setStatus( Stream::NoSignal );
-                    emit ( done( tr( "Stopped by server. Press play to try again") ) );
-                    } else {
-                        setStatus( d->userStatus );
-                    }
-                }
+                setStatus( d->userStatus );
+            }
         }
+    }
 }
 
-void Stream::checkConnection(){
-    if ( d->userStatus == Stream::Playing && d->type != Event && d->http->state() == QHttp::Unconnected ){
+void Stream::finishedConnection()
+{
+    d->finishedConnection = true;
+}
+
+void Stream::checkConnection() {
+    if ( d->userStatus == Stream::Playing && d->finishedConnection ) {
         //try to connect
         restart();
-    } else {
-        if ( d->reconnectCount != 0 && d->http->state() == QHttp::Connected ){
-                d->reconnectCount = 0;
-        }
+    } else if ( d->reconnectCount != 0 && !d->finishedConnection ){
+        d->reconnectCount = 0;
     }
 }
 

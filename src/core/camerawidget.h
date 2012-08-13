@@ -29,6 +29,7 @@ class QToolButton;
 class CameraWidgetToolBar;
 class QSpacerItem;
 class QMenu;
+class QVBoxLayout;
 
 /**
 	@author Leandro Emanuel López <lopezlean@gmail.com>
@@ -163,7 +164,7 @@ private:
     QSpacerItem * m_spacerV;
     Stream * m_stream;
     QFrame * m_frame;
-    QLayout * m_layout;
+    QVBoxLayout * m_layout;
     CameraWidgetToolBar * m_toolbar;
     bool m_autoAdjustImage;
     QAction * m_toggleViewAction;

@@ -27,6 +27,7 @@
 #include <QObject>
 class QDomElement;
 class QPushButton;
+
 class Style: public QObject{
 Q_OBJECT
 public:
@@ -68,7 +69,7 @@ public:
     QString fileName()const;
     bool isValid() const;
 
-    Style operator=( const Style & other);
+    Style &  operator=( const Style & other);
     ~Style();
 
 protected:

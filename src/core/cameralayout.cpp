@@ -20,6 +20,7 @@
 
 #include "cameralayout.h"
 #include "blackwidget.h"
+#include <QtGui/QtGui>
 
 
 class CameraLayout::Private{
@@ -40,6 +41,7 @@ CameraLayout::CameraLayout( int rows, int columns )
     d->columnCount = 0;
     d->rowCount = 0;
     d->hasSpace = true;
+    clear();
     setSizeConstraint( QLayout::SetMaximumSize );
     setSpacing( 2 );
     setMargin( 1 );
@@ -66,12 +68,12 @@ void CameraLayout::addWidget ( QWidget * widget ){
          return;
     }
     QLayoutItem *item = itemAtPosition( d->rowCount, d->columnCount );
+    if ( !item )
+        return;
+
     QSize size = item->widget()->size();
-    if ( item ){
-        removeItem( item );
-        delete item->widget();
-        //delete item;
-    }
+    removeItem( item );
+    delete item->widget();
     widget->setFixedSize( size );
     QGridLayout::addWidget ( widget, d->rowCount , d->columnCount );
     d->columnCount++;
@@ -150,6 +152,7 @@ void CameraLayout::clear(){
                             else item->widget()->setVisible( false );
                         }
                 }
+                delete item;
             }
         }
 }
@@ -184,6 +187,7 @@ void CameraLayout::reset(){
 
 CameraLayout::~CameraLayout()
 {
+    clear();
     delete d;
 }
 

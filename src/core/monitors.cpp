@@ -81,9 +81,12 @@ void Monitors::init()
             streamMode = method == "jpeg" ? Stream::JPEG : Stream::VIDEO;
         }
 
+        //int count = 0;
         query.exec("SELECT Id, Name FROM Monitors;" );
         while ( query.next() )
         {
+            /*count += 1;
+            if (count > 2) break;*/
             CameraWidget * camera = new CameraWidget ( connection );
             uint id = query.value(0).toUInt();
             QString name = query.value(1).toString();
@@ -103,7 +106,6 @@ void Monitors::init()
         }
     }
 }
-
 
 int Monitors::count()
 {

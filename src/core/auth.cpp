@@ -35,9 +35,8 @@
 #include <QSettings>
 
 Auth::Auth ( const QString & db , QObject * parent )
-        :QObject ( parent ),m_isAuth ( false ),m_AuthType ( NONE ),m_needAuth ( false )
+    :QObject(parent), m_db(db), m_isAuth(false), m_AuthType(NONE), m_needAuth(false)
 {
-    m_db = db;
     init();
 }
 
@@ -106,6 +105,7 @@ int Auth::authType() const
 {
     return m_AuthType;
 }
+
 bool Auth::isAuthNeeded() const
 {
     return m_needAuth;

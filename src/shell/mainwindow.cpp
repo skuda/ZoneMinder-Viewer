@@ -348,12 +348,13 @@ void MainWindow::update ( )
     m_centralWidget->clearCameras();
     m_monitors->updateMonitors();
     m_cameraToggleAction->clear();
-    QWidget *cam;
-    foreach ( cam , m_monitors->cameras() )
+
+    foreach (QWidget *cam , m_monitors->cameras() )
     {
         m_centralWidget->appendCamera ( cam );
-        m_cameraToggleAction->append ( ((CameraWidget *)cam)->toggleViewAction() );
+        m_cameraToggleAction->append ( (static_cast<CameraWidget *> (cam))->toggleViewAction() );
     }
+
     m_centralWidget->updateCameras();
     m_controlBar->updateControls();
     m_commandListener->clear();
@@ -406,6 +407,7 @@ MainWindow::~MainWindow()
 {
     delete m_adminPanel;
     ConnectionManager::closeAll();
+    delete m_cameraToggleAction;
 }
 
 void MainWindow::switchLanguage( const QString & /*locale*/)

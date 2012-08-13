@@ -186,7 +186,7 @@ Style::Style( const Style & other)
 {
 }
 
-Style Style::operator=( const Style & other){
+Style & Style::operator=( const Style & other){
   this->d = new Private(*other.d);
   return *this;
 }

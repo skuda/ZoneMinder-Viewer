@@ -31,8 +31,8 @@ public:
     ~About();
     static QString applicationName();
     static QString versionString();
+    void showAboutDialog();
 
-    void showAboutDialog ();
 private:
     QString aboutText();
     QString authorsText();

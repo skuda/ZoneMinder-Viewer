@@ -31,7 +31,6 @@ class EventModel::Private{
 
 EventModel::EventModel( const QString &cn, QObject * parent )
 :BaseModel( cn, parent ),d( new Private ){
-    setTable( "Events" );
     d->lastEventCount = 0;
     d->eventTracker = false;
     connect( &d->timer, SIGNAL(timeout()), this, SLOT(searchForNewEvents()));
@@ -40,6 +39,7 @@ EventModel::EventModel( const QString &cn, QObject * parent )
 void EventModel::setCamera( int id ){
     d->cameraId = id;
     setFilter( "MonitorId = " + QString::number ( d->cameraId ) );
+    setTable( "Events" );
 }
 
 void EventModel::startEventTracker( ){
@@ -48,7 +48,6 @@ void EventModel::startEventTracker( ){
     d->lastEventCount = rowCount();
     d->eventTracker = true;
     d->timer.start( 5000 );
-
 }
 
 void EventModel::stopEventTracker(){
@@ -68,6 +67,7 @@ void EventModel::searchForNewEvents(){
 
 EventModel::~EventModel()
 {
+    delete d;
 }
 
 

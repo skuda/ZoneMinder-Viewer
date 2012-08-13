@@ -59,7 +59,6 @@ void About::showAboutDialog()
 
     tab->addTab ( authors , QObject::tr( "Authors and Thanks" ) );
 
-
     layout->addWidget ( tab );
     QPushButton * button = new QPushButton ( QObject::tr( "Ok" ) , m_dialog );
     QHBoxLayout * buttonLayout = new QHBoxLayout ( );
@@ -69,6 +68,7 @@ void About::showAboutDialog()
 
     QObject::connect ( button, SIGNAL ( clicked() ),m_dialog,SLOT ( accept() ) );
     m_dialog->exec();
+    m_dialog->deleteLater();
 }
 
 
@@ -107,8 +107,10 @@ QString About::authorsText(){
                         </ul><br></ul>\
                        ");
 }
+
 About::~About()
 {
+
 }
 
 

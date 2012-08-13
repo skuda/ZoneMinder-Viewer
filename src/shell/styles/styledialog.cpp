@@ -215,7 +215,7 @@ void StyleDialog::urlSelected(const QString& _url ){
   
 }
 void StyleDialog::applyStyle(){
-  EntryButton * _sender = (EntryButton *)sender();
+  EntryButton * _sender = static_cast<EntryButton *> (sender());
   qApp->setStyle( QStyleFactory::create( _sender->style->style() ) );
   qApp->setStyleSheet(  _sender->style->styleSheet() );
   QSettings s;

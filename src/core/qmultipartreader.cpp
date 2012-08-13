@@ -24,6 +24,7 @@
 #include <QByteArray>
 #include <QBuffer>
 #include <QHttpResponseHeader>
+
 //#define DEBUG_PARSING
 class QMultiPartReader::Private{
     public:
@@ -37,7 +38,7 @@ class QMultiPartReader::Private{
     //test vars
     //bool m_haveLength;
     //bool m_haveMimeType;
-
+    int m_currentImageSize;
     QBuffer buffer;
 };
 
@@ -72,6 +73,9 @@ public:
         Q_ASSERT( m_lineComplete );
         reset();
     }
+    void resize(int size) {
+        m_currentLine.resize(size);
+    }
     void reset() {
         m_currentLine.resize( 0 );
         m_lineComplete = false;
@@ -98,39 +102,38 @@ void QMultiPartReader::startHeader(){
     d->m_bParsingHeader = true; // we expect a header to come first
     d->m_bGotAnyHeader = false;
     d->m_gzip = false;
-//   test code
-//    m_haveLength = false;
-//    m_haveMimeType = false;
+    /*test code
+    m_haveLength = false;
+    m_haveMimeType = false;*/
 }
 
-QByteArray QMultiPartReader::read( const QByteArray  &data ){
+QByteArray QMultiPartReader::read( const QByteArray  &data )
+{
     for ( int i = 0; i < data.size() ; ++i )
     {
         // Store char. Skip if '\n' and currently parsing a header.
         m_lineParser->addChar( data[i], !d->m_bParsingHeader );
         if ( m_lineParser->isLineComplete() )
         {
-            QByteArray lineData = m_lineParser->currentLine();
-
-            QByteArray line( lineData.data(), lineData.size()+1 ); // deep copy
-            // 0-terminate the data, but only for the line-based tests below
-            // We want to keep the raw data in case it ends up in sendData()
-            int sz = line.size();
-            if ( sz > 0 )
-                line[sz-1] = '\0';
+            QByteArray line = m_lineParser->currentLine();
+            line.append('\0', 1);
 
             if ( d->m_bParsingHeader )
             {
                 if ( !line.isEmpty() )
                     d->m_bGotAnyHeader = true;
-                 if ( !qstrnicmp( line.data(), "Content-Length:", 15 ) )
+
+                if ( !qstrnicmp( line.data(), "Content-Length:", 15 ) )
                 {
+#ifdef DEBUG_PARSING
                     QString length = QString::fromLatin1(line.data()+15).trimmed().toLower();
-                #ifdef DEBUG_PARSING
                     qDebug ( ) << "Content-Length: " << length;
-                #endif
-    //test code                    m_haveLength = true;
+#else
+                     ; //nop
+#endif
+                    //m_haveLength = true; //test code
                 }
+
                 // parse Content-Type
                 else if ( !qstrnicmp( line.data(), "Content-Type:", 13 ) )
                 {
@@ -139,20 +142,22 @@ QByteArray QMultiPartReader::read( const QByteArray  &data ){
                     int semicolon = d->m_nextMimeType.indexOf( ';' );
                     if ( semicolon != -1 )
                         d->m_nextMimeType = d->m_nextMimeType.left( semicolon );
-                #ifdef DEBUG_PARSING
+#ifdef DEBUG_PARSING
                     qDebug() << "d->m_nextMimeType=" << d->m_nextMimeType;
-                #endif
-//test code                    m_haveMimeType = true;
+#endif
+                    //m_haveMimeType = true; //test code
                 }
+
                 // Empty line, end of headers (if we had any header line before)
-                else if ( ( line.isEmpty() || line.data() == QByteArray("\r\n" ) || line.toHex() == "00" ) && d->m_bGotAnyHeader  )
+                else if ( ( line.isEmpty() || line.data() == QByteArray("\r\n" ) || line.toHex() == "00" )
+                          && d->m_bGotAnyHeader  )
                 {
                     d->m_bParsingHeader = false;
-            #ifdef DEBUG_PARSING
+#ifdef DEBUG_PARSING
                     qDebug() << "end of headers";
-            #endif
+#endif
                     startOfData();
-                }/*  test code
+                }          /*  test code
                             else if ( m_haveLength && m_haveMimeType){
                             qDebug() << "have all headers!!!";
                              qDebug() << ">>"<<line.data() << "<<";
@@ -164,7 +169,7 @@ QByteArray QMultiPartReader::read( const QByteArray  &data ){
                             if ( line == " " ) qDebug () << "empty 2";
                             m_haveMimeType = m_haveLength = false;
                             //qDebug() << line.data();
-                       }*/
+                           }*/
                 // First header (when we know it from kio_http)
                 else if ( line == d->m_boundary )
                     {}; // nothing to do
@@ -179,7 +184,6 @@ QByteArray QMultiPartReader::read( const QByteArray  &data ){
                     qDebug() << "boundary found!";
                     qDebug() << "after it is " << line.data() + d->m_boundaryLength;
 #endif
-
                     // Was it the very last boundary ?
                     if ( !qstrncmp( line.data() + d->m_boundaryLength, "--", 2 ) )
                     {
@@ -212,21 +216,18 @@ QByteArray QMultiPartReader::read( const QByteArray  &data ){
                 }
             }
             m_lineParser->clearLine();
-        } //else qDebug() << "Line not complete";
+        }
     }
-    //d->c_frame->loadFromData( d->http->readAll() );
-    //d->label->setPixmap( *d->c_frame );
-    //qDebug ( qPrintable ( con ) );
     return QByteArray();
 }
 
 void QMultiPartReader::startOfData()
 {
-    #ifdef DEBUG_PARSING
+#ifdef DEBUG_PARSING
     qDebug() << "QMultiPartReader::startOfData";
-    #endif
+#endif
     d->m_bParsingHeader = false;
-    Q_ASSERT( !d->m_nextMimeType.isNull() );
+    //Q_ASSERT( !d->m_nextMimeType.isNull() );
     if( d->m_nextMimeType.isNull() )
         return;
 
@@ -235,7 +236,7 @@ void QMultiPartReader::startOfData()
         qWarning ("QMultiPartReader:: GZip not supported for now!");
     }
 
-    
+    return;
 }
 
 /**
@@ -268,7 +269,3 @@ QMultiPartReader::~QMultiPartReader()
     delete d;
     delete m_lineParser;
 }
-
-
-
-
