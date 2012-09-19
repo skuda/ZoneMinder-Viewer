@@ -21,9 +21,9 @@ set ( core_SRCS
       commandlistener.cpp
       models/basemodel.cpp
       models/eventmodel.cpp
-      rest/rest.cpp
-      rest/requestinterface.cpp
-      rest/zoneminderhtmlrequest.cpp
+      abstractplayer.cpp
+      vlcplayer.cpp
+      mjpegplayer.cpp
     )
 
 set ( core_MOC_HDRS
@@ -47,9 +47,9 @@ set ( core_MOC_HDRS
       commandlistener.h
       models/basemodel.h
       models/eventmodel.h
-      rest/rest.h
-      rest/requestinterface.h
-      rest/zoneminderhtmlrequest.h
+      abstractplayer.h
+      vlcplayer.h
+      mjpegplayer.h
     )
 
 set ( core_UIS
@@ -63,6 +63,7 @@ include_directories ( ${CMAKE_CURRENT_BINARY_DIR}
                       ${QT_QTGUI_INCLUDE_DIR}
                       ${QT_QTNETWORK_INCLUDE_DIR}
                       ${QT_QTSQL_INCLUDE_DIR}
+                      ${LIBVLC_INCLUDE_DIR}
 		     )
 
 QT4_ADD_RESOURCES ( core_SRCS resources.qrc )
@@ -70,5 +71,10 @@ QT4_WRAP_UI( core_SRCS ${core_UIS} )
 QT4_WRAP_CPP( core_MOC_SRCS ${core_MOC_HDRS} )
 
 add_library (zmviewercore SHARED ${core_SRCS} ${core_MOC_SRCS})
-target_link_libraries( zmviewercore ${QT_QTCORE_LIBRARY} ${QT_QTNETWORK_LIBRARY} ${QT_QTSQL_LIBRARY} ${QT_QTGUI_LIBRARY} )
+target_link_libraries( zmviewercore
+                      ${QT_QTCORE_LIBRARY}
+                      ${QT_QTNETWORK_LIBRARY}
+                      ${QT_QTSQL_LIBRARY}
+                      ${QT_QTGUI_LIBRARY}
+                      ${LIBVLC_LIBRARY} )
 install(TARGETS zmviewercore DESTINATION ${ZMVIEWER_LIB_DIR})

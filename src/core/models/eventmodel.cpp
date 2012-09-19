@@ -38,16 +38,16 @@ EventModel::EventModel( const QString &cn, QObject * parent )
 
 void EventModel::setCamera( int id ){
     d->cameraId = id;
-    setFilter( "MonitorId = " + QString::number ( d->cameraId ) );
     setTable( "Events" );
+    setFilter( "MonitorId = " + QString::number ( d->cameraId ) );
 }
 
 void EventModel::startEventTracker( ){
-    setFilter( "MonitorId = " + QString::number ( d->cameraId ) );
-    select();
+    /*setFilter( "MonitorId = " + QString::number ( d->cameraId ) );
+    select();*/
     d->lastEventCount = rowCount();
     d->eventTracker = true;
-    d->timer.start( 5000 );
+    //d->timer.start( 5000 ); //disabled for wan sanity until fixed.
 }
 
 void EventModel::stopEventTracker(){

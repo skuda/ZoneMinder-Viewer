@@ -91,11 +91,9 @@ public:
     QSize sizeHint()const{ return QSize(320,240); } 
     void saveState();
     void restoreState();
+
 protected Q_SLOTS:
-    /**
-        set pixmap
-    */
-void setPixmap ( QPixmap * p);
+    void setPixmap(QPixmap * p);
 
 public Q_SLOTS:
     /**
@@ -156,6 +154,7 @@ private Q_SLOTS:
     void changeCameraNumber();
     void newEvents( int count );
     void statusChangedSlot( const Stream::Status & status );
+    //void invisibleFrameUpdate();
 
 private:
     void init();
@@ -174,11 +173,9 @@ private:
 
     QString m_conectionName;
     QMenu * m_menu;
+
     class Private;
     Private *d;
-  
-
-
 };
 
 #endif

@@ -54,7 +54,7 @@ void Monitors::init()
             return;
         }
 
-        QString zms = query.value ( 0 ).toString();
+        QString zms = query.value(0).toString();
 
         Auth auth ( connection );
         bool append = false;
@@ -75,33 +75,35 @@ void Monitors::init()
         Stream::StreamMode streamMode = Stream::VIDEO; //just in case we don't found the name
 
         //this check for old and new name of stream types config in database
-        query.exec ( "SELECT Value FROM Config WHERE Name IN ('ZM_STREAM_METHOD', 'ZM_WEB_H_STREAM_METHOD');" );
+        query.exec( "SELECT Value FROM Config WHERE Name IN ('ZM_STREAM_METHOD', 'ZM_WEB_H_STREAM_METHOD');" );
         if ( query.next() ) {
             QString method = query.value ( 0 ).toString();
             streamMode = method == "jpeg" ? Stream::JPEG : Stream::VIDEO;
         }
 
-        //int count = 0;
+        /*int count = 0;*/
         query.exec("SELECT Id, Name FROM Monitors;" );
         while ( query.next() )
         {
             /*count += 1;
-            if (count > 2) break;*/
+            if (count > 1) break;*/
             CameraWidget * camera = new CameraWidget ( connection );
             uint id = query.value(0).toUInt();
             QString name = query.value(1).toString();
 
             camera->setWindowTitle ( name + tr( " at " ) + db.hostName() );
             camera->setName ( name );
-            camera->stream()->setHost ( db.hostName() , ConnectionManager::connectionWebPort( connection ) );
-            camera->stream()->setMonitor ( id );
-            camera->stream()->setMode ( streamMode );
-            camera->stream()->setZMStreamServer ( zms );
+            Stream * stream = camera->stream();
+
+            stream->setHost ( db.hostName() , ConnectionManager::connectionWebPort( connection ) );
+            stream->setMonitor ( id );
+            stream->setMode ( streamMode );
+            stream->setZMStreamServer ( zms );
 
             m_cameras.append ( camera );
             camera->setAutoAdjustImage ( true );
             if ( append )
-                camera->stream()->appendZMSString ( auth.zmsString() );
+                stream->appendZMSString ( auth.zmsString() );
             camera->startCamera();
         }
     }
@@ -112,9 +114,8 @@ int Monitors::count()
     return m_cameras.count();
 }
 
-QList<QPair< QString,QString> > Monitors::hosts(){
+QList<QPair< QString,QString> > Monitors::hosts() {
     return hostList;
-
 }
 
 void Monitors::updateMonitors()

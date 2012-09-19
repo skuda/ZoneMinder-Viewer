@@ -35,15 +35,18 @@ ConnectionManager::ConnectionManager()
 {}
 
 
-bool ConnectionManager::addConnection ( const QString &d , const QString & h, const QString & dn , const QString & u,const QString & p , int port, int wwwPort ,bool removeiferror )
+bool ConnectionManager::addConnection ( const QString &d, const QString &h, const QString &dn, const QString &u,
+                                        const QString &p, int port, int wwwPort, bool removeiferror )
 {
     //driver,host,database,user,port
     QString cn = d+h+dn+u+QString::number ( port );
-    if ( QSqlDatabase::contains ( cn ) )
+
+    if ( QSqlDatabase::contains (cn) )
     {
-        lastError.setDatabaseText ( QObject::tr ( "Connection to <b>%1</b> already exist at host %2" ).arg ( dn ).arg ( h ) );
+        lastError.setDatabaseText( QObject::tr("Connection to <b>%1</b> already exist at host %2").arg(dn).arg(h) );
         return false;
     }
+
     bool dbOpen = false;
     {
         QSqlDatabase db = QSqlDatabase::addDatabase ( d , cn );
@@ -51,24 +54,28 @@ bool ConnectionManager::addConnection ( const QString &d , const QString & h, co
         db.setDatabaseName ( dn );
         db.setUserName ( u );
         db.setPassword ( p );
+        db.setConnectOptions("MYSQL_OPT_RECONNECT=1;");
 
         if ( port != 0 )
             db.setPort ( port );
+
         dbOpen = db.open();
-        if ( ! dbOpen ) 
+        if ( !dbOpen )
             lastError = db.lastError();
         else 
             lastError = QSqlError(); //no error
     }
-    if ( ! dbOpen )
+
+    if ( !dbOpen )
     {
         if( removeiferror )
             QSqlDatabase::removeDatabase ( cn );
     }
     else
     {
-        saveConnection ( d , h , dn , u , p , port, wwwPort );
+        saveConnection ( d, h, dn, u, p, port, wwwPort );
     }
+
     return dbOpen;
 }
 
@@ -79,7 +86,7 @@ QStringList ConnectionManager::connectionNames()
 
 void ConnectionManager::closeAll(){
     QStringList cnList = ConnectionManager::connectionNames();
-    foreach ( QString cn, cnList ){
+    foreach ( const QString cn, cnList ){
         QSqlDatabase::removeDatabase(cn);
     }
 }

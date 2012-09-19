@@ -20,9 +20,11 @@
  ***************************************************************************/
 #include "stream.h"
 #include "qmultipartreader.h"
+#include "abstractplayer.h"
+#include "vlcplayer.h"
+#include "mjpegplayer.h"
+#include "framewidget.h"
 
-#include <QNetworkAccessManager>
-#include <QNetworkReply>
 #include <QString>
 #include <QPixmap>
 #include <QTimer>
@@ -34,27 +36,20 @@ class Stream::Private
         Private ( QObject * parent )
         {
             timer = new QTimer( parent );
-            manager = new QNetworkAccessManager(parent);
-
+            player = NULL;
             mode = "jpeg";
             host = "localhost";
             port = 80;
             monitor = 1;
             type = Monitor;
             scale = 100;
-            bitrate = 2;
-            reconnectCount = 0;
+            bitrate = 150000;
             zms ="/cgi-bin/nph-zms";
-            current_frame = new QPixmap;
-            multiPartReader = new QMultiPartReader("--ZoneMinderFrame", parent );
         }
         ~Private(){
-            delete manager;
-            delete current_frame;
-            delete multiPartReader;
+            if (player)
+                delete player;
 	    }
-        QNetworkAccessManager * manager;
-        QNetworkReply * reply;
 
         QString mode;
         QString host;
@@ -62,31 +57,17 @@ class Stream::Private
         quint16 monitor;
         quint16 event;
         quint16 scale;
-        quint16 bitrate;
+        quint32 bitrate;
         QString zms;
         StreamType type;
-        QPixmap * current_frame;
         QTimer * timer;
         QString appendString;
-        Status status;
-        // used to check connection errors
-        Status userStatus;
-        int reconnectCount;
-        bool finishedConnection;
-
-        QMultiPartReader * multiPartReader;
+        AbstractPlayer * player;
 };
 
 Stream::Stream ( QObject * parent )
         :QObject ( parent ),d ( new Private( this ) )
 {
-    init();
-}
-
-void Stream::init(){
-    d->status = Stream::None;
-    d->timer->start( 3000 );
-    connect ( d->timer , SIGNAL( timeout() ), this, SLOT( checkConnection() ) );
 }
 
 void Stream::setHost ( const QString & host, quint16 port )
@@ -97,12 +78,21 @@ void Stream::setHost ( const QString & host, quint16 port )
 
 void Stream::setMode ( const StreamMode &mode )
 {
-    if ( mode != JPEG )
+    if ( mode == JPEG )
     {
-        qDebug ( "Stream:setMode(): Not implemented yet!" );
-        d->mode = "Invalid";
+        d->mode = "jpeg";
+        d->player = new MjpegPlayer(this);
+        connect(d->player, SIGNAL(frameReady(QPixmap*)), SIGNAL(frameReady(QPixmap*)));
+
+    } else {
+        d->mode = "mpeg";
+        d->player = new VlcPlayer(this);
     }
-    d->mode = "jpeg";
+
+    connect(d->player, SIGNAL(done(QString)), SIGNAL(done(QString)));
+
+    d->timer->start( 3000 );
+    connect( d->timer, SIGNAL(timeout()), d->player, SLOT(checkConnection()) );
 }
 
 void Stream::setMonitor ( quint16 monitor )
@@ -110,11 +100,12 @@ void Stream::setMonitor ( quint16 monitor )
     d->monitor = monitor;
 }
 
-void Stream::setStreamType ( const StreamType & t ){
+void Stream::setStreamType ( const StreamType & t )
+{
     d->type = t;
 }
-void Stream::setScale ( quint16 scale )
 
+void Stream::setScale ( quint16 scale )
 {
     d->scale = scale;
 }
@@ -133,69 +124,51 @@ void Stream::setEvent ( quint16 event ){
     d->event = event;
 }
 
-void Stream::read()
+void Stream::start(FrameWidget *frameWidget)
 {
-    if (d->reply->bytesAvailable()) {
-        QByteArray r = d->multiPartReader->read( d->reply->readAll() );
-        if ( !r.isNull() )
-            image( r );
-    }
-}
+    QString const complete_url = completeUrl();
+    qDebug(qPrintable(complete_url));
 
-bool Stream::image ( const QByteArray &array )
-{
-    if ( d->current_frame->loadFromData ( array ) )
-    {
-        emit ( frameReady ( d->current_frame ) );
-        return true;
-    }
-#ifdef DEBUG_PARSING
-    qDebug ( "Stream::image: NOT ready" );
-#endif
-    return false;
-}
-
-void Stream::start()
-{
-    d->userStatus = Playing;
-    d->finishedConnection = false;
+    d->player->setFrameWidget(frameWidget);
+    d->player->start(complete_url);
     setStatus( Stream::Playing );
+}
+
+QString const Stream::completeUrl()
+{
     QString connection;
 
-    if (d->type == Monitor )
-        connection = QString("%1?mode=%2&monitor=%3&scale=%4&bitrate=%5")
-                     .arg(d->zms).arg(d->mode).arg(d->monitor).arg(d->scale).arg(d->bitrate);
+    if (d->mode == "jpeg") {
 
-    else if ( d->type == Event )
-        connection = QString("%1?source=event&mode=%2&frame=1&event=%3&scale=%4&bitrate=%5")
-                     .arg(d->zms).arg(d->mode).arg(d->event).arg(d->scale).arg(d->bitrate);
+        if (d->type == Monitor) {
+            connection = QString("%1?mode=%2&monitor=%3&scale=%4&bitrate=%5")
+                    .arg(d->zms).arg(d->mode).arg(d->monitor).arg(d->scale).arg(d->bitrate);
+        }
+        else if (d->type == Event) {
+            connection = QString("%1?source=event&mode=%2&frame=1&event=%3&scale=%4&bitrate=%5")
+                    .arg(d->zms).arg(d->mode).arg(d->event).arg(d->scale).arg(d->bitrate);
+        }
+    } else {
+        if (d->type == Monitor) {
+            connection = QString("%1?mode=%2&monitor=%3&scale=%4&bitrate=%5&maxpfs=7&format=asf")
+                    .arg(d->zms).arg(d->mode).arg(d->monitor).arg(d->scale).arg(d->bitrate);
+        }
+        else if (d->type == Event) {
+            connection = QString("%1?source=event&mode=%2&frame=1&event=%3&scale=%4&bitrate=%5&maxpfs=7&format=asf")
+                    .arg(d->zms).arg(d->mode).arg(d->event).arg(d->scale).arg(d->bitrate);
+        }
+    }
 
     if (d->appendString.size() > 0)
         connection.append("&"+d->appendString);
 
-    QString complete_url = QString("http://%1%2").arg(d->host).arg(connection);
-    qDebug(qPrintable(complete_url));
-
-    d->reply = d->manager->get(QNetworkRequest(QUrl(complete_url)));
-    connect( d->reply, SIGNAL(readyRead()), this, SLOT(read()) );
-    connect( d->reply, SIGNAL(error(QNetworkReply::NetworkError)), this, SLOT(readError(QNetworkReply::NetworkError)) );
-    connect( d->reply, SIGNAL(finished()), this, SLOT(finishedConnection()) );
+    return QString("http://%1%2").arg(d->host).arg(connection);
 }
 
 void Stream::stop()
 {
-    d->userStatus = Stopped;
     setStatus( Stream::Stopped );
-    d->finishedConnection = true;
-    disconnect( d->reply, SIGNAL(readyRead()), this, SLOT(read()) );
-    disconnect( d->reply, SIGNAL(error(QNetworkReply::NetworkError)),
-                this, SLOT(readError(QNetworkReply::NetworkError)) );
-    disconnect( d->reply, SIGNAL(finished()), this, SLOT(finishedConnection()) );
-}
-
-void Stream::restart(){
-    stop();
-    start();
+    d->player->stop();
 }
 
 QString Stream::host() const
@@ -233,8 +206,9 @@ QString Stream::zmStreamServer() const
     return d->zms;
 }
 
-Stream::Status Stream::status() const{
-    return d->status;
+Stream::Status Stream::status() const
+{
+    return d->player->status();
 }
 
 void Stream::appendZMSString( const QString & s ){
@@ -245,43 +219,10 @@ QString Stream::ZMSStringAppended( ) const{
     return d->appendString;
 }
 
-void Stream::setStatus( const Status & status ){
-    d->status = status;
-    emit( statusChanged( d->status ) );
-}
-
-void Stream::readError ( QNetworkReply::NetworkError error ){
-    if (error != QNetworkReply::NoError && d->userStatus != Stream::Stopped) {
-        setStatus ( Stream::HTTPError );
-        emit ( done( d->reply->errorString() ) );
-    }
-    else {
-        if ( d->type == Event ){
-            setStatus( Stream::Stopped );
-            emit ( done( tr( "Event finished.") ) );
-        } else {
-            if ( d->userStatus != Stream::Stopped ){
-                setStatus( Stream::NoSignal );
-                emit ( done( tr( "Stopped by server. Press play to try again") ) );
-            } else {
-                setStatus( d->userStatus );
-            }
-        }
-    }
-}
-
-void Stream::finishedConnection()
+void Stream::setStatus(Status status )
 {
-    d->finishedConnection = true;
-}
-
-void Stream::checkConnection() {
-    if ( d->userStatus == Stream::Playing && d->finishedConnection ) {
-        //try to connect
-        restart();
-    } else if ( d->reconnectCount != 0 && !d->finishedConnection ){
-        d->reconnectCount = 0;
-    }
+    d->player->setStatus(status);
+    emit( statusChanged(status) );
 }
 
 Stream::~Stream()

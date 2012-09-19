@@ -58,7 +58,7 @@ void FullScreenCamera::init(){
 
 }
 void FullScreenCamera::startCamera(){
-    m_stream->start();
+    m_stream->start(m_frameWidget);
     connect ( m_stream , SIGNAL ( frameReady ( QPixmap *) ) , this , SLOT (setPixmap (QPixmap *)));
 }
 void FullScreenCamera::pauseCamera( ){

@@ -75,10 +75,11 @@ void CameraEvents::init()
 
     QHBoxLayout * hLayout = new QHBoxLayout;
     QVBoxLayout * calendarLayout = new QVBoxLayout;
+
     m_camera = new CameraWidget( NULL , this );
     m_camera->setCameraType( CameraWidget::EventViewer );
     m_camera->toolBar()->setVisible( false );
-
+    m_camera->setAutoAdjustImage ( true );
     m_camera->frameWidget()->setStatus( Stream::Stopped );
     m_camera->frameWidget()->setMessage( tr("Please select an event") );
 
@@ -93,9 +94,10 @@ void CameraEvents::init()
     m_model = new QSqlTableModel ( this , QSqlDatabase::database ( m_connectionName ) );
     m_model->setTable ( "Events" );
     m_model->setFilter ( "MonitorId = " + QString::number ( m_cameraId ) );
+    m_model->select();
+
     m_model->setEditStrategy ( QSqlTableModel::OnManualSubmit );
     m_model->setSort( StartTime, Qt::DescendingOrder );
-    m_model->select();
 
     for ( int i = 0 ; i < m_model->rowCount(); i++ ){
         m_calendarWidget->appendDate (m_model->record( i ).value( "StartTime" ).toDate());
@@ -118,8 +120,8 @@ void CameraEvents::init()
     m_view->setModel ( m_model );
 
     QLabel * calendarLabel = new QLabel( tr("<center><h2>Events Calendar</h2></center>"
-    "<p><center>The days that have events are marked yellow</center></p>"
-    ), this );
+                                            "<p><center>The days that have events are marked yellow</center></p>"
+                                           ), this );
     calendarLabel->setSizePolicy ( QSizePolicy::Fixed, QSizePolicy::Fixed );
     m_calendarWidget->setSizePolicy ( QSizePolicy::Fixed, QSizePolicy::Fixed );
 
@@ -166,10 +168,47 @@ void CameraEvents::init()
     m_camera->toolBar()->setIconSize(  QSize ( 32, 32 ) );
     m_camera->toolBar()->setVisible( true );
     m_camera->resize( 320, 240 );
+    initCameraStream();
 
     m_timer = new QTimer ( this );
-    m_timer->start( 5000 );
+    m_timer->start( 25000 ); //cada 25 segundos actualiza la tabla.
     connect( m_timer, SIGNAL(timeout()), this, SLOT( updateEvents() ) );
+}
+
+void CameraEvents::initCameraStream()
+{
+    //TODO: all of this it's nearly the same in Monitors::init(), refactor it
+    QSqlDatabase db = QSqlDatabase::database( m_connectionName ) ;
+    QSqlQuery query(db);
+
+    query.exec( "SELECT Value FROM Config WHERE Name='ZM_PATH_ZMS';" );
+    //if we don't found this...game over
+    if ( !query.next() ) {
+        qDebug("CameraEvents::showOurEvent: Can't find the zm_path_zms config in database so we can't continue");
+        return;
+    }
+
+    QString zms = query.value(0).toString();
+
+    Stream::StreamMode streamMode = Stream::VIDEO; //just in case we don't found the name
+
+    //this check for old and new name of stream types config in database
+    query.exec( "SELECT Value FROM Config WHERE Name IN ('ZM_STREAM_METHOD', 'ZM_WEB_H_STREAM_METHOD');" );
+    if ( query.next() ) {
+        QString method = query.value(0).toString();
+        streamMode = method == "jpeg" ? Stream::JPEG : Stream::VIDEO;
+    }
+
+    int port = 80;
+    query.exec( QString("SELECT port from Monitors where Id = %1;").arg(m_cameraId) );
+    if (query.next())
+        port = query.value(0).toInt();
+
+    Stream * stream = m_camera->stream();
+    stream->setStreamType( Stream::Event );
+    stream->setMode( streamMode );
+    stream->setHost(db.hostName(), port);
+    stream->setZMStreamServer( zms );
 }
 
 void CameraEvents::appendZMSString( const QString & s ){
@@ -182,33 +221,23 @@ CameraWidget * CameraEvents::cameraWidget( ) const{
 
 void CameraEvents::showOurEvent ( const QModelIndex & index )
 {
-    m_camera->stopCamera();
-    int eventId = m_model->data ( m_model->index ( index.row(), Id ) ).toInt();
-    QSqlDatabase db = QSqlDatabase::database ( m_connectionName );
-    QSqlQuery query = db.exec ( "SELECT Value from Config where Name='ZM_PATH_ZMS'" );
-    query.next();
-    QString zms = query.value ( 0 ).toString();
-    query.clear();
-    query = db.exec ( "SELECT * from Monitors where Id = " + m_model->data ( m_model->index ( index.row(), 1 ) ).toString() );
-    query.next();
+    int row = index.row();
+    int eventId = m_model->index(row, Id).data().toInt();
 
-    m_camera->setWindowTitle ( m_model->data ( m_model->index ( index.row(), Name ) ).toString() );
-    m_camera->stream()->setHost ( db.hostName() ,query.value ( query.record().indexOf ( "Port" ) ).toInt() );
-    m_camera->stream()->setStreamType ( Stream::Event );
-    m_camera->stream()->setEvent ( eventId );
-    m_camera->stream()->setZMStreamServer ( zms );
-    m_camera->stream()->appendZMSString( m_appendString );
-    m_camera->setAutoAdjustImage ( true );
+    m_camera->stopCamera();
+
+    m_camera->setWindowTitle( m_model->index(row, Name).data().toString() );
+    m_camera->stream()->setEvent( eventId );
+    m_camera->stream()->appendZMSString( m_appendString ); //it's not specified in init.
     m_camera->startCamera();
-    query.clear();
     m_camera->show();
 }
-
 
 void CameraEvents::filterEventDate( const QDate & date ){
     if ( m_calendarWidget->eventsDateList().contains( date ) ){
         m_clearFilterButton->setEnabled( true );
-        m_model->setFilter( "MonitorId = " + QString::number ( m_cameraId ) + " AND " + "date(StartTime) = '" + date.toString( Qt::ISODate ) + "'" );
+        m_model->setFilter( "MonitorId = " + QString::number ( m_cameraId ) + " AND "
+                            + "date(StartTime) = '" + date.toString( Qt::ISODate ) + "'" );
         m_model->select();
     }
 }
@@ -228,9 +257,8 @@ void CameraEvents::updateDeleteButton( const QModelIndex & index ){
 
 void CameraEvents::deleteEvent(){
     int row = m_view->currentIndex().row();
-    qDebug ( qPrintable (m_model->record( row ).value( Id ).toString() ) );
-    qDebug ( "CameraEvents::deleteEvent: implement me!" );
-    
+    qDebug( qPrintable (m_model->record( row ).value( Id ).toString() ) );
+    qDebug( "CameraEvents::deleteEvent: implement me!" );
 }
 
 void CameraEvents::updateEvents(){

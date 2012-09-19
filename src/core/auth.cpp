@@ -25,6 +25,7 @@
 #include <QSqlDatabase>
 #include <QSqlQuery>
 #include <QSqlRecord>
+#include <QSqlError>
 #include <QString>
 #include <QVariant>
 #include <QCryptographicHash>
@@ -76,6 +77,7 @@ bool Auth::userLogin ( const QString &username , const QString &password )
             return m_isAuth = true;
     }*/
     QSqlDatabase db = QSqlDatabase::database ( m_db );
+
     QSqlQuery query = db.exec ( QString ( "SELECT * from Users where Username = '%1' and Password = password('%2') and Enabled = 1" ).arg ( username ).arg ( password ) );
     query.next();
     if ( query.size() != 1 )
@@ -93,10 +95,10 @@ bool Auth::userLogin ( const QString &username , const QString &password )
     return m_isAuth = true;
 }
 
-QString Auth::zmsString( ) const
+QString Auth::zmsString()
 {
     if ( m_AuthType == HASHED )
-        return QString ( "auth="+authKey() );
+        return QString( "auth="+authKey() );
     else if ( m_AuthType == PLAIN ) return QString ( "user="+m_userName+"&pass="+m_password );
     else return QString ( "user="+m_userName );
 }
@@ -116,36 +118,58 @@ bool Auth::isAuth() const
     return m_isAuth;
 }
 
-/**
-    TODO: now this work but need test
-*/
-QByteArray Auth::authKey( ) const
+void Auth::loadSettings()
 {
+    QSettings s;
+    s.beginGroup ( m_db );
+    m_userName = s.value ( "AuthUser" ).toString();
+    m_password = s.value ( "AuthPassword" ).toString();
+    s.endGroup();
+}
 
+QByteArray Auth::authKey( )
+{
+    if (m_authKey.isEmpty())
+        return calculateAuthKey();
+
+    return m_authKey;
+}
+
+const QByteArray Auth::calculateAuthKey()
+{
     QSqlDatabase db = QSqlDatabase::database ( m_db );
-    QSqlQuery query = db.exec ( QString ( "SELECT Value from Config where Name = 'ZM_AUTH_HASH_SECRET'" ) );
-    QString auth_key;
-    query.next();
-    auth_key = query.value ( 0 ).toString(); // HASH Secret
-    query.clear();
-    query = db.exec ( QString ( "SELECT Value from Config where Name = 'ZM_AUTH_HASH_IPS'" ) );
-    bool use_remote_addr = false;;
-    query.next();
-    use_remote_addr = query.value ( 0 ).toBool(); // Include remote addr?
-    query.clear();
 
-    query = db.exec ( QString ( "SELECT now()" ) );
-    query.next();
-    if ( !query.isValid() ) qDebug ("Hash Error: Can not read Server Time. now() function doesn't work");
-    QString dateTimeString = query.value ( 0 ).toString();
-    QDateTime dateTime = QDateTime::fromString( dateTimeString, Qt::ISODate );
-    if ( ! dateTime.isValid() )
-		qDebug ("Hash Error: not iso datetime from server");
-    query.clear();
-    qDebug ( qPrintable (dateTimeString) );
+    bool ok = false;
+    QSqlQuery query(db);
+
+    ok = query.exec( QString("SELECT Value from Config where Name = 'ZM_AUTH_HASH_SECRET'") );
+    if (!ok || !query.next()) {
+        qDebug("Hash Error: error getting zm_auth_hash_secret from db %s", qPrintable(query.lastError().text()));
+        return QByteArray();
+    }
+
+    QString auth_key = query.value(0).toString(); // HASH Secret
+
+    ok = query.exec( QString("SELECT Value from Config where Name = 'ZM_AUTH_HASH_IPS'") );
+    if (!ok || !query.next()) {
+        qDebug("Hash Error: error getting zm_auth_hash_ips from db %s", qPrintable(query.lastError().text()));
+        return QByteArray();
+    }
+
+    bool use_remote_addr = query.value(0).toBool(); // Include remote addr?
+
+    ok = query.exec( QString("SELECT now()") );
+    if (!ok || !query.next()) {
+        qDebug("Hash Error: Can not read Server Time. now() function doesn't work %s",
+               qPrintable(query.lastError().text()));
+        return QByteArray();
+    }
+
+    QDateTime dateTime = query.value(0).toDateTime();
 
     auth_key += m_userName;
     auth_key += m_hashPassword;
+
     if ( use_remote_addr )
     {
         QTcpSocket socket;
@@ -164,32 +188,25 @@ QByteArray Auth::authKey( ) const
             {
                 //TODO: fix this. Use the correct interface address and not the first
                 QHostAddress address = hinfo.addresses().first();
-                auth_key+=address.toString();
+                auth_key += address.toString();
             }
         }
     }
+
     dateTime = dateTime.toTimeSpec( Qt::LocalTime );
-    auth_key += QString::number ( ( dateTime.time().hour() ) );//hour
-    auth_key += QString::number ( dateTime.date().day() );//day of month
-    auth_key += QString::number ( dateTime.date().month() -1 );//month
-    auth_key += QString::number ( dateTime.date().year() - 1900 );//years since 1900
+    auth_key += QString::number( dateTime.time().hour() ); //hour
+    auth_key += QString::number( dateTime.date().day() ); //day of month
+    auth_key += QString::number( dateTime.date().month() -1 ); //month
+    auth_key += QString::number( dateTime.date().year() - 1900 ); //years since 1900
 
-    qDebug ( qPrintable ( "authkey:" + auth_key ));
+    qDebug ( qPrintable("authkey: " + auth_key) );
 
-    QByteArray ret = QCryptographicHash::hash ( auth_key.toUtf8()  , QCryptographicHash::Md5 );
-    qDebug ( qPrintable(QString (auth_key.toUtf8())) );
-    qDebug ( qPrintable(QString (ret.toHex())) );
-    return ret.toHex();
+    QByteArray ret = QCryptographicHash::hash( auth_key.toUtf8(), QCryptographicHash::Md5 );
+    //qDebug ( qPrintable(QString (auth_key.toUtf8())) );
+    qDebug ( qPrintable("authkey hex: " + ret.toHex()) );
 
-}
-void Auth::loadSettings()
-{
-    QSettings s;
-    s.beginGroup ( m_db );
-    m_userName = s.value ( "AuthUser" ).toString();
-    m_password = s.value ( "AuthPassword" ).toString();
-    s.endGroup();
-
+    m_authKey = ret.toHex();
+    return m_authKey;
 }
 
 void Auth::saveSettings()

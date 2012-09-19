@@ -146,6 +146,7 @@ void FrameWidget::paintEvent ( QPaintEvent * event ){
 
 void FrameWidget::drawText( QPainter * painter ){
     painter->setPen( Qt::white );
+
     switch( d->status ){
         case Stream::Stopped:
             if ( d->message.isEmpty() ){
@@ -169,7 +170,6 @@ void FrameWidget::drawText( QPainter * painter ){
             break;
         default: return;
     }
-
 }
 
 void FrameWidget::drawEventsText ( QPainter * painter  ){

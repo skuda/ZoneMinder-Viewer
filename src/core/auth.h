@@ -24,10 +24,12 @@
 	@author Leandro Emanuel Lopez <lopezlean@gmail.com>
 */
 #include <QObject>
-class QString;
+#include <QString>
+#include <QByteArray>
 
 class Auth : public QObject{
 Q_OBJECT
+
 public:
     Auth( const QString & db , QObject * parent = 0 );
     enum AuthType{PLAIN,HASHED,NONE};
@@ -36,19 +38,23 @@ public:
     bool isAuth() const;
     ~Auth();
     bool userLogin( const QString &username , const QString &password );
-    QString zmsString( ) const;
-    QByteArray authKey( ) const;
+    QString zmsString();
+    QByteArray authKey();
+
 private:
+    void init();
+    void saveSettings();
+    void loadSettings();
+    const QByteArray calculateAuthKey();
+
     QString m_db;
     bool m_isAuth;
     AuthType m_AuthType;
     bool m_needAuth;
-    void init();
-    void saveSettings();
-    void loadSettings();
     QString m_userName;
     QString m_password;
     QString m_hashPassword;
+    QByteArray m_authKey;
 };
 
 #endif

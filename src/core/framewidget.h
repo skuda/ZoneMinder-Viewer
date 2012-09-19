@@ -30,6 +30,7 @@
 
 class FrameWidget : public QWidget{
     Q_OBJECT
+
 public:
     FrameWidget( QWidget * parent = 0 );
     void setStatus( const Stream::Status & status , const QString & message = QString() );
@@ -42,19 +43,22 @@ public:
 
     Stream::Status status() const;
     QPixmap currentPixmap() const;
-    QString frameId()const;
-    bool showNumbers()const;
-    Qt::Alignment numbersPosition()const;
+    QString frameId() const;
+    bool showNumbers() const;
+    Qt::Alignment numbersPosition() const;
     Qt::TransformationMode transformationMode() const;
-    Qt::AspectRatioMode aspectRatioMode()const;
+    Qt::AspectRatioMode aspectRatioMode() const;
 
     void updateSize();
     ~FrameWidget();
+
 public Q_SLOTS:
     void setPixmap( const QPixmap &pixmap );
     void setMessage( const QString & msg );
+
 protected:
     void paintEvent ( QPaintEvent * event );
+
 private:
     void init();
     qreal ratioX();

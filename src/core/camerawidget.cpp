@@ -17,11 +17,6 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#include "camerawidget.h"
-#include "cameraevents.h"
-#include "framewidget.h"
-#include "models/eventmodel.h"
-
 #include <QLabel>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
@@ -31,10 +26,15 @@
 #include <QPaintEvent>
 
 //local includes
+#include "camerawidget.h"
+#include "cameraevents.h"
+#include "framewidget.h"
+#include "models/eventmodel.h"
 #include "cameraadddialog.h"
 #include "fullscreencamera.h"
 #include "camerawidgettoolbar.h"
 #include "camerawidget.h"
+
 
 class CameraWidget::Private{
     public:
@@ -47,7 +47,7 @@ class CameraWidget::Private{
         Qt::AspectRatioMode aspectRatioMode;
         QString cameraName;
         Stream::Status savedState;
-        mutable QString uniqueId;
+        QString uniqueId;
         bool restoreStateOnShow;
         EventModel  * eventModel;
 };
@@ -98,7 +98,7 @@ void CameraWidget::init(){
 
     m_menu = m_toolbar->menu ();
     setContextMenuPolicy ( Qt::CustomContextMenu );
-    connect ( this, SIGNAL(customContextMenuRequested ( const QPoint &  )) , this , SLOT( popupMenu ( const QPoint & ) ) );
+    connect ( this, SIGNAL(customContextMenuRequested(const QPoint &)), this, SLOT(popupMenu(const QPoint &)) );
 
     adjustSize( );
     setFocusPolicy( Qt::StrongFocus );
@@ -109,8 +109,8 @@ void CameraWidget::init(){
     d->aspectRatioMode = Qt::KeepAspectRatio;
     d->restoreStateOnShow = false;
 
-    connect ( d->eventModel, SIGNAL( eventsDetected( int ) ), this, SLOT( newEvents( int ) ) );
-    connect ( m_stream , SIGNAL ( statusChanged ( Stream::Status ) ), this, SLOT ( statusChangedSlot( Stream::Status ) ) );
+    connect ( d->eventModel, SIGNAL(eventsDetected(int)), this, SLOT(newEvents(int)) );
+    connect ( m_stream , SIGNAL(statusChanged(Stream::Status)), this, SLOT(statusChangedSlot(Stream::Status)) );
 }
 
 Stream * CameraWidget::stream(){
@@ -119,7 +119,7 @@ Stream * CameraWidget::stream(){
 
 void CameraWidget::setStream( Stream * stream){
     m_stream = stream;
-    connect ( m_stream , SIGNAL ( statusChanged ( Stream::Status ) ), this, SLOT ( statusChangedSlot( Stream::Status ) ) );
+    connect ( m_stream , SIGNAL(statusChanged(Stream::Status)), this, SLOT(statusChangedSlot(Stream::Status)) );
 }
 
 void CameraWidget::setAutoAdjustImage ( bool b ){
@@ -130,61 +130,46 @@ void CameraWidget::setAutoAdjustImage ( bool b ){
     m_autoAdjustImage = b;
 }
 
-void CameraWidget::startCamera(){
-    m_stream->start();
-    connect ( m_stream , SIGNAL ( frameReady ( QPixmap *) ) , this , SLOT (setPixmap (QPixmap *)));
-    connect ( m_stream , SIGNAL ( done ( QString ) ) , m_frameWidget , SLOT ( setMessage ( QString ) ) );
+void CameraWidget::startCamera() {
     if ( d->cameraType == Monitor ){
         d->eventModel->setCamera( stream()->monitor() );
         d->eventModel->startEventTracker();
     }
+
+    m_stream->start(m_frameWidget);
+    connect( m_stream , SIGNAL(frameReady(QPixmap*)), this, SLOT(setPixmap(QPixmap*)) ); //only emmited if mjpeg
+    connect( m_stream , SIGNAL(done(QString)), m_frameWidget, SLOT(setMessage(QString)) );
 }
 
-void CameraWidget::pauseCamera( ){
+void CameraWidget::pauseCamera()
+{
     m_stream->stop();
-    disconnect ( m_stream , SIGNAL ( frameReady ( QPixmap *) ) , this , SLOT (setPixmap (QPixmap *)));
-    disconnect ( m_stream , SIGNAL ( done ( QString ) ) , m_frameWidget , SLOT ( setMessage ( QString ) ) );
+    disconnect( m_stream , SIGNAL(frameReady(QPixmap*)), this, SLOT(setPixmap(QPixmap*)) ); //only emmited if mjpeg
+    disconnect( m_stream , SIGNAL(done(QString)), m_frameWidget, SLOT(setMessage(QString)) );
     m_stream->setStatus( Stream::Paused );
     m_frameWidget->update();
 }
 
-void CameraWidget::stopCamera(){
+void CameraWidget::stopCamera()
+{
+    /*if (m_stream->status() != Stream::Playing)
+        return;*/
+
     m_stream->stop();
-    disconnect ( m_stream , SIGNAL ( frameReady ( QPixmap *) ) , this , SLOT (setPixmap (QPixmap *)));
-    disconnect ( m_stream , SIGNAL ( done ( QString ) ) , m_frameWidget , SLOT ( setMessage ( QString ) ) );
-    m_frameWidget->setPixmap( QPixmap());
+    disconnect( m_stream , SIGNAL(frameReady(QPixmap*)), this, SLOT(setPixmap(QPixmap*)) ); //only emmited if mjpeg
+    disconnect( m_stream , SIGNAL(done(QString)), m_frameWidget, SLOT(setMessage(QString)) );
+    m_frameWidget->setPixmap(QPixmap());
 
     if ( d->cameraType == Monitor )
         d->eventModel->stopEventTracker();
     m_frameWidget->setHasNewEvents( false );
 }
 
-void CameraWidget::restartCamera(){
+void CameraWidget::restartCamera()
+{
     stopCamera();
     startCamera();
-    m_stream->start();
-}
-
-void CameraWidget::setPixmap ( QPixmap * p){
-  QWidget * window = this->window();
-  if ( isVisible() && isVisibleTo( window ) ) {
-        if (p->isNull()){
-            qDebug( "CameraWidget::setPixmap: is Null" );
-            return;
-        }
-
-        if (m_autoAdjustImage){
-            m_frameWidget->setPixmap ( *p );
-        }
-
-    }else{
-        if ( !d->restoreStateOnShow ){
-            d->restoreStateOnShow = true;
-            saveState();
-            pauseCamera();
-        }
-    }
-
+    //m_stream->start();
 }
 
 void CameraWidget::configCamera(){
@@ -210,13 +195,12 @@ void CameraWidget::fullScreen(){
     FullScreenCamera w( this );
     w.setStream ( m_stream );
     if ( d->cameraType == EventViewer ) {
-         m_stream->start();
+         m_stream->start(m_frameWidget);
     }
     emit( fullScreen ( this ) );
     w.exec();
     emit( fullScreenClosed ( this ) );
     //loadFromState();
-
 }
 
 void CameraWidget::setConfigActionState( bool state ){
@@ -308,7 +292,7 @@ void CameraWidget::resizeEvent ( QResizeEvent * event ){
 QSize CameraWidget::cameraPixmapSizeHint() const{
     QSize s = size();
    if ( m_toolbar->isVisible() )
-                s.setHeight ( s.height() - m_toolbar->size().height() );
+       s.setHeight ( s.height() - m_toolbar->size().height() );
     return s;
 }
 
@@ -376,10 +360,10 @@ void CameraWidget::restoreState(){
 
 void CameraWidget::loadFromState(){
     switch ( d->savedState ){
-        case Stream::Playing: startCamera();break;
-        case Stream::Stopped: stopCamera();break;
-        case Stream::Paused: pauseCamera();break;
-        default: restartCamera();break;
+        case Stream::Playing: startCamera(); break;
+        case Stream::Stopped: stopCamera(); break;
+        case Stream::Paused: pauseCamera(); break;
+        default: restartCamera(); break;
     }
 }
 
@@ -441,6 +425,28 @@ void CameraWidget::newEvents( int count ){
 
 void CameraWidget::statusChangedSlot( const Stream::Status & status ){
     m_frameWidget->setStatus( status );
+}
+
+void CameraWidget::setPixmap ( QPixmap * p)
+{
+  QWidget * window = this->window();
+  if ( isVisible() && isVisibleTo( window ) ) {
+      if (p->isNull()){
+          qDebug( "CameraWidget::setPixmap: is Null" );
+          return;
+      }
+
+      if (m_autoAdjustImage){
+          m_frameWidget->setPixmap ( *p );
+      }
+
+  }else{
+      if ( !d->restoreStateOnShow ){
+          d->restoreStateOnShow = true;
+          saveState();
+          pauseCamera();
+      }
+  }
 }
 
 CameraWidget::~CameraWidget()

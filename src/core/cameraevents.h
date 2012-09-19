@@ -78,6 +78,7 @@ protected Q_SLOTS:
     void updateEvents();
 private:
     void init();
+    void initCameraStream();
     int m_cameraId;
     QString m_connectionName;
     QSqlTableModel * m_model;

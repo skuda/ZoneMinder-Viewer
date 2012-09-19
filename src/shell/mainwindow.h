@@ -25,7 +25,6 @@
 #include <QActionGroup>
 
 class CameraWidget;
-class Stream;
 class QAction;
 class QSettings;
 class QMenu;

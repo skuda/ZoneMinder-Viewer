@@ -22,67 +22,57 @@
 
 #include <QObject>
 #include <QtNetwork/QNetworkReply>
+
 class QString;
 class QPixmap;
 class QByteArray;
+class FrameWidget;
 
 class Stream: public QObject{
 Q_OBJECT
 
 public:
-    enum StreamMode{ JPEG, VIDEO/** TODO: VIDEO */ };
+    enum StreamMode{ JPEG, VIDEO};
     enum StreamType{ Monitor, Event };
     enum Status{ None, Playing, NoSignal, Paused, Stopped, HTTPError };
     Stream( QObject * parent = 0 );
     ~Stream();
     
-    QString host()const;
-    quint16 port()const;
-    QString mode()const;
-    quint16 monitor()const;
-    quint16 bitrate()const;
-    quint16 scale()const;
-    QString zmStreamServer()const;
+    QString host() const;
+    quint16 port() const;
+    QString mode() const;
+    quint16 monitor() const;
+    quint16 bitrate() const;
+    quint16 scale() const;
+    QString zmStreamServer() const;
     Status status() const;
 
-    /** start Stream*/
-    void start();
+    /** start Stream */
+    void start(FrameWidget *frameWidget);
     void stop();
     void restart();
 
-    void appendZMSString( const QString & s );
+    void appendZMSString( const QString &s );
     QString ZMSStringAppended( ) const;
-
-    void setStatus( const Status & status );
+    void setStatus(Status status );
+    QString const completeUrl();
 
 public Q_SLOTS:
     void setHost( const QString & host , quint16 port = 80 );
     void setMode ( const StreamMode &mode );
     void setMonitor ( quint16 monitor );
-    void setStreamType ( const StreamType & t );
+    void setStreamType ( const StreamType &t );
     void setEvent ( quint16 event );
     void setBitRate ( quint16 bitrate );
     void setScale ( quint16 scale );
     void setZMStreamServer ( const QString &zms = "/cgi-bin/nph-zms" );
 
 Q_SIGNALS:
-    /**
-        Esta señal es emitida por cada vez que se produce una imagen y
-        debe de ser atrapada por algun objeto externo.
-    */
-    void frameReady ( QPixmap * current_frame );
-    void done( const QString & message );
-    void statusChanged ( const Stream::Status & newStatus );
-
-private Q_SLOTS:
-    void read ();
-    bool image ( const QByteArray &array );
-    void readError ( QNetworkReply::NetworkError error );
-    void checkConnection();
-    void finishedConnection();
+    void done(const QString&);
+    void statusChanged(const Stream::Status&);
+    void frameReady(QPixmap*);
 
 private:
-    void init();
     //private class
     class Private;
     Private *d;
