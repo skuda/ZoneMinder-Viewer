@@ -73,12 +73,23 @@ void Monitors::init()
         }
 
         Stream::StreamMode streamMode = Stream::VIDEO; //just in case we don't found the name
-
         //this check for old and new name of stream types config in database
         query.exec( "SELECT Value FROM Config WHERE Name IN ('ZM_STREAM_METHOD', 'ZM_WEB_H_STREAM_METHOD');" );
         if ( query.next() ) {
             QString method = query.value ( 0 ).toString();
             streamMode = method == "jpeg" ? Stream::JPEG : Stream::VIDEO;
+        }
+
+        quint32 bitrate = 100000;
+        query.exec( "SELECT Value FROM Config WHERE Name IN ('ZM_VIDEO_BITRATE', 'ZM_WEB_H_VIDEO_BITRATE');" );
+        if ( query.next() ) {
+            bitrate = query.value(0).toInt();
+        }
+
+        quint16 maxFps = 5;
+        query.exec( "SELECT Value FROM Config WHERE Name IN ('ZM_VIDEO_MAXFPS', 'WEB_H_VIDEO_MAXFPS');" );
+        if ( query.next() ) {
+            maxFps = query.value(0).toInt();
         }
 
         /*int count = 0;*/
@@ -98,6 +109,8 @@ void Monitors::init()
             stream->setHost ( db.hostName() , ConnectionManager::connectionWebPort( connection ) );
             stream->setMonitor ( id );
             stream->setMode ( streamMode );
+            stream->setBitRate( bitrate );
+            stream->setMaxFps( maxFps );
             stream->setZMStreamServer ( zms );
 
             m_cameras.append ( camera );

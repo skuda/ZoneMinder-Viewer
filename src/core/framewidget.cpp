@@ -184,6 +184,8 @@ void FrameWidget::drawId( QPainter * painter ){
     */
     painter->setPen( QColor("#FFFF00") );
     painter->drawText( rect() ,d->numbersPosition , d->id );
+    /*qDebug("size of the frame %i: %i, %i", d->id.toInt(), size().width(), size().height());
+    qDebug("size of the parent %i: %i, %i", d->id.toInt(), parentWidget()->size().width(), parentWidget()->size().height());*/
 }
 
 qreal FrameWidget::ratioX(){

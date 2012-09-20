@@ -6,7 +6,6 @@ cmake_minimum_required(VERSION 2.6)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 
-
 find_package ( Qt4 REQUIRED )
 find_package ( LIBVLC REQUIRED )
  
@@ -20,8 +19,9 @@ SET(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O2 -g")
 SET(CMAKE_CXX_FLAGS_RELEASE "-O2 -s -flto -std=c++0x")
 SET(CMAKE_CXX_FLAGS_DEBUG  "-O1 -g -std=c++0x -Wno-variadic-macros -Wuninitialized -Wcast-align -Wredundant-decls -Wno-unknown-pragmas -fdata-sections -ffunction-sections -pedantic -Wextra -Wno-long-long -Wstrict-overflow -Woverloaded-virtual -Wsign-promo -Wabi -Wall -Werror -isystem /opt/qt-4-debug/include")
 
-#uncomment if you don't need debug outputs
-#set (ZMVIEWERDEF -DQT_NO_DEBUG_OUTPUT )
+if(NOT CMAKE_BUILD_TYPE MATCHES "^[Dd][Ee][Bb][Uu][Gg]")
+    set (ZMVIEWERDEF -DQT_NO_DEBUG_OUTPUT )
+endif()
 
 set(ZMVIEWER_INSTALL_DIR  ${CMAKE_INSTALL_PREFIX} )
 set(ZMVIEWER_BIN_DIR      ${ZMVIEWER_INSTALL_DIR}/bin )

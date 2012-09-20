@@ -42,8 +42,9 @@ public:
     quint16 port() const;
     QString mode() const;
     quint16 monitor() const;
-    quint16 bitrate() const;
+    quint32 bitrate() const;
     quint16 scale() const;
+    quint16 maxFps() const;
     QString zmStreamServer() const;
     Status status() const;
 
@@ -63,8 +64,9 @@ public Q_SLOTS:
     void setMonitor ( quint16 monitor );
     void setStreamType ( const StreamType &t );
     void setEvent ( quint16 event );
-    void setBitRate ( quint16 bitrate );
+    void setBitRate ( quint32 bitrate );
     void setScale ( quint16 scale );
+    void setMaxFps ( quint16 maxFps );
     void setZMStreamServer ( const QString &zms = "/cgi-bin/nph-zms" );
 
 Q_SIGNALS:

@@ -154,7 +154,6 @@ private Q_SLOTS:
     void changeCameraNumber();
     void newEvents( int count );
     void statusChangedSlot( const Stream::Status & status );
-    //void invisibleFrameUpdate();
 
 private:
     void init();

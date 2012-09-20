@@ -41,9 +41,10 @@ class Stream::Private
             host = "localhost";
             port = 80;
             monitor = 1;
+            maxFps = 5;
             type = Monitor;
             scale = 100;
-            bitrate = 150000;
+            bitrate = 100000;
             zms ="/cgi-bin/nph-zms";
         }
         ~Private(){
@@ -58,6 +59,7 @@ class Stream::Private
         quint16 event;
         quint16 scale;
         quint32 bitrate;
+        quint16 maxFps;
         QString zms;
         StreamType type;
         QTimer * timer;
@@ -110,7 +112,12 @@ void Stream::setScale ( quint16 scale )
     d->scale = scale;
 }
 
-void Stream::setBitRate ( quint16 bitrate )
+void Stream::setMaxFps(quint16 maxFps)
+{
+    d->maxFps = maxFps;
+}
+
+void Stream::setBitRate (quint32 bitrate )
 {
     d->bitrate = bitrate;
 }
@@ -150,12 +157,12 @@ QString const Stream::completeUrl()
         }
     } else {
         if (d->type == Monitor) {
-            connection = QString("%1?mode=%2&monitor=%3&scale=%4&bitrate=%5&maxpfs=7&format=asf")
-                    .arg(d->zms).arg(d->mode).arg(d->monitor).arg(d->scale).arg(d->bitrate);
+            connection = QString("%1?mode=%2&monitor=%3&scale=%4&bitrate=%5&maxpfs=%6&format=asf")
+                    .arg(d->zms).arg(d->mode).arg(d->monitor).arg(d->scale).arg(d->bitrate).arg(d->maxFps);
         }
         else if (d->type == Event) {
-            connection = QString("%1?source=event&mode=%2&frame=1&event=%3&scale=%4&bitrate=%5&maxpfs=7&format=asf")
-                    .arg(d->zms).arg(d->mode).arg(d->event).arg(d->scale).arg(d->bitrate);
+            connection = QString("%1?source=event&mode=%2&frame=1&event=%3&scale=%4&bitrate=%5&maxpfs=%6&format=asf")
+                    .arg(d->zms).arg(d->mode).arg(d->event).arg(d->scale).arg(d->bitrate).arg(d->maxFps);
         }
     }
 
@@ -191,7 +198,7 @@ quint16 Stream::monitor() const
     return d->monitor;
 }
 
-quint16 Stream::bitrate() const
+quint32 Stream::bitrate() const
 {
     return d->bitrate;
 }
@@ -199,6 +206,11 @@ quint16 Stream::bitrate() const
 quint16 Stream::scale() const
 {
     return d->scale;
+}
+
+quint16 Stream::maxFps() const
+{
+    return d->maxFps;
 }
 
 QString Stream::zmStreamServer() const

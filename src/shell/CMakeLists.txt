@@ -59,10 +59,19 @@ include_directories ( ${CMAKE_CURRENT_BINARY_DIR}
                       ${QT_QTWEBKIT_INCLUDE_DIR}
              )
 
+# Set some Win32 Specific Settings
+IF(WIN32)
+  SET(GUI_TYPE WIN32)
+ENDIF(WIN32)
 
-add_executable (zmviewer ${shell_SRCS} ${shell_MOC_SRCS})
+# Set some Apple MacOS Specific settings
+IF (APPLE)
+  SET(GUI_TYPE MACOSX_BUNDLE)
+ENDIF (APPLE)
+
+add_executable (zmviewer ${GUI_TYPE} ${shell_SRCS} ${shell_MOC_SRCS})
 target_link_libraries( zmviewer ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} ${QT_QTXML_LIBRARY} ${QT_QTWEBKIT_LIBRARY} zmviewercore )
 install(TARGETS zmviewer DESTINATION ${ZMVIEWER_BIN_DIR})
 
-install ( DIRECTORY styles/examples/blackstyle DESTINATION ${ZMVIEWER_STYLE_DIR}  PATTERN ".svn" EXCLUDE )
+install ( DIRECTORY styles/examples/blackstyle DESTINATION ${ZMVIEWER_STYLE_DIR} PATTERN ".svn" EXCLUDE )
 install ( DIRECTORY styles/examples/whitestyle DESTINATION ${ZMVIEWER_STYLE_DIR} PATTERN ".svn" EXCLUDE )
