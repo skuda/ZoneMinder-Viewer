@@ -195,6 +195,7 @@ void MainWindow::retranslateStrings()
 
 void MainWindow::initSettings()
 {
+    QApplication::setOverrideCursor(Qt::WaitCursor);
     m_settings->beginGroup ( "MainWindow" );
     int ws = m_settings->value ( "windowState" , Qt::WindowMaximized ).toInt();
     setWindowState ( ( Qt::WindowStates ) ws );
@@ -218,6 +219,7 @@ void MainWindow::initSettings()
     QStringList con = m_settings->value ( "names" ).toStringList();
     m_settings->endGroup();
 
+
     foreach ( const QString name , con )
     {
         qDebug ( "%s init...", qPrintable ( name ) );
@@ -229,12 +231,18 @@ void MainWindow::initSettings()
                                                     m_settings->value ( "password" ).toString(),
                                                     m_settings->value ( "port" , 0 ).toInt(),
                                                     m_settings->value ( "wwwPort" , 80 ).toInt(),
-                                                    false );
-        if (!b)
+                                                    true );
+
+
+        if (!b) {
+            QApplication::restoreOverrideCursor();
             QMessageBox::critical( this , tr("Database Error") ,
                                    tr("Can not connect with Database %1 at host %2")
                                    .arg(m_settings->value ( "database" ).toString())
                                    .arg(m_settings->value ( "host" ).toString()) );
+            QApplication::setOverrideCursor(Qt::WaitCursor);
+        }
+
         m_settings->endGroup();
     }
 
@@ -254,6 +262,8 @@ void MainWindow::initSettings()
     foreach ( QAction * action , m_centralWidget->cameraFocusActions()->actions() ){
         m_commandListener->setMapAction( action->text(), action );
     }
+
+    QApplication::restoreOverrideCursor();
 }
 
 void MainWindow::initCameraSetting( CameraWidget * camera ){

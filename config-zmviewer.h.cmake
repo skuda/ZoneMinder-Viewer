@@ -2,9 +2,9 @@
 #define CONFIG_ZMVIEWER_H
 
 #define ZMVIEWER_VERSION_MAJOR 0
-#define ZMVIEWER_VERSION_MINOR 3
+#define ZMVIEWER_VERSION_MINOR 31
 #define ZMVIEWER_RELEASE 0
-#define ZMVIEWER_VERSION_STRING "0.3"
+#define ZMVIEWER_VERSION_STRING "0.31"
 const static char ApplicationName[] = "ZoneMinder Viewer";
 const static char ApplicationShortName[] = "ZMViewer";
 
