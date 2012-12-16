@@ -1,3 +1,4 @@
+#include "stdio.h"
 #include "vlcplayer.h"
 #include <vlc/vlc.h>
 #include <QTimer>
